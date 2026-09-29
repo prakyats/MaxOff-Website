@@ -18,14 +18,15 @@
   --accent: #c42126;
   --on-accent: #ffffff;
   --live: #4ade80;
-  --grid-line: rgb(255 255 255 / 4%);
+  --grid-line: rgb(255 255 255 / 5.5%);
   --glow: rgb(196 33 38 / 22%);
   --control-border: color-mix(in srgb, var(--text) 45%, transparent);
 
   --content-max: 1200px;
   --gutter: 16px;
   --section-gap: clamp(4rem, 10vw, 8rem);
-  --duration-reveal: 500ms;
+  --duration-reveal: 400ms;
+  --reveal-distance: 8px;
   --duration-hover: 200ms;
 }
 
@@ -37,7 +38,7 @@
   --text: #16161a;
   --muted: #52525b;
   --live: #15803d;
-  --grid-line: rgb(0 0 0 / 6%);
+  --grid-line: rgb(0 0 0 / 7%);
   --glow: rgb(196 33 38 / 14%);
 }
 
@@ -50,7 +51,7 @@
     --text: #16161a;
     --muted: #52525b;
     --live: #15803d;
-    --grid-line: rgb(0 0 0 / 6%);
+    --grid-line: rgb(0 0 0 / 7%);
     --glow: rgb(196 33 38 / 14%);
   }
 }

@@ -34,6 +34,9 @@ Each phase: its own branch and PR, `pnpm check` green, a short note in `docs/PRO
 - Every section in `docs/SITEMAP.md` in the chosen direction (Instrument), on `phase-2/build-page`.
 - Two borrowings: chips inside the feature cards, restyled in Instrument's hairline and mono language; giant type for the closing line.
 - The `/preview` pages, the Glass and Editorial styles and Inter Tight are removed.
+
+**Status:** built on `phase-2/build-page`. All nine sections, the task loop with a Pause button, the light and dark phone pair, the two borrowings, the reply line. Copy is a first pass for Phase 3 review.
+
 - Recreated app screens: Today, a task card, an approval. The task-state loop.
 - Responsive at every width, both themes, 200 % text.
 
@@ -67,7 +70,6 @@ The site is fully static and contact is email only. Most of this is built into t
 ## Phase 6: Launch
 
 - The owner removes any remaining parked/GoDaddy records for the apex.
-- The Phase 1 `/preview` pages are gone (removed in Phase 2 once a direction is built).
 - Set `PRE_LAUNCH` to `false` in `src/lib/launch.ts`. That removes the `noindex` meta from every page and the `Disallow: /` from `robots.txt` (which then allows all and lists the sitemap). Update the tests that assert them.
 - Custom domains `maxoff.in` and `www.maxoff.in` (www → apex 301) added in `wrangler.jsonc`.
 - Verify HTTPS, redirects, analytics, a real email to hello@maxoff.in end to end, and that `app.maxoff.in` is untouched.

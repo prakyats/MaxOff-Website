@@ -51,6 +51,7 @@ const { headingLevel: Heading = 'h3', class: className } = Astro.props;
     </div>
     <p class="contact__status" role="status" data-copy-status></p>
   </div>
+  <p class="contact__reply">{contact.reply}</p>
 
   <p class="contact__signin">
     {contact.alreadyOn} <a href={cta.signInHref}>{contact.signIn}</a>

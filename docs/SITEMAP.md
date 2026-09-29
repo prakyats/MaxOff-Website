@@ -9,6 +9,8 @@
 | `/404`     | Not found, on brand, with a link home                                                                                                | 0     |
 | `/og.png`  | Social share image (1200×630), generated at build time                                                                               | 3     |
 
+The `/preview` pages of Phase 1 were removed in Phase 2.
+
 Until launch every page is noindex and `robots.txt` disallows everything (`PRE_LAUNCH` in `src/lib/launch.ts`); Phase 6 removes both.
 
 Later (not now): `/pricing`, `/security`, `/changelog`, a blog.

@@ -72,6 +72,22 @@
     background: currentColor;
   }
 
+  .badge-coming {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2em 0.65em;
+    border: 1px dashed var(--control-border);
+    border-radius: 999px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
   /* ---------- Reveal on scroll: fade and rise, once ---------- */
 
   @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
@@ -395,6 +411,11 @@
     color: var(--muted);
     font-size: 0.875rem;
   }
+  .contact__reply {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
   .contact__signin {
     margin: 0;
     color: var(--muted);
@@ -428,7 +449,7 @@
     width: 26%;
     height: 22px;
     border-radius: 999px;
-    background: var(--bg);
+    background: #0a0a0b;
     transform: translateX(-50%);
   }
   .phone__screen {
@@ -437,6 +458,26 @@
     overflow: hidden;
     border-radius: calc(var(--radius-phone) - 10px);
     background: var(--surface);
+  }
+
+  /* A frame can carry its own theme, whatever the page's theme is (the light and dark pair). */
+  .phone--dark {
+    --bg: #0a0a0b;
+    --surface: #121214;
+    --border: #232326;
+    --text: #f4f4f5;
+    --muted: #a1a1aa;
+    --control-border: color-mix(in srgb, #f4f4f5 45%, transparent);
+    color: var(--text);
+  }
+  .phone--light {
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --border: #e4e4e7;
+    --text: #16161a;
+    --muted: #52525b;
+    --control-border: color-mix(in srgb, #16161a 45%, transparent);
+    color: var(--text);
   }
 
   /* ---------- Recreated Today screen (sizes in container units, so it scales with the frame) ---------- */
@@ -616,44 +657,44 @@
     height: 1.5em;
   }
 
-  /* ---------- Preview bar (Phase 1 only) ---------- */
-
-  .preview-bar {
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
+  .today__back {
+    display: flex;
+    align-items: center;
+    gap: 0.2em;
+    color: var(--muted);
+    font-size: 0.85em;
+  }
+  .today__back svg {
+    width: 1.2em;
+    height: 1.2em;
+  }
+  .today__row--first {
+    border-top: 0;
+  }
+  .today__facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6em 1em;
+    padding-top: 0.6em;
+    border-top: 1px solid var(--border);
+  }
+  .today__history {
+    padding: 0.35em 0;
+    border-top: 1px solid var(--border);
     color: var(--muted);
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.04em;
+    font-size: 0.72em;
+    letter-spacing: 0.02em;
   }
-  .preview-bar__inner {
+  .today__actions {
+    display: grid;
+    gap: 0.6em;
+    padding: 1.2em 1.4em;
+  }
+  .today__pill--wide {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0 1.5rem;
-    min-height: 44px;
-  }
-  .preview-bar p {
-    margin: 0;
-  }
-  .preview-bar ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 1rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .preview-bar a {
-    display: inline-flex;
-    min-height: 44px;
-    align-items: center;
-    color: var(--text);
-    text-underline-offset: 4px;
-  }
-  .preview-bar a[aria-current='page'] {
-    text-decoration: none;
-    font-weight: 600;
+    justify-content: center;
+    padding-block: 0.7em;
+    font-size: 0.95em;
   }
 }

@@ -58,7 +58,7 @@ test('a built page may carry the credit in plain body text only', () => {
     'dist/index.html',
     page('<title>MaxOff</title>', `<footer><p>MaxOff is developed by ${CREDIT}.</p></footer>`),
   );
-  clean('dist/preview/glass.html', page('', `<footer><span>${CREDIT}</span></footer>`));
+  clean('dist/privacy.html', page('', `<footer><span>${CREDIT}</span></footer>`));
 });
 
 test('a built page must not carry the credit in the head, headings, attributes or scripts', () => {

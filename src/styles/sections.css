@@ -1,0 +1,749 @@
+/*
+  Page sections, in the Instrument direction (docs/DESIGN.md): a strict grid, mono labels,
+  hairlines everywhere, information density. Two borrowings: chips inside the feature cells
+  (from Glass, restyled here as hairline mono tags) and giant type for the closing line
+  (from Editorial). Class prefix: mo-.
+*/
+
+/* ---------- Shared pieces, restyled ---------- */
+
+.site-header {
+  border-bottom-color: var(--border);
+  background: var(--bg);
+}
+.site-header__nav a,
+.site-footer__nav a {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.site-footer__credit {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.contact__heading {
+  font-size: var(--text-lg);
+  letter-spacing: -0.01em;
+}
+.contact__label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.contact__address {
+  background: var(--bg);
+}
+
+/* ---------- Type ---------- */
+
+.mo-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1.25rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.mo-eyebrow span {
+  padding: 0.15rem 0.45rem;
+  border: 1px solid var(--control-border);
+  border-radius: 4px;
+  color: var(--text);
+  letter-spacing: 0.06em;
+}
+
+.mo-h1,
+.mo-h2,
+.mo-close__title {
+  margin: 0;
+  overflow-wrap: break-word;
+  font-weight: 600;
+  text-wrap: balance;
+}
+.mo-h1 {
+  font-size: clamp(2.5rem, 1.3rem + 5.4vw, 5.5rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+.mo-h2 {
+  font-size: clamp(2rem, 1.3rem + 2.8vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+/* Giant type, borrowed from Editorial: used once, for the closing line. */
+.mo-close__title {
+  font-size: clamp(2.75rem, 0.6rem + 8.4vw, 8rem);
+  line-height: 0.97;
+  letter-spacing: -0.045em;
+}
+.mo-lead {
+  max-width: 34rem;
+  margin: 1.5rem 0 0;
+  color: var(--muted);
+  font-size: var(--text-lg);
+  text-wrap: pretty;
+}
+.mo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  margin-top: 2rem;
+}
+
+/* ---------- Hero ---------- */
+
+.mo-hero {
+  padding-top: clamp(2rem, 5vw, 4.5rem);
+  /* The glow behind the device extends past the container; clip it without making a scroll box. */
+  overflow-x: clip;
+}
+.mo-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+  align-items: center;
+}
+.mo-hero__device {
+  position: relative;
+  isolation: isolate;
+}
+/* The one soft glow, sitting behind the device. */
+.mo-hero__device::before {
+  content: '';
+  position: absolute;
+  inset: -15% -10%;
+  z-index: -1;
+  background: radial-gradient(closest-side, var(--glow), transparent);
+  filter: blur(30px);
+}
+
+.mo-frame {
+  position: relative;
+  padding: 3rem 1rem;
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / 100% 16px,
+    color-mix(in srgb, var(--surface) 55%, transparent);
+}
+/* Corner brackets. */
+.mo-frame::before,
+.mo-frame::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--text);
+}
+.mo-frame::before {
+  top: -1px;
+  left: -1px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.mo-frame::after {
+  right: -1px;
+  bottom: -1px;
+  border-top: 0;
+  border-left: 0;
+}
+.mo-frame__label {
+  position: absolute;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.mo-frame__label--tl {
+  top: 0.9rem;
+  left: 1rem;
+}
+.mo-frame__label--br {
+  right: 1rem;
+  bottom: 0.9rem;
+}
+
+.mo-specs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: clamp(2.5rem, 6vw, 5rem) 0 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--border);
+}
+.mo-specs__cell {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg);
+}
+.mo-specs dt {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.mo-specs dd {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+/* ---------- Sections ---------- */
+
+.mo-section {
+  margin-top: var(--section-gap);
+  padding-top: clamp(2rem, 4vw, 3rem);
+  border-top: 1px solid var(--border);
+}
+.mo-sechead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+.mo-sechead .mo-eyebrow {
+  margin-bottom: 0;
+}
+.mo-sechead__intro {
+  max-width: 28rem;
+  margin: 0;
+  color: var(--muted);
+}
+
+/* ---------- Tables: cells share hairlines ---------- */
+
+.mo-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--border);
+  list-style: none;
+}
+.mo-cell {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  background: var(--bg);
+  transition: background-color var(--duration-hover) var(--ease-out);
+}
+.mo-cell:hover {
+  background: var(--surface);
+}
+.mo-cell__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 1.5rem;
+  margin-bottom: 1rem;
+}
+.mo-cell__index {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+.mo-cell__icon {
+  color: var(--muted);
+  transition: color var(--duration-hover) var(--ease-out);
+}
+.mo-cell:hover .mo-cell__icon {
+  color: var(--text);
+}
+.mo-cell__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.mo-cell__text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* Chips: small mono tags that illustrate a card. Decorative. Hairline, never filled, never red or green. */
+.mo-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+.mo-chip {
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--control-border);
+  border-radius: 4px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+.mo-bars {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.5rem;
+}
+.mo-bar {
+  display: grid;
+  grid-template-columns: 3.75rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+}
+.mo-bar__track {
+  display: block;
+  height: 0.5rem;
+  border: 1px solid var(--control-border);
+  border-radius: 2px;
+}
+.mo-bar__fill {
+  display: block;
+  height: 100%;
+  background: color-mix(in srgb, var(--text) 45%, transparent);
+}
+
+/* Coming: same cell, dimmed and hatched, with a dashed badge. */
+.mo-cell--coming {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 10px,
+    color-mix(in srgb, var(--text) 3.5%, transparent) 10px 11px
+  );
+}
+.mo-cell--coming .mo-cell__title {
+  color: var(--muted);
+}
+
+/* Steps: a large step number instead of a small index. */
+.mo-cell--steps .mo-cell__index {
+  color: var(--text);
+  font-size: clamp(2rem, 1.4rem + 2vw, 3rem);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.mo-cell--steps .mo-cell__top {
+  margin-bottom: 1.5rem;
+}
+
+/* ---------- Three questions ---------- */
+
+.mo-q {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-content: start;
+  gap: 2rem;
+  min-height: 15rem;
+  padding: 1.75rem;
+  background: var(--bg);
+}
+.mo-q__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mo-q__question {
+  margin: 0;
+  font-size: clamp(1.625rem, 1.1rem + 1.6vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.mo-q__answer {
+  margin: 1rem 0 0;
+  color: var(--muted);
+}
+
+/* ---------- Coming next: the task loop beside the table ---------- */
+
+.mo-coming {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.loop {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.loop__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.loop__label {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.loop__title {
+  margin: 0.5rem 0 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.loop__meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+.loop__steps {
+  display: grid;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.loop__step {
+  --on: 1;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  column-gap: 1rem;
+  padding-block: 0.7rem;
+}
+/* The rail between dots. */
+.loop__step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  top: 1.75rem;
+  bottom: -0.55rem;
+  left: 0.4375rem;
+  width: 1px;
+  background: var(--border);
+}
+.loop__dot {
+  grid-row: 1 / span 2;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-top: 0.3rem;
+  border: 1px solid color-mix(in srgb, var(--text) calc(45% + var(--on) * 55%), transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--text) calc(var(--on) * 100%), var(--bg));
+}
+.loop__name {
+  color: color-mix(in srgb, var(--text) calc(var(--on) * 100%), var(--muted));
+  font-weight: 600;
+}
+.loop__note {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+.loop__pause {
+  justify-self: start;
+  min-height: 44px;
+  padding-inline: 0.9rem;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-button);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.loop__pause:hover {
+  border-color: var(--text);
+}
+/* Nothing to pause when nothing moves. */
+.loop__pause {
+  display: none;
+}
+
+/* --on is a number that animates, so the dots and names can fade from off to on. */
+@property --on {
+  syntax: '<number>';
+  /* The dot and the name inside each step read it, so it must inherit. */
+  inherits: true;
+  initial-value: 1;
+}
+@keyframes loop-2 {
+  0%,
+  24% {
+    --on: 0;
+  }
+  27%,
+  97% {
+    --on: 1;
+  }
+  100% {
+    --on: 0;
+  }
+}
+@keyframes loop-3 {
+  0%,
+  49% {
+    --on: 0;
+  }
+  52%,
+  97% {
+    --on: 1;
+  }
+  100% {
+    --on: 0;
+  }
+}
+@keyframes loop-4 {
+  0%,
+  74% {
+    --on: 0;
+  }
+  77%,
+  97% {
+    --on: 1;
+  }
+  100% {
+    --on: 0;
+  }
+}
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .loop__pause {
+    display: inline-flex;
+    align-items: center;
+  }
+  .loop__step:nth-child(2) {
+    animation: loop-2 10s linear infinite;
+  }
+  .loop__step:nth-child(3) {
+    animation: loop-3 10s linear infinite;
+  }
+  .loop__step:nth-child(4) {
+    animation: loop-4 10s linear infinite;
+  }
+  .loop[data-paused] .loop__step {
+    animation-play-state: paused;
+  }
+}
+
+/* ---------- Feels like an app ---------- */
+
+.mo-app {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+  align-items: start;
+}
+.mo-app .mo-sechead {
+  grid-template-columns: minmax(0, 1fr);
+}
+.mo-points {
+  margin: 2rem 0 0;
+  padding: 0;
+  border-top: 1px solid var(--border);
+  list-style: none;
+}
+.mo-points li {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr);
+  gap: 0 1rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.mo-points svg {
+  grid-row: 1 / span 2;
+  margin-top: 0.15rem;
+  color: var(--muted);
+}
+.mo-points strong {
+  font-weight: 600;
+}
+.mo-points span {
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+.mo-devices {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+  justify-items: center;
+}
+.mo-shot {
+  display: grid;
+  width: 100%;
+  justify-items: center;
+  gap: 1rem;
+  margin: 0;
+  padding: 2.5rem 1rem 1.5rem;
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / 100% 16px,
+    color-mix(in srgb, var(--surface) 55%, transparent);
+}
+.mo-shot figcaption {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ---------- Roles ---------- */
+
+.mo-role {
+  gap: 0.6rem;
+}
+.mo-role__name {
+  margin: 0;
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+.mo-role__label {
+  display: flex;
+  align-items: center;
+  margin: 1.25rem 0 0.25rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.mo-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mo-list li {
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  gap: 0.6rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--border);
+  font-size: 0.9375rem;
+}
+.mo-list svg {
+  margin-top: 0.2rem;
+  color: var(--muted);
+}
+.mo-list--never li,
+.mo-list--soon li {
+  color: var(--muted);
+}
+.mo-money {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0 0;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.mo-money svg {
+  flex: none;
+  color: var(--muted);
+}
+
+/* ---------- Closing ---------- */
+
+.mo-close {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.5rem;
+  align-items: start;
+  margin-top: clamp(2rem, 5vw, 4rem);
+}
+.mo-close__line {
+  max-width: 24rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-lg);
+}
+.mo-close__panel {
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
+/* ---------- Breakpoints ---------- */
+
+@media (min-width: 640px) {
+  .mo-specs {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .mo-grid--c2,
+  .mo-grid--c3,
+  .mo-grid--c4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 768px) {
+  .mo-devices {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+@media (min-width: 1024px) {
+  .mo-hero__grid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 4rem;
+  }
+  .mo-frame {
+    padding-inline: 2rem;
+  }
+  .mo-sechead {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+  }
+  .mo-sechead .mo-eyebrow {
+    grid-column: 1 / -1;
+  }
+  .mo-sechead__intro {
+    justify-self: end;
+  }
+  .mo-grid--c3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .mo-grid--c4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .mo-coming {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 2rem;
+  }
+  .mo-app {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: 4rem;
+  }
+  .mo-close {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: 4rem;
+  }
+  .mo-close__line {
+    position: sticky;
+    top: 6rem;
+  }
+}

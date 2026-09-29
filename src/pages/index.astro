@@ -1,25 +1,255 @@
 ---
+/**
+ * The MaxOff home page, in the Instrument direction (docs/DESIGN.md).
+ * Sections, in order: hero, three questions, what it does (Live), coming next, feels like an app,
+ * roles, trust, how it starts, closing and contact. All copy lives in src/content/copy.ts.
+ */
+import ArrowDown from '@lucide/astro/icons/arrow-down';
+import Lock from '@lucide/astro/icons/lock-keyhole';
+import ContactBlock from '../components/ContactBlock.astro';
 import EmailLink from '../components/EmailLink.astro';
+import FeatureIcon from '../components/FeatureIcon.astro';
+import FeatureTable from '../components/FeatureTable.astro';
+import PhoneFrame from '../components/PhoneFrame.astro';
+import RoleColumn from '../components/RoleColumn.astro';
+import ApprovalScreen from '../components/screens/ApprovalScreen.astro';
+import TodayScreen from '../components/screens/TodayScreen.astro';
+import SectionHead from '../components/SectionHead.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import SiteHeader from '../components/SiteHeader.astro';
-import { cta, hero } from '../content/copy';
+import TaskLoop from '../components/TaskLoop.astro';
+import {
+  app,
+  approvalScreen,
+  badges,
+  closing,
+  coming,
+  comingFeatures,
+  cta,
+  hero,
+  how,
+  liveFeatures,
+  questions,
+  roles,
+  todayScreen,
+  trust,
+  what,
+} from '../content/copy';
 import Base from '../layouts/Base.astro';
 ---
 
 <Base>
-  <SiteHeader showNav={false} />
-  <main id="main" class="relative flex flex-1 flex-col overflow-x-clip">
-    <div class="hero-glow" aria-hidden="true"></div>
-    <section class="container-site flex flex-1 flex-col justify-center py-16 md:py-24">
-      <p class="font-mono text-xs tracking-[0.18em] text-muted uppercase">{hero.eyebrow}</p>
-      <h1 class="mt-4 max-w-4xl text-hero font-semibold text-balance">{hero.headline}</h1>
-      <p class="mt-6 max-w-xl text-lg text-muted text-pretty">{hero.supporting}</p>
-      <div class="mt-10 flex flex-wrap items-center gap-4">
-        <EmailLink kind="demo" class="button-primary" primary hint>
-          {cta.demo}
-        </EmailLink>
+  <SiteHeader />
+
+  <main id="main">
+    <!-- 01 Hero -->
+    <section class="mo-hero" aria-labelledby="hero-title">
+      <div class="container-site mo-hero__grid">
+        <div class="mo-hero__copy">
+          <p class="mo-eyebrow">
+            <span>01</span>
+            {hero.eyebrow}
+          </p>
+          <h1 id="hero-title" class="mo-h1">
+            {hero.headline}
+          </h1>
+          <p class="mo-lead">{hero.supporting}</p>
+          <div class="mo-actions">
+            <EmailLink kind="demo" class="button-primary" primary hint>
+              {cta.demo}
+            </EmailLink>
+            <a class="link-arrow" href="#how">
+              {cta.seeHow}
+              <ArrowDown size={16} stroke-width={1.5} aria-hidden="true" />
+            </a>
+          </div>
+        </div>
+
+        <div class="mo-hero__device">
+          <div class="mo-frame">
+            <span class="mo-frame__label mo-frame__label--tl" aria-hidden="true">
+              Screen / Today
+            </span>
+            <span class="mo-frame__label mo-frame__label--br" aria-hidden="true">
+              Owner view
+            </span>
+            <PhoneFrame label={todayScreen.label}>
+              <TodayScreen />
+            </PhoneFrame>
+          </div>
+        </div>
+      </div>
+
+      <div class="container-site">
+        <dl class="mo-specs">
+          {hero.specs.map((spec) => (
+            <div class="mo-specs__cell">
+              <dt>{spec.term}</dt>
+              <dd>{spec.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <!-- 02 The three questions -->
+    <section id="questions" class="mo-section" aria-labelledby="questions-title">
+      <div class="container-site">
+        <SectionHead
+          index="02"
+          eyebrow={questions.eyebrow}
+          title={questions.headline}
+          titleId="questions-title"
+        />
+        <ol class="mo-grid mo-grid--c3">
+          {questions.items.map((item, i) => (
+            <li class="mo-q reveal" style={`--reveal-delay: ${i * 60}ms`}>
+              <div class="mo-q__top">
+                <span class="mo-cell__index" aria-hidden="true">
+                  Q{i + 1}
+                </span>
+                <span class={item.status === 'live' ? 'badge-live' : 'badge-coming'}>
+                  {badges[item.status]}
+                </span>
+              </div>
+              <div>
+                <h3 class="mo-q__question">{item.question}</h3>
+                <p class="mo-q__answer">{item.answer}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- 03 What it does (Live) -->
+    <section id="what" class="mo-section" aria-labelledby="what-title">
+      <div class="container-site">
+        <SectionHead
+          index="03"
+          eyebrow={what.eyebrow}
+          title={what.headline}
+          titleId="what-title"
+          intro={what.intro}
+        />
+        <FeatureTable items={liveFeatures} variant="live" columns={4} />
+      </div>
+    </section>
+
+    <!-- 04 Coming next -->
+    <section id="coming" class="mo-section" aria-labelledby="coming-title">
+      <div class="container-site">
+        <SectionHead
+          index="04"
+          eyebrow={coming.eyebrow}
+          title={coming.headline}
+          titleId="coming-title"
+          intro={coming.intro}
+        />
+        <div class="mo-coming">
+          <div class="reveal">
+            <TaskLoop />
+          </div>
+          <FeatureTable items={comingFeatures} variant="coming" columns={2} />
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 Feels like an app -->
+    <section id="app" class="mo-section" aria-labelledby="app-title">
+      <div class="container-site mo-app">
+        <div>
+          <SectionHead index="05" eyebrow={app.eyebrow} title={app.headline} titleId="app-title" />
+          <ul class="mo-points reveal">
+            {app.points.map((point) => (
+              <li>
+                <FeatureIcon name={point.key} />
+                <strong>{point.title}</strong>
+                <span>{point.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="mo-devices reveal">
+          <figure class="mo-shot">
+            <PhoneFrame label={todayScreen.label} theme="dark">
+              <TodayScreen />
+            </PhoneFrame>
+            <figcaption>{app.darkLabel}</figcaption>
+          </figure>
+          <figure class="mo-shot">
+            <PhoneFrame label={approvalScreen.label} theme="light">
+              <ApprovalScreen />
+            </PhoneFrame>
+            <figcaption>{app.lightLabel}</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 Roles -->
+    <section id="roles" class="mo-section" aria-labelledby="roles-title">
+      <div class="container-site">
+        <SectionHead
+          index="06"
+          eyebrow={roles.eyebrow}
+          title={roles.headline}
+          titleId="roles-title"
+          intro={roles.intro}
+        />
+        <ul class="mo-grid mo-grid--c3">
+          {roles.items.map((role, i) => (
+            <RoleColumn role={role} index={i} />
+          ))}
+        </ul>
+        <p class="mo-money reveal">
+          <Lock size={24} stroke-width={1.5} aria-hidden="true" />
+          {roles.money}
+        </p>
+      </div>
+    </section>
+
+    <!-- 07 Trust -->
+    <section id="trust" class="mo-section" aria-labelledby="trust-title">
+      <div class="container-site">
+        <SectionHead
+          index="07"
+          eyebrow={trust.eyebrow}
+          title={trust.headline}
+          titleId="trust-title"
+        />
+        <FeatureTable items={trust.items} variant="plain" columns={3} />
+      </div>
+    </section>
+
+    <!-- 08 How it starts -->
+    <section id="how" class="mo-section" aria-labelledby="how-title">
+      <div class="container-site">
+        <SectionHead index="08" eyebrow={how.eyebrow} title={how.headline} titleId="how-title" />
+        <FeatureTable items={how.steps} variant="steps" columns={3} />
+      </div>
+    </section>
+
+    <!-- 09 Closing and contact -->
+    <section id="demo" class="mo-section" aria-labelledby="close-title">
+      <div class="container-site">
+        <p class="mo-eyebrow reveal">
+          <span>09</span>
+          {closing.eyebrow}
+        </p>
+        <h2 id="close-title" class="mo-close__title reveal">
+          {closing.headline}
+        </h2>
+        <div class="mo-close">
+          <p class="mo-close__line reveal">{closing.line}</p>
+          <div class="mo-close__panel reveal">
+            <ContactBlock />
+          </div>
+        </div>
       </div>
     </section>
   </main>
+
   <SiteFooter />
 </Base>

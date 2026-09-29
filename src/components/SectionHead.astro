@@ -1,0 +1,24 @@
+---
+/** The head of a section: a mono index and eyebrow, the h2, and an optional intro. */
+interface Props {
+  index: string;
+  eyebrow: string;
+  title: string;
+  titleId: string;
+  intro?: string;
+  class?: string;
+}
+
+const { index, eyebrow, title, titleId, intro, class: className = '' } = Astro.props;
+---
+
+<header class:list={['mo-sechead', 'reveal', className]}>
+  <p class="mo-eyebrow">
+    <span>{index}</span>
+    {eyebrow}
+  </p>
+  <h2 id={titleId} class="mo-h2">
+    {title}
+  </h2>
+  {intro && <p class="mo-sechead__intro">{intro}</p>}
+</header>
