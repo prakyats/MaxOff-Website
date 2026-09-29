@@ -49,6 +49,8 @@ Each phase: its own branch and PR, `pnpm check` green, a short note in `docs/PRO
 
 **Acceptance:** copy approved; every claim matches `docs/BRIEF.md`; SEO checks pass.
 
+**Status:** built on `phase-3/copy-seo`. The owner approved the copy with edits (`docs/BRIEF.md` §3). Delivered: the approved copy edits, `/privacy`, the social image (`/og.png`, 1200×630, drawn at build time with satori and resvg from the site's own fonts and mark), favicons (`favicon.ico` with 16, 32 and 48 px, `favicon.svg`, a 180 px Apple touch icon), Open Graph and Twitter tags, canonical URLs, the sitemap (`/` and `/privacy`, never `/404`) and JSON-LD `SoftwareApplication` on the home page (no ratings, offers, author or publisher). `/privacy` and the 404 page share the home header, so the phone menu (Request a demo, Sign in) works everywhere. Everything stays dormant until Phase 6: every page is `noindex` and `robots.txt` disallows everything.
+
 ## Phase 4: Contact by email (small)
 
 The site is fully static and contact is email only. Most of this is built into the Phase 1 to 3 pages; Phase 4 finishes and verifies it.
@@ -72,6 +74,7 @@ The site is fully static and contact is email only. Most of this is built into t
 - The owner removes any remaining parked/GoDaddy records for the apex.
 - Set `PRE_LAUNCH` to `false` in `src/lib/launch.ts`. That removes the `noindex` meta from every page and the `Disallow: /` from `robots.txt` (which then allows all and lists the sitemap). Update the tests that assert them.
 - Custom domains `maxoff.in` and `www.maxoff.in` (www → apex 301) added in `wrangler.jsonc`.
+- **Owner step: enable Cloudflare Web Analytics for maxoff.in** (cookie-less, no banner) once the domain is attached. If Cloudflare does not add the beacon by itself, the owner passes the site's public beacon token so it can be added to the page; it is a public identifier, not a secret. `scripts/check-budget.mjs` already allows the one beacon host (`static.cloudflareinsights.com`); `pnpm check:static` and its tests must be updated in the same change if the beacon is added to the markup. Then read the Analytics line on `/privacy` again: "We count visits with cookie-less analytics. No cookies are set." must still be true.
 - Verify HTTPS, redirects, analytics, a real email to hello@maxoff.in end to end, and that `app.maxoff.in` is untouched.
 
 **Acceptance:** https://maxoff.in serves the site; the go/no-go checklist is complete.

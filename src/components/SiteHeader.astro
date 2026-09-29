@@ -13,13 +13,16 @@ import Logo from './Logo.astro';
 interface Props {
   /** Where the logo leads. */
   homeHref?: string;
-  /** Show the section links. Off on pages that do not have those sections. */
-  showNav?: boolean;
+  /**
+   * Prefix for the section links. Empty on the home page, where they are in-page anchors; "/" on
+   * other pages, so the same header (and the same phone menu) leads back to those sections.
+   */
+  navBase?: string;
   class?: string;
 }
 
-const { homeHref = '/', showNav = true, class: className } = Astro.props;
-const links = showNav ? nav : [];
+const { homeHref = '/', navBase = '', class: className } = Astro.props;
+const links = nav.map((item) => ({ ...item, href: `${navBase}${item.href}` }));
 ---
 
 <header class:list={['site-header', className]} data-site-header>
@@ -28,17 +31,15 @@ const links = showNav ? nav : [];
       <Logo />
     </a>
 
-    {links.length > 0 && (
-      <nav class="site-header__nav" aria-label="Primary">
-        <ul>
-          {links.map((item) => (
-            <li>
-              <a href={item.href}>{item.label}</a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    )}
+    <nav class="site-header__nav" aria-label="Primary">
+      <ul>
+        {links.map((item) => (
+          <li>
+            <a href={item.href}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
 
     <div class="site-header__actions">
       <a class="button-outline site-header__signin" href={cta.signInHref}>
@@ -47,43 +48,39 @@ const links = showNav ? nav : [];
       <EmailLink kind="demo" class="button-primary site-header__demo">
         {cta.demo}
       </EmailLink>
-      {links.length > 0 && (
-        <button
-          type="button"
-          class="site-header__menu-button"
-          aria-expanded="false"
-          aria-controls="site-menu"
-          data-menu-button
-        >
-          <span class="sr-only">{cta.menu}</span>
-          <Menu class="icon-open" size={22} stroke-width={1.5} aria-hidden="true" />
-          <X class="icon-close" size={22} stroke-width={1.5} aria-hidden="true" />
-        </button>
-      )}
+      <button
+        type="button"
+        class="site-header__menu-button"
+        aria-expanded="false"
+        aria-controls="site-menu"
+        data-menu-button
+      >
+        <span class="sr-only">{cta.menu}</span>
+        <Menu class="icon-open" size={22} stroke-width={1.5} aria-hidden="true" />
+        <X class="icon-close" size={22} stroke-width={1.5} aria-hidden="true" />
+      </button>
     </div>
   </div>
 
-  {links.length > 0 && (
-    <div id="site-menu" class="site-header__menu" data-menu hidden>
-      <div class="container-site">
-        <ul>
-          {links.map((item) => (
-            <li>
-              <a href={item.href}>{item.label}</a>
-            </li>
-          ))}
-        </ul>
-        <div class="site-header__menu-actions">
-          <EmailLink kind="demo" class="button-primary">
-            {cta.demo}
-          </EmailLink>
-          <a class="button-outline" href={cta.signInHref}>
-            {cta.signIn}
-          </a>
-        </div>
+  <div id="site-menu" class="site-header__menu" data-menu hidden>
+    <div class="container-site">
+      <ul>
+        {links.map((item) => (
+          <li>
+            <a href={item.href}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+      <div class="site-header__menu-actions">
+        <EmailLink kind="demo" class="button-primary">
+          {cta.demo}
+        </EmailLink>
+        <a class="button-outline" href={cta.signInHref}>
+          {cta.signIn}
+        </a>
       </div>
     </div>
-  )}
+  </div>
 </header>
 
 <script>

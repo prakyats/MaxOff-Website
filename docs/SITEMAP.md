@@ -6,10 +6,14 @@
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----- |
 | `/`        | The landing page (sections below)                                                                                                    | 2     |
 | `/privacy` | Privacy, plain language: no form data is collected, cookie-less analytics only, emails answered by the developer named in the footer | 3     |
-| `/404`     | Not found, on brand, with a link home                                                                                                | 0     |
+| `/404`     | Not found, on brand, with a link home (never in the sitemap)                                                                         | 0     |
 | `/og.png`  | Social share image (1200×630), generated at build time                                                                               | 3     |
 
 The `/preview` pages of Phase 1 were removed in Phase 2.
+
+Files the pages point to, all generated at build time from the site's own mark and fonts: `/favicon.ico` (16, 32 and 48 px), `/favicon.svg`, `/apple-touch-icon.png` (180 px), `/sitemap-index.xml` and `/sitemap-0.xml` (`/` and `/privacy`), and `/robots.txt`.
+
+`/privacy` and `/404` use the same header as the home page; its section links point at `/#what` and so on, so the phone menu (with Request a demo and Sign in) works on every page.
 
 Until launch every page is noindex and `robots.txt` disallows everything (`PRE_LAUNCH` in `src/lib/launch.ts`); Phase 6 removes both.
 
@@ -37,8 +41,9 @@ Every section must work at 360, 390, 430, 768, 1280 and 1440px wide, in both the
 
 ## Recreated app screens (HTML/CSS, never screenshots)
 
-- **Today** (hero): Start day strip, pending approvals, who's in.
+- **Today** (hero): Start day strip, pending approvals, who's in (the Owner's view).
+- **My day** (Feels like an app, dark): the Staff view, a "Started working?" prompt with Start day, and their own week.
+- **A leave request** (Feels like an app, light): the Owner deciding, with Approve and Reject.
 - **A task card** (Coming section): Assigned → Noted → Done → Approved.
-- **An approval** (roles or trust section): the chain ending with the Owner.
 
 Demo data uses Northwind Studio and invented first names only.

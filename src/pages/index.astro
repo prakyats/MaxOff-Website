@@ -33,14 +33,29 @@ import {
   myDayScreen,
   questions,
   roles,
+  site,
   todayScreen,
   trust,
   what,
 } from '../content/copy';
 import Base from '../layouts/Base.astro';
+
+// Structured data: what the product is, nothing more. No ratings, prices, reviews or publisher
+// (docs/BRIEF.md rule: never claim what we cannot show). "<" is escaped so the JSON can never
+// close its own script tag.
+const structuredData = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: site.name,
+  url: site.url,
+  description: site.description,
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+}).replace(/</g, '\\u003c');
 ---
 
 <Base>
+  <script slot="head" type="application/ld+json" set:html={structuredData} />
   <SiteHeader />
 
   <main id="main">
