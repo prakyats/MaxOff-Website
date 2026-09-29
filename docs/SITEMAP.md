@@ -15,11 +15,11 @@ Files the pages point to, all generated at build time from the site's own mark a
 
 `/privacy` and `/404` use the same header as the home page; its section links point at `/#what` and so on, so the phone menu (with Request a demo and Sign in) works on every page.
 
-Until launch every page is noindex and `robots.txt` disallows everything (`PRE_LAUNCH` in `src/lib/launch.ts`); Phase 6 removes both.
+Since launch every page is indexable except `/404`, and `robots.txt` allows crawling and lists the sitemap (`PRE_LAUNCH` in `src/lib/launch.ts` is `false`).
 
 Later (not now): `/pricing`, `/security`, `/changelog`, a blog.
 
-`www.maxoff.in` redirects permanently to `maxoff.in` (Phase 6). `app.maxoff.in` is the app and is not part of this project; the site links to it through the Sign in button in the header (every width, including the phone menu), a Sign in link in the footer, and "Already on MaxOff? Sign in" under the contact block.
+`www.maxoff.in` redirects permanently to `maxoff.in`, keeping path and query (a Redirect Rule in the Cloudflare dashboard). `app.maxoff.in` is the app and is not part of this project; the site links to it through the Sign in button in the header (every width, including the phone menu), a Sign in link in the footer, and "Already on MaxOff? Sign in" under the contact block.
 
 The build emits `privacy.html`-style files (`build.format: 'file'`) and Cloudflare serves them without trailing slashes, so canonical URLs have none.
 

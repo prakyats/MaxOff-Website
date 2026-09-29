@@ -88,9 +88,9 @@ for (const path of PAGES) {
       expect(html.toLowerCase()).not.toContain('mailto:');
     });
 
-    test('is not indexed until launch (Phase 6 removes this)', async ({ page }) => {
+    test('is indexable: no robots meta', async ({ page }) => {
       await page.goto(path);
-      await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+      await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
     });
 
     test('skip link is the first focusable element and targets main', async ({ page }) => {
@@ -309,18 +309,19 @@ for (const path of [HOME]) {
   });
 }
 
-// ---------- Not indexed until launch ----------
+// ---------- Live: crawlable, except the 404 page ----------
 
-test('robots.txt disallows everything until launch (Phase 6 removes this)', async ({ request }) => {
+test('robots.txt allows crawling and points at the sitemap on maxoff.in', async ({ request }) => {
   const response = await request.get('/robots.txt');
   expect(response.status()).toBe(200);
   const body = await response.text();
   expect(body).toContain('User-agent: *');
-  expect(body).toContain('Disallow: /');
-  expect(body).not.toContain('Allow: /');
+  expect(body).toContain('Allow: /');
+  expect(body).not.toContain('Disallow');
+  expect(body).toContain('Sitemap: https://maxoff.in/sitemap-index.xml');
 });
 
-test('the 404 page is noindex too', async ({ page }) => {
+test('the 404 page stays noindex', async ({ page }) => {
   for (const path of ['/this-page-does-not-exist']) {
     await page.goto(path);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
