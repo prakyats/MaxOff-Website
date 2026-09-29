@@ -79,6 +79,8 @@
     color: var(--text);
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
+    /* Section links and the skip link land below the sticky header (68px, taller at 200% text). */
+    scroll-padding-top: 5rem;
   }
 
   body {
@@ -132,6 +134,9 @@
     top: 8px;
     left: 8px;
     z-index: 100;
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
     padding: 0.5rem 0.75rem;
     border-radius: var(--radius-button);
     background-color: var(--text);

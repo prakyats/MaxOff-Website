@@ -100,6 +100,7 @@ const links = nav.map((item) => ({ ...item, href: `${navBase}${item.href}` }));
     const setOpen = (open: boolean): void => {
       button.setAttribute('aria-expanded', String(open));
       menu.hidden = !open;
+      header?.toggleAttribute('data-menu-open', open);
     };
     button.addEventListener('click', () => {
       setOpen(button.getAttribute('aria-expanded') !== 'true');
