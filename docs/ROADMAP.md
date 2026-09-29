@@ -4,7 +4,7 @@ Each phase: its own branch and PR, `pnpm check` green, a short note in `docs/PRO
 
 ## Phase 0: Setup and skeleton
 
-**Branch:** `claude/zealous-curie-92bmzb` (this session's designated branch; later phases use `phase-N/<topic>`).
+**Branch:** `claude/zealous-curie-92bmzb` (PR #1). Later phases use `phase-N/<topic>`.
 
 - Docs kit: `CLAUDE.md`, `docs/BRIEF.md`, `docs/DESIGN.md` (draft), `docs/SITEMAP.md`, `docs/ROADMAP.md`, `docs/PROGRESS.md`, `docs/BRIEF-ORIGINAL.md`.
 - Astro + Tailwind v4 + TypeScript strict scaffold, static output, pnpm.
@@ -18,7 +18,9 @@ Each phase: its own branch and PR, `pnpm check` green, a short note in `docs/PRO
 
 ## Phase 1: Design direction
 
-- 2–3 directions as preview pages (hero + one feature section + footer each), both themes, phone and desktop.
+**Branch:** `phase-1/design-directions`.
+
+- 3 directions as preview pages under `/preview` (header, hero, one feature section, closing with the demo form, footer), both themes, phone and desktop. Each applies the developer credit and the two doors (Request a demo, Sign in).
 - The owner picks one; `docs/DESIGN.md` is finalised.
 
 **Acceptance:** the owner has chosen; DESIGN.md is no longer a draft.
@@ -34,16 +36,17 @@ Each phase: its own branch and PR, `pnpm check` green, a short note in `docs/PRO
 ## Phase 3: Copy, SEO and sharing
 
 - Final copy in `src/content/copy.ts`, reviewed by the owner.
-- `/privacy`, `/404` final, OG image at build time, meta, canonical, sitemap, JSON-LD `SoftwareApplication` (no ratings, no offers), favicons and Apple touch icon.
+- `/privacy` (names the developer as the data controller), `/404` final, OG image at build time, meta, canonical, sitemap, JSON-LD `SoftwareApplication` (no ratings, no offers), favicons and Apple touch icon.
 
 **Acceptance:** copy approved; every claim matches `docs/BRIEF.md`; SEO checks pass.
 
 ## Phase 4: The form
 
-- Worker endpoint `/api/early-access`: validation, Turnstile verification, one email via Resend, per-IP rate limit, JSON responses.
-- Client: all states (idle, loading, success, error keeping what was typed), 16px inputs, 44px targets.
+- Worker endpoint `/api/early-access`: validation, Turnstile verification, one email via Resend from `MaxOff Website <leads@mail.maxoff.in>` with Reply-To set to the person's email, per-IP rate limit, JSON responses.
+- Fields: Name, Email, Studio name, Team size (1–10 / 11–25 / 26–50 / 50+), "What do you want to fix first?" (optional). Consent line linking to `/privacy`.
+- Client: all states (idle, loading, success "Thanks. We'll get back to you within two working days.", error keeping what was typed), 16px inputs, 44px targets. Heading "Tell us about your studio", submit "Request a demo".
 - Tests for validation and the endpoint.
-- The owner completes the setup steps: Turnstile widget, Resend key (sending-only), the three variables in Cloudflare, Email Routing for hello@maxoff.in.
+- The owner completes the setup steps: Turnstile widget, Resend key (sending-only), the variables in Cloudflare (`LEADS_TO` is set by the owner and never asked for), Email Routing for hello@maxoff.in.
 
 **Acceptance:** a real submission arrives in the owner's inbox from the preview URL.
 
@@ -56,6 +59,7 @@ Each phase: its own branch and PR, `pnpm check` green, a short note in `docs/PRO
 ## Phase 6: Launch
 
 - The owner removes any remaining parked/GoDaddy records for the apex.
+- The Phase 1 `/preview` pages are gone (removed in Phase 2 once a direction is built).
 - Custom domains `maxoff.in` and `www.maxoff.in` (www → apex 301) added in `wrangler.jsonc`.
 - Verify HTTPS, redirects, analytics, the form end to end with a real submission, and that `app.maxoff.in` is untouched.
 

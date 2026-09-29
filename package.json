@@ -17,10 +17,11 @@
     "format:check": "prettier --check .",
     "check:budget": "node scripts/check-budget.mjs",
     "check:brand": "node scripts/check-brand.mjs",
-    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm build && pnpm check:budget && pnpm check:brand",
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm build && pnpm check:budget && pnpm check:brand && pnpm test:scripts",
     "test": "astro build && playwright test",
     "test:e2e": "playwright test",
-    "worker:dev": "wrangler dev"
+    "worker:dev": "wrangler dev",
+    "test:scripts": "node --test \"scripts/*.test.mjs\""
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
