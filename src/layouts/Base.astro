@@ -8,12 +8,8 @@ interface Props {
   description?: string;
   /** Path used for the canonical URL, e.g. "/privacy". Defaults to the home page. */
   path?: string;
-  /** Pages that should never be indexed, even after launch (previews, 404). */
+  /** Pages that should never be indexed, even after launch (the 404 page). */
   noindex?: boolean;
-  /** Which sans face to preload. The mono face is preloaded either way. */
-  sans?: 'geist' | 'inter-tight';
-  /** Extra classes on <body>, e.g. a design direction's scope class. */
-  bodyClass?: string;
 }
 
 const {
@@ -21,14 +17,7 @@ const {
   description = site.description,
   path = '/',
   noindex = false,
-  sans = 'geist',
-  bodyClass = '',
 } = Astro.props;
-
-const sansFont =
-  sans === 'inter-tight'
-    ? '/fonts/inter-tight-latin-wght-normal.woff2'
-    : '/fonts/geist-latin-wght-normal.woff2';
 
 const canonical = new URL(path, site.url).href;
 ---
@@ -45,7 +34,13 @@ const canonical = new URL(path, site.url).href;
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0A0A0B" />
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAFAFA" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href={sansFont} as="font" type="font/woff2" crossorigin />
+    <link
+      rel="preload"
+      href="/fonts/geist-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <link
       rel="preload"
       href="/fonts/geist-mono-latin-wght-normal.woff2"
@@ -69,7 +64,7 @@ const canonical = new URL(path, site.url).href;
     </script>
     <slot name="head" />
   </head>
-  <body class:list={['text-text', bodyClass]}>
+  <body class="text-text">
     <a href="#main" class="skip-link">
       Skip to content
     </a>

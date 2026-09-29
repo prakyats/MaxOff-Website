@@ -1,0 +1,68 @@
+---
+/** One role: what it can do, what it never does, and what is coming. Icons are decorative. */
+import Check from '@lucide/astro/icons/check';
+import Clock from '@lucide/astro/icons/clock';
+import Minus from '@lucide/astro/icons/minus';
+import { badges, roles } from '../content/copy';
+import FeatureIcon from './FeatureIcon.astro';
+
+type Role = (typeof roles.items)[number];
+
+interface Props {
+  role: Role;
+  index: number;
+}
+
+const { role, index } = Astro.props;
+---
+
+<li class="mo-cell mo-role reveal" style={`--reveal-delay: ${index * 60}ms`}>
+  <div class="mo-cell__top">
+    <span class="mo-cell__index" aria-hidden="true">
+      {String(index + 1).padStart(2, '0')}
+    </span>
+  </div>
+  <FeatureIcon name={role.key} class="mo-cell__icon" />
+  <h3 class="mo-role__name">{role.name}</h3>
+  <p class="mo-cell__text">{role.tagline}</p>
+
+  <p class="mo-role__label">{roles.can}</p>
+  <ul class="mo-list">
+    {role.can.map((line) => (
+      <li>
+        <Check size={16} stroke-width={1.5} aria-hidden="true" />
+        <span>{line}</span>
+      </li>
+    ))}
+  </ul>
+
+  {role.never.length > 0 && (
+    <>
+      <p class="mo-role__label">{roles.never}</p>
+      <ul class="mo-list mo-list--never">
+        {role.never.map((line) => (
+          <li>
+            <Minus size={16} stroke-width={1.5} aria-hidden="true" />
+            <span>{line}</span>
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
+
+  {role.soon.length > 0 && (
+    <>
+      <p class="mo-role__label">
+        <span class="badge-coming">{badges.coming}</span>
+      </p>
+      <ul class="mo-list mo-list--soon">
+        {role.soon.map((line) => (
+          <li>
+            <Clock size={16} stroke-width={1.5} aria-hidden="true" />
+            <span>{line}</span>
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
+</li>

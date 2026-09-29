@@ -1,0 +1,52 @@
+---
+/**
+ * The task-state loop: Assigned, Noted, Done, Approved. A real ordered list, so it reads the same
+ * with or without the animation. The animation is CSS only, runs only when scripting and motion are
+ * allowed, and has a Pause button (WCAG 2.2.2: it loops for more than five seconds).
+ */
+import { badges, taskLoop } from '../content/copy';
+---
+
+<div class="loop" data-loop>
+  <div class="loop__head">
+    <span class="loop__label">{taskLoop.label}</span>
+    <span class="badge-coming">{badges.coming}</span>
+  </div>
+  <p class="loop__title">{taskLoop.title}</p>
+  <p class="loop__meta">{taskLoop.meta}</p>
+
+  <ol class="loop__steps">
+    {taskLoop.steps.map((step) => (
+      <li class="loop__step">
+        <span class="loop__dot" aria-hidden="true" />
+        <span class="loop__name">{step.name}</span>
+        <span class="loop__note">{step.note}</span>
+      </li>
+    ))}
+  </ol>
+
+  <button
+    type="button"
+    class="loop__pause"
+    aria-pressed="false"
+    data-loop-pause
+    data-pause-label={taskLoop.pause}
+    data-play-label={taskLoop.play}
+  >
+    {taskLoop.pause}
+  </button>
+</div>
+
+<script>
+  for (const loop of document.querySelectorAll<HTMLElement>('[data-loop]')) {
+    const button = loop.querySelector<HTMLButtonElement>('[data-loop-pause]');
+    if (!button) continue;
+    button.addEventListener('click', () => {
+      const paused = button.getAttribute('aria-pressed') !== 'true';
+      button.setAttribute('aria-pressed', String(paused));
+      loop.toggleAttribute('data-paused', paused);
+      button.textContent =
+        (paused ? button.dataset['playLabel'] : button.dataset['pauseLabel']) ?? '';
+    });
+  }
+</script>

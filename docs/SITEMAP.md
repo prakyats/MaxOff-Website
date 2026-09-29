@@ -9,6 +9,8 @@
 | `/404`     | Not found, on brand, with a link home                                                                                                | 0     |
 | `/og.png`  | Social share image (1200×630), generated at build time                                                                               | 3     |
 
+The `/preview` pages of Phase 1 were removed in Phase 2.
+
 Until launch every page is noindex and `robots.txt` disallows everything (`PRE_LAUNCH` in `src/lib/launch.ts`); Phase 6 removes both.
 
 Later (not now): `/pricing`, `/security`, `/changelog`, a blog.
@@ -23,8 +25,8 @@ The build emits `privacy.html`-style files (`build.format: 'file'`) and Cloudfla
 2. **Hero.** Headline (3–7 words), one supporting sentence, primary button **Request a demo**, secondary text link "See how it works". On the right (below on phones): a phone frame showing a recreated **Today** screen (Start day strip, pending approvals, who's in: the Owner's Today, with a people board). A faint grid and one soft red glow behind it. A small mono label above the headline, e.g. `OPERATIONS FOR STUDIOS`.
 3. **The three questions.** Three cards, each question in large type with the one-line answer beneath: _Who's in today?_ / _Did they actually see the task?_ / _What's waiting on me?_
 4. **What it does (Live).** Feature cards with a **Live** badge: Attendance, Leave, Comp leave, Expense claims, Month summary, Clients, People, Settings. Each: icon, title, one sentence.
-5. **Coming next.** The same card style, dimmed, with a **Coming** badge: Tasks with "Noted", Owner-final approvals, Notifications & reminders, Dashboards & calendar, Client projects, Owner-only revenue & reports. One short loop animation: a task card moving _Assigned → Noted → Done → Approved_.
-6. **Feels like an app.** Installs from the browser, no app store; back gesture like a native app; light and dark; works on any modern phone. Visual: two phone frames (light and dark).
+5. **Coming next.** The same card style, dimmed, with a **Coming** badge: Tasks with "Noted", Owner-final approvals, Notifications & reminders, Dashboards & calendar, Client projects, Work submission, Owner-only revenue & reports. One short loop animation: a task card moving _Assigned → Noted → Done → Approved_.
+6. **Feels like an app.** Installs from the browser, no app store; back gesture like a native app; light and dark; works on any modern phone. Visual: two phone frames, the Staff's My day (dark) and the Owner deciding a leave request (light), so with the hero's Owner Today a visitor sees both the Owner view and the team view.
 7. **Three roles.** Owner / Admin / Staff side by side: what each sees and does. Includes the line **"Money stays with the owner."**
 8. **Trust.** Invite-only; history never overwritten; every change recorded; permissions enforced by the database; nightly encrypted backups; clients never log in. No certifications or numbers.
 9. **How it starts.** Three steps: _Invite your team by link → They tap Start day → You decide._

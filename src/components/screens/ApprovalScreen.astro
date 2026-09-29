@@ -1,0 +1,72 @@
+---
+/**
+ * The Owner deciding a leave request, recreated in HTML/CSS with demo data. Leave is live: only the
+ * Owner decides it. Shares the screen styles with TodayScreen (see components.css).
+ */
+import Calendar from '@lucide/astro/icons/calendar';
+import ChevronLeft from '@lucide/astro/icons/chevron-left';
+import House from '@lucide/astro/icons/house';
+import Receipt from '@lucide/astro/icons/receipt';
+import Users from '@lucide/astro/icons/users';
+import { approvalScreen as a } from '../../content/copy';
+
+const tabIcons = [House, Users, Calendar, Receipt];
+---
+
+<div class="today">
+  <div class="today__status">
+    <span>
+      {a.time} {a.zone}
+    </span>
+  </div>
+  <div class="today__head">
+    <div>
+      <p class="today__back">
+        <ChevronLeft stroke-width={1.5} aria-hidden="true" />
+        {a.back}
+      </p>
+      <p class="today__title">{a.title}</p>
+    </div>
+  </div>
+
+  <div class="today__section">
+    <div class="today__row today__row--first">
+      <span class="today__avatar">{a.person.slice(0, 1)}</span>
+      <div class="today__row-text">
+        <p class="today__row-title">{a.person}</p>
+        <p class="today__row-sub">{a.kind}</p>
+      </div>
+    </div>
+    <div class="today__facts">
+      <div>
+        <p class="today__day-label">Dates</p>
+        <p class="today__day-status">{a.dates}</p>
+      </div>
+      <div>
+        <p class="today__day-label">Note</p>
+        <p class="today__day-status">{a.note}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="today__section">
+    <p class="today__history">{a.history}</p>
+  </div>
+
+  <div class="today__actions">
+    <span class="today__pill today__pill--wide">{a.approve}</span>
+    <span class="today__pill today__pill--quiet today__pill--wide">{a.reject}</span>
+  </div>
+
+  <div class="today__tabs">
+    {a.tabs.map((label, i) => {
+      const Icon = tabIcons[i];
+      return (
+        <span class:list={['today__tab', { 'today__tab--on': i === 2 }]}>
+          {Icon && <Icon stroke-width={1.5} aria-hidden="true" />}
+          {label}
+        </span>
+      );
+    })}
+  </div>
+</div>

@@ -2,13 +2,14 @@
 
 ## Current state
 
-- **Phase 0** is merged (PR #1). The owner connected Cloudflare Workers Builds: the Worker is `maxoff-website`, production at `maxoff-website.<account>.workers.dev`, previews at `<id>-maxoff-website.<account>.workers.dev`. Email Routing for hello@maxoff.in is live.
-- **Phase 1** (design directions) is in progress on `phase-1/design-directions`. The first slice (owner decisions, the developer credit and its brand check) is merged (PR #2). This slice adds the shared header, footer, contact block and Today screen, the fully static setup, the pre-launch noindex switch, and the three directions with a chooser at `/preview`.
+- **Phase 0** and the first slice of **Phase 1** are merged. PR #3 (the design directions, static setup, noindex switch, the branch-build fix) is open. Its final commits record the owner's choice: **Instrument**, with Glass's chips and Editorial's giant closing type. `docs/DESIGN.md` is final.
+- **Phase 2** (the full page) is built on `phase-2/build-page`, stacked on the Phase 1 branch: hero, the three questions, What it does (Live), Coming next with the task loop, Feels like an app (light and dark phones), Roles, Trust, How it starts, and the closing section with the contact block. The `/preview` pages, the Glass and Editorial styles and Inter Tight are gone.
+- Cloudflare: the Worker is `maxoff-website`. Email Routing for hello@maxoff.in is live.
 
 ## Next step
 
-1. Get every test green, open the Phase 1 PR, share screenshots.
-2. The owner picks a direction. Then Phase 2 builds the full page in it and removes `/preview`.
+1. The owner reads the page and the copy. Copy is a first pass written only from `docs/BRIEF.md`; Phase 3 is the review.
+2. Merge PR #3, then the Phase 2 PR. Then Phase 3: final copy review, `/privacy`, OG image, meta, JSON-LD, favicons.
 
 ## Decisions
 
@@ -22,6 +23,9 @@
 - **Icons:** Lucide via `@lucide/astro`, 1.5px stroke, imported one by one.
 - **Theme:** dark by default, following the system; the choice is kept in the visitor's own browser storage.
 - **URLs:** no trailing slashes (`build.format: 'file'` and `auto-trailing-slash`).
+- **The task loop** animates a registered custom property (`--on`) so dots and names fade in turn. It runs only when scripting is on and motion is allowed, has a Pause button (WCAG 2.2.2), and reads as a plain ordered list otherwise. Under reduced motion all four steps show as complete.
+- **Coming cards** (seven) use a dashed badge, a faint hatch and muted titles: dimmed, never green.
+- **The light and dark phone pair** (Staff My day in dark, Owner leave request in light; the hero keeps the Owner's Today) forces each frame's tokens (`.phone--dark`, `.phone--light`), so the pair is the same in either page theme.
 - **One red button per view.** The header's Request a demo shows only while no other primary button is on screen (it starts collapsed, and a small IntersectionObserver script sets `html[data-header-cta]` when no other primary button is visible).
 - **Astro 7 preview in tests:** `astro preview` detaches into a background daemon when it detects an agent environment, and pnpm's wrapper puts the server in its own process group. Playwright starts `node node_modules/astro/bin/astro.mjs preview --ignore-lock` directly, which stays in the foreground and stops cleanly.
 - **Playwright in sandboxes:** set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to a local Chromium when Playwright's own download is unavailable; CI installs Playwright's Chromium normally.

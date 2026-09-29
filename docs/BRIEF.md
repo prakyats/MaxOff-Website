@@ -90,6 +90,7 @@ These supersede `docs/BRIEF-ORIGINAL.md` where they differ.
 - **Closing section:** the headline "The final say is yours." and, in the card, the heading "Tell us about your studio". Keep both. Under the contact block: "We usually reply within two working days."
 - **Privacy page (Phase 3):** one plain line saying the theme choice is saved only in the visitor's own browser and never sent anywhere.
 - **The phone mock-up** shows Northwind Studio once.
+- **Phase 2 review (29 Sep 2026):** "Feels like an app" pairs the Staff's My day (a "Started working?" prompt with a Start day button, the date, and their own week below) with the Owner deciding a leave request, so the hero's Owner Today is not repeated. The leave request's buttons are "Approve" and "Reject" (the app's words), and it does not say "Recorded next to the original" (that describes corrections). A seventh Coming card, **Work submission**: staff hand in their files at full quality, never re-encoded, and originals are kept.
 - **Fonts:** Google Fonts, self-hosted (Geist and Geist Mono). No Adobe Fonts.
 
 ## 4. Demo data

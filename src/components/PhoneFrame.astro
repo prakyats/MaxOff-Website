@@ -2,13 +2,15 @@
 /** A phone frame, recreated in HTML/CSS. The screen inside is an illustration, not the real app. */
 interface Props {
   label: string;
+  /** Force this frame's theme, whatever the page's theme is. Default: follow the page. */
+  theme?: 'light' | 'dark';
   class?: string;
 }
 
-const { label, class: className } = Astro.props;
+const { label, theme, class: className } = Astro.props;
 ---
 
-<div class:list={['phone', className]} role="img" aria-label={label}>
+<div class:list={['phone', theme && `phone--${theme}`, className]} role="img" aria-label={label}>
   <div class="phone__screen">
     <slot />
   </div>

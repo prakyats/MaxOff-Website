@@ -1,0 +1,67 @@
+---
+/**
+ * A table of cells that share hairlines: mono index, badge, icon, title, sentence and optional
+ * chips. Used for Live features, Coming features, Trust and the three steps.
+ */
+import { badges, monthBars } from '../content/copy';
+import type { IconKey } from '../lib/icons';
+import FeatureIcon from './FeatureIcon.astro';
+
+interface Item {
+  key: IconKey;
+  title: string;
+  text: string;
+  chips?: readonly string[];
+}
+
+interface Props {
+  items: readonly Item[];
+  /** live and coming show a badge; plain shows none; steps shows a large step number. */
+  variant?: 'live' | 'coming' | 'plain' | 'steps';
+  /** Columns from 1024px up. */
+  columns?: 2 | 3 | 4;
+  class?: string;
+}
+
+const { items, variant = 'plain', columns = 3, class: className = '' } = Astro.props;
+const index = (n: number): string => String(n).padStart(2, '0');
+---
+
+<ul class:list={['mo-grid', `mo-grid--c${columns}`, className]}>
+  {items.map((item, i) => (
+    <li
+      class:list={['mo-cell', 'reveal', `mo-cell--${variant}`]}
+      style={`--reveal-delay: ${(i % columns) * 60}ms`}
+    >
+      <div class="mo-cell__top">
+        <span class="mo-cell__index" aria-hidden="true">
+          {index(i + 1)}
+        </span>
+        {variant === 'live' && <span class="badge-live">{badges.live}</span>}
+        {variant === 'coming' && <span class="badge-coming">{badges.coming}</span>}
+      </div>
+      <FeatureIcon name={item.key} class="mo-cell__icon" />
+      <h3 class="mo-cell__title">{item.title}</h3>
+      <p class="mo-cell__text">{item.text}</p>
+      {item.chips && item.chips.length > 0 && (
+        <div class="mo-chips" aria-hidden="true">
+          {item.chips.map((chip) => (
+            <span class="mo-chip">{chip}</span>
+          ))}
+        </div>
+      )}
+      {item.key === 'month-summary' && (
+        <div class="mo-bars" aria-hidden="true">
+          {monthBars.map((bar) => (
+            <div class="mo-bar">
+              <span>{bar.name}</span>
+              <span class="mo-bar__track">
+                <span class="mo-bar__fill" style={`width: ${bar.width}%`} />
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </li>
+  ))}
+</ul>

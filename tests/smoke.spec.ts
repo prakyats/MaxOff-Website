@@ -2,8 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
 const HOME = '/';
-const DIRECTIONS = ['/preview/instrument', '/preview/glass', '/preview/editorial'] as const;
-const PAGES = [HOME, ...DIRECTIONS] as const;
+const PAGES = [HOME] as const;
 const WIDTHS = [360, 390, 430, 768, 1280, 1440] as const;
 
 const APP = 'https://app.maxoff.in';
@@ -201,7 +200,7 @@ for (const path of PAGES) {
 
 // ---------- The phone menu ----------
 
-for (const path of DIRECTIONS) {
+for (const path of PAGES) {
   test(`${path}: the phone menu holds Request a demo and Sign in`, async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'desktop', 'viewport is set explicitly; run once');
     await page.setViewportSize({ width: 390, height: 800 });
@@ -235,7 +234,7 @@ for (const path of DIRECTIONS) {
 
 // ---------- One red button per view ----------
 
-for (const path of DIRECTIONS) {
+for (const path of PAGES) {
   test(`${path}: the header's Request a demo shows only while no other primary button is on screen`, async ({
     page,
   }, testInfo) => {
@@ -255,7 +254,7 @@ for (const path of DIRECTIONS) {
 
 // ---------- Contact block: address as text, Copy email ----------
 
-for (const path of DIRECTIONS) {
+for (const path of PAGES) {
   test.describe(`${path}: contact block`, () => {
     test('is headed "Tell us about your studio" and shows the address as text', async ({
       page,
@@ -325,8 +324,8 @@ test('robots.txt disallows everything until launch (Phase 6 removes this)', asyn
   expect(body).not.toContain('Allow: /');
 });
 
-test('the 404 page and the preview chooser are noindex too', async ({ page }) => {
-  for (const path of ['/this-page-does-not-exist', '/preview']) {
+test('the 404 page is noindex too', async ({ page }) => {
+  for (const path of ['/this-page-does-not-exist']) {
     await page.goto(path);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
   }
@@ -339,4 +338,244 @@ test('unknown paths get the 404 page with a link home', async ({ page }) => {
   expect(response?.status()).toBe(404);
   await expect(page.locator('h1')).toHaveText('Page not found');
   await expect(page.getByRole('link', { name: 'Back to home' })).toHaveAttribute('href', '/');
+});
+
+// ---------- The full page: sections, labels, loop, phones ----------
+
+const SECTION_IDS = [
+  'questions',
+  'what',
+  'coming',
+  'app',
+  'roles',
+  'trust',
+  'how',
+  'demo',
+] as const;
+
+test.describe('the page', () => {
+  test('has every section, in order, each labelled by its own heading', async ({ page }) => {
+    await page.goto(HOME);
+    const ids = await page.evaluate(() =>
+      [...document.querySelectorAll('main > section')].map((section) => section.id),
+    );
+    expect(ids.filter(Boolean)).toEqual([...SECTION_IDS]);
+    for (const id of SECTION_IDS) {
+      const labelledBy = await page.locator(`#${id}`).getAttribute('aria-labelledby');
+      expect(labelledBy).toBeTruthy();
+      await expect(page.locator(`#${labelledBy}`)).toHaveCount(1);
+    }
+  });
+
+  test('headings never skip a level and there is one h1', async ({ page }) => {
+    await page.goto(HOME);
+    const levels = await page.evaluate(() =>
+      [...document.querySelectorAll('h1, h2, h3, h4, h5, h6')].map((h) => Number(h.tagName[1])),
+    );
+    expect(levels.filter((level) => level === 1)).toHaveLength(1);
+    expect(levels[0]).toBe(1);
+    for (let i = 1; i < levels.length; i += 1) {
+      expect((levels[i] ?? 0) - (levels[i - 1] ?? 0)).toBeLessThanOrEqual(1);
+    }
+  });
+
+  test('every header link points at a section that exists', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'desktop', 'viewport is set explicitly; run once');
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(HOME);
+    const nav = page.getByRole('navigation', { name: 'Primary' });
+    const hrefs = await nav
+      .getByRole('link')
+      .evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+    expect(hrefs).toEqual(['#what', '#how', '#roles', '#trust']);
+    for (const href of hrefs) await expect(page.locator(href ?? '#none')).toHaveCount(1);
+    await expect(page.getByRole('link', { name: 'See how it works' })).toHaveAttribute(
+      'href',
+      '#how',
+    );
+  });
+
+  test('every feature is labelled Live or Coming, and matches the brief', async ({ page }) => {
+    await page.goto(HOME);
+    await revealAll(page);
+    const live = page.locator('#what .badge-live');
+    const soon = page.locator('#coming .mo-grid .badge-coming');
+    await expect(live).toHaveCount(8);
+    await expect(soon).toHaveCount(7);
+    const liveTitles = await page.locator('#what .mo-cell__title').allTextContents();
+    expect(liveTitles).toEqual([
+      'Attendance',
+      'Leave',
+      'Comp leave',
+      'Expense claims',
+      'Month summary',
+      'Clients',
+      'People',
+      'Settings',
+    ]);
+    const comingTitles = await page.locator('#coming .mo-grid .mo-cell__title').allTextContents();
+    expect(comingTitles).toEqual([
+      'Tasks with “Noted”',
+      'Owner-final approvals',
+      'Notifications and reminders',
+      'Dashboards and calendar',
+      'Client projects',
+      'Work submission',
+      'Owner-only revenue and reports',
+    ]);
+    // The second question depends on a Coming feature, so it is labelled Coming.
+    const questions = page.locator('#questions .mo-q');
+    await expect(questions.nth(0).locator('.badge-live')).toHaveCount(1);
+    await expect(questions.nth(1).locator('.badge-coming')).toHaveCount(1);
+    await expect(questions.nth(2).locator('.badge-live')).toHaveCount(1);
+  });
+
+  test('the three roles state what each can do, and money stays with the owner', async ({
+    page,
+  }) => {
+    await page.goto(HOME);
+    await revealAll(page);
+    await expect(page.locator('#roles .mo-role__name')).toHaveText(['Owner', 'Admin', 'Staff']);
+    await expect(page.locator('#roles')).toContainText('Money stays with the owner.');
+    const admin = page.locator('#roles .mo-role').nth(1);
+    await expect(admin).toContainText('Decides attendance or leave.');
+    await expect(admin).toContainText('Sees money.');
+    // Admin tasks are Coming, not live.
+    const adminSoon = admin.locator('.mo-list--soon');
+    await expect(adminSoon).toContainText('Creates and assigns tasks.');
+  });
+
+  test('the closing section keeps both headings and the reply line', async ({ page }) => {
+    await page.goto(HOME);
+    await revealAll(page);
+    const closing = page.locator('#demo');
+    await expect(closing.getByRole('heading', { level: 2 })).toHaveText('The final say is yours.');
+    await expect(closing.getByRole('heading', { level: 3 })).toHaveText(
+      'Tell us about your studio',
+    );
+    await expect(closing).toContainText('Built by a working studio, used by its team every day.');
+    await expect(closing).toContainText('We usually reply within two working days.');
+  });
+
+  test('the two phones show a dark and a light theme whatever the page theme is', async ({
+    page,
+  }) => {
+    for (const scheme of ['dark', 'light'] as const) {
+      await page.emulateMedia({ colorScheme: scheme });
+      await page.goto(HOME);
+      const backgrounds = await page.evaluate(() =>
+        [...document.querySelectorAll('#app .phone')].map((phone) =>
+          getComputedStyle(phone).getPropertyValue('--bg').trim(),
+        ),
+      );
+      expect(backgrounds).toEqual(['#0a0a0b', '#fafafa']);
+    }
+  });
+
+  test('the dark phone is the Staff view and the light phone is the Owner deciding a request', async ({
+    page,
+  }) => {
+    await page.goto(HOME);
+    const [dark, light] = await page.locator('#app .phone').all();
+    const staff = (await dark?.textContent()) ?? '';
+    expect(staff).toContain('My day');
+    expect(staff).toContain('Started working?');
+    expect(staff).toContain('Start day');
+    expect(staff).toContain('This week');
+    // The hero shows the Owner's Today, so the app section adds a different view.
+    expect(staff).not.toContain('Waiting on you');
+    const owner = (await light?.textContent()) ?? '';
+    expect(owner).toContain('Leave request');
+    expect(owner).toContain('Approve');
+    expect(owner).toContain('Reject');
+    expect(owner).not.toContain('Decline');
+    expect(owner).not.toContain('Recorded next to the original');
+    await expect(page.locator('#app figcaption')).toHaveText([
+      'Staff view, dark theme',
+      'Owner view, light theme',
+    ]);
+  });
+
+  test('the seventh Coming card spans the row, so no empty cell shows', async ({
+    page,
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'desktop', 'viewport is set explicitly; run once');
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(HOME);
+    await revealAll(page);
+    const cells = page.locator('#coming .mo-grid .mo-cell');
+    await expect(cells).toHaveCount(7);
+    const grid = await page.locator('#coming .mo-grid').boundingBox();
+    const last = await cells.last().boundingBox();
+    expect(Math.abs((last?.width ?? 0) - (grid?.width ?? 1))).toBeLessThan(4);
+  });
+
+  test('Northwind Studio is shown once in each recreated screen', async ({ page }) => {
+    await page.goto(HOME);
+    for (const phone of await page.locator('.phone').all()) {
+      const text = await phone.textContent();
+      expect((text?.match(/Northwind Studio/g) ?? []).length).toBeLessThanOrEqual(1);
+    }
+  });
+});
+
+test.describe('the task loop', () => {
+  test('lists the four states in order, with or without the animation', async ({ page }) => {
+    await page.goto(HOME);
+    await expect(page.locator('.loop__name')).toHaveText(['Assigned', 'Noted', 'Done', 'Approved']);
+  });
+
+  test('has a Pause button that pauses and resumes the animation', async ({ page }) => {
+    await page.goto(HOME);
+    await revealAll(page);
+    const loop = page.locator('[data-loop]');
+    const button = loop.getByRole('button', { name: 'Pause animation' });
+    await expect(button).toBeVisible();
+    await expect(button).toHaveAttribute('aria-pressed', 'false');
+    await button.click();
+    const play = loop.getByRole('button', { name: 'Play animation' });
+    await expect(play).toHaveAttribute('aria-pressed', 'true');
+    await expect(loop).toHaveAttribute('data-paused', '');
+    const states = await page.evaluate(() =>
+      [...document.querySelectorAll('.loop__step')].map(
+        (step) => getComputedStyle(step).animationPlayState,
+      ),
+    );
+    expect(states.slice(1)).toEqual(['paused', 'paused', 'paused']);
+    await play.click();
+    await expect(loop).not.toHaveAttribute('data-paused', '');
+  });
+
+  test('the steps really animate: they are not all lit at once', async ({ page }) => {
+    await page.goto(HOME);
+    await revealAll(page);
+    await page.locator('[data-loop]').scrollIntoViewIfNeeded();
+    const lit = await page.evaluate(() => {
+      for (const animation of document.getAnimations()) {
+        animation.pause();
+        animation.currentTime = 3500;
+      }
+      return [...document.querySelectorAll('.loop__step')].map((step) =>
+        Number(getComputedStyle(step).getPropertyValue('--on')),
+      );
+    });
+    expect(lit).toEqual([1, 1, 0, 0]);
+  });
+
+  test('under reduced motion nothing animates and there is nothing to pause', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(HOME);
+    await expect(page.locator('[data-loop-pause]')).toBeHidden();
+    const running = await page.evaluate(
+      () =>
+        document.getAnimations().filter((animation) => animation.playState === 'running').length,
+    );
+    expect(running).toBe(0);
+    const lit = await page.evaluate(() =>
+      [...document.querySelectorAll('.loop__step')].map((step) =>
+        Number(getComputedStyle(step).getPropertyValue('--on')),
+      ),
+    );
+    expect(lit).toEqual([1, 1, 1, 1]);
+  });
 });

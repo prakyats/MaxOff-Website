@@ -38,7 +38,7 @@ Before writing copy, read `docs/BRIEF.md`. Before writing CSS, read `docs/DESIGN
 ## Budgets (hard limits, checked before every merge)
 
 - LCP < 1.5 s on a throttled 4G phone profile; CLS < 0.05; INP < 200 ms.
-- JavaScript shipped on `/` < 30 KB gzipped; CSS < 40 KB gzipped (`scripts/check-budget.mjs` enforces these on every `pnpm check`).
+- JavaScript shipped on each page < 30 KB gzipped; CSS < 40 KB gzipped (`scripts/check-budget.mjs` enforces these on every built page in `pnpm check`).
 - Lighthouse 95+ on Performance, Accessibility, Best Practices and SEO (mobile).
 - Total page weight on first load < 500 KB.
 
@@ -56,13 +56,13 @@ Before writing copy, read `docs/BRIEF.md`. Before writing CSS, read `docs/DESIGN
 ## Layout
 
 ```
-src/pages         index.astro, 404.astro, preview/ (Phase 1 only); privacy.astro in Phase 3
+src/pages         index.astro, 404.astro, robots.txt.ts; privacy.astro in Phase 3
 src/layouts       Base.astro (head, theme bootstrap, fonts, skip link)
 src/components    UI components; recreated app screens under screens/
-src/styles        tokens.css (design tokens), global.css (Tailwind v4 + theme mapping)
+src/styles        tokens.css (design tokens), global.css (Tailwind v4 + theme mapping), components.css (header, footer, contact, phone), sections.css (the page's sections)
 src/content       copy.ts: all page copy in one place
-src/lib           contact.ts (the address and mailto links as entities), launch.ts (the pre-launch noindex switch)
-src/scripts       small client scripts (reveal on scroll)
+src/lib           contact.ts (the address and mailto links as entities), icons.ts (the icon map), launch.ts (the pre-launch noindex switch)
+src/scripts       small client scripts (reveal on scroll); the header, contact and task-loop scripts live in their components
 public/           favicon set, robots.txt
 scripts/          check-budget.mjs, check-brand.mjs, check-static.mjs (+ tests)
 tests/            Playwright smoke tests + axe

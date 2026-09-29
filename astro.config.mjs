@@ -11,9 +11,7 @@ export default defineConfig({
     // privacy.html rather than privacy/index.html: canonical URLs have no trailing slash.
     format: 'file',
   },
-  integrations: [
-    sitemap({ filter: (page) => !page.endsWith('/404') && !page.includes('/preview') }),
-  ],
+  integrations: [sitemap({ filter: (page) => !page.endsWith('/404') })],
   vite: {
     plugins: [tailwindcss()],
   },
