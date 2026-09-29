@@ -17,6 +17,8 @@ import { pathToFileURL } from 'node:url';
 export const STEM = ['Pix', 'ora'].join('');
 /** The one permitted string, matched case-sensitively. */
 export const CREDIT = `${STEM} Agencies`;
+/** The banned product name the rule docs cite as their example. Allowed in the rule docs only. */
+export const BANNED_EXAMPLE = `${STEM} Clips`;
 
 /** Source files where the exact credit may appear (copy lives in copy.ts; the privacy page names the controller). */
 export const CREDIT_SOURCES = new Set(['src/content/copy.ts', 'src/pages/privacy.astro']);
@@ -33,6 +35,15 @@ const lineOf = (text, index) => text.slice(0, index).split('\n').length;
 /** Is the match at `index` exactly the credit, starting at a word boundary? */
 function isExactCredit(text, index) {
   return text.startsWith(CREDIT, index) && !/[A-Za-z0-9]/.test(text[index - 1] ?? '');
+}
+
+/** Is the match at `index` the documented banned example, in a file that states the rule? */
+function isCitedExample(file, text, index) {
+  return (
+    RULE_DOCS.has(file) &&
+    text.startsWith(BANNED_EXAMPLE, index) &&
+    !/[A-Za-z0-9]/.test(text[index - 1] ?? '')
+  );
 }
 
 /**
@@ -68,8 +79,9 @@ export function findViolations(file, text) {
   const bodyRanges = isBuiltHtml ? bodyTextRanges(text) : [];
   for (const match of text.matchAll(pattern)) {
     const at = `${file}:${lineOf(text, match.index)}`;
+    if (isCitedExample(file, text, match.index)) continue;
     if (!isExactCredit(text, match.index)) {
-      problems.push(`${at}: a Pixora name other than the exact credit`);
+      problems.push(`${at}: a name from the banned family other than the exact credit`);
     } else if (isBuiltHtml) {
       const inBodyText = bodyRanges.some(([a, b]) => match.index >= a && match.index < b);
       if (!inBodyText)
@@ -83,7 +95,7 @@ export function findViolations(file, text) {
   return problems;
 }
 
-/** Violations in a commit message: no Pixora string at all, not even the credit. */
+/** Violations in a commit message: the name may not appear at all, not even the credit. */
 export function findCommitViolations(message) {
   return new RegExp(STEM, 'i').test(message)
     ? [`commit message: ${message.trim().split('\n')[0].slice(0, 80)}`]

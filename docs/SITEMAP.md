@@ -27,7 +27,7 @@ The build emits `privacy.html`-style files (`build.format: 'file'`) and the Work
 8. **Trust.** Invite-only; history never overwritten; every change recorded; permissions enforced by the database; nightly encrypted backups; clients never log in. No certifications or numbers.
 9. **How it starts.** Three steps: _Invite your team by link → They tap Start day → You decide._
 10. **Closing and demo form.** Headline "The final say is yours." and one short line, "Built by a working studio, used by its team every day." Then the form, headed "Tell us about your studio": Name, Email, Studio name, Team size (1–10 / 11–25 / 26–50 / 50+), What do you want to fix first? (optional). Consent line linking to `/privacy`. Submit button **Request a demo**. Success message: "Thanks. We'll get back to you within two working days." Under the form: "Already on MaxOff? Sign in".
-11. **Footer.** Logo, one-line description, the developer credit ("MaxOff is developed by Pixora Agencies."), links (Privacy, Contact: hello@maxoff.in, Sign in), the theme toggle, © MaxOff and the year.
+11. **Footer.** Logo, one-line description, the developer credit line, links (Privacy, Contact: hello@maxoff.in, Sign in), the theme toggle, © MaxOff and the year.
 
 Every section must work at 360, 390, 430, 768, 1280 and 1440px wide, in both themes, and at 200 % text size.
 

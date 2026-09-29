@@ -36,7 +36,7 @@ Each phase: its own branch and PR, `pnpm check` green, a short note in `docs/PRO
 ## Phase 3: Copy, SEO and sharing
 
 - Final copy in `src/content/copy.ts`, reviewed by the owner.
-- `/privacy` (names the developer, Pixora Agencies, as the data controller), `/404` final, OG image at build time, meta, canonical, sitemap, JSON-LD `SoftwareApplication` (no ratings, no offers), favicons and Apple touch icon.
+- `/privacy` (names the developer as the data controller), `/404` final, OG image at build time, meta, canonical, sitemap, JSON-LD `SoftwareApplication` (no ratings, no offers), favicons and Apple touch icon.
 
 **Acceptance:** copy approved; every claim matches `docs/BRIEF.md`; SEO checks pass.
 

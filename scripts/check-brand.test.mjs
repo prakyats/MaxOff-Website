@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { CREDIT, STEM, findCommitViolations, findViolations } from './check-brand.mjs';
+import {
+  BANNED_EXAMPLE,
+  CREDIT,
+  STEM,
+  findCommitViolations,
+  findViolations,
+} from './check-brand.mjs';
 
 const page = (head, body) => `<!doctype html><html><head>${head}</head><body>${body}</body></html>`;
 const clean = (file, text) => assert.deepEqual(findViolations(file, text), []);
@@ -20,6 +26,14 @@ test('the exact credit is allowed in the docs that state the rule', () => {
   clean('docs/BRIEF.md', `Developed by ${CREDIT}.`);
 });
 
+test('the rule docs may cite the banned example, and no other file may', () => {
+  clean('CLAUDE.md', `"${BANNED_EXAMPLE}" stays banned everywhere.`);
+  clean('docs/BRIEF.md', `"${BANNED_EXAMPLE}" stays banned everywhere.`);
+  dirty('docs/PROGRESS.md', `${BANNED_EXAMPLE}`, /banned family/);
+  dirty('src/content/copy.ts', `${BANNED_EXAMPLE}`, /banned family/);
+  dirty('CLAUDE.md', `${STEM} Studios`, /banned family/);
+});
+
 test('the original brief is exempt', () => {
   clean('docs/BRIEF-ORIGINAL.md', `Never write ${STEM} Clips.`);
 });
@@ -30,13 +44,13 @@ test('the exact credit is rejected in any other file', () => {
   dirty('src/styles/global.css', `/* ${CREDIT} */`, /outside the credit files/);
 });
 
-test('every other Pixora name is rejected, even in the credit files', () => {
-  dirty('src/content/copy.ts', `${STEM} Clips`, /other than the exact credit/);
-  dirty('src/content/copy.ts', `${STEM} Agency`, /other than the exact credit/);
-  dirty('src/content/copy.ts', `${STEM}`, /other than the exact credit/);
-  dirty('src/content/copy.ts', `${CREDIT.toLowerCase()}`, /other than the exact credit/);
-  dirty('src/content/copy.ts', `${CREDIT.toUpperCase()}`, /other than the exact credit/);
-  dirty('src/content/copy.ts', `x${CREDIT}`, /other than the exact credit/);
+test('every other name in the banned family is rejected, even in the credit files', () => {
+  dirty('src/content/copy.ts', `${STEM} Clips`, /banned family/);
+  dirty('src/content/copy.ts', `${STEM} Agency`, /banned family/);
+  dirty('src/content/copy.ts', `${STEM}`, /banned family/);
+  dirty('src/content/copy.ts', `${CREDIT.toLowerCase()}`, /banned family/);
+  dirty('src/content/copy.ts', `${CREDIT.toUpperCase()}`, /banned family/);
+  dirty('src/content/copy.ts', `x${CREDIT}`, /banned family/);
 });
 
 test('a built page may carry the credit in plain body text only', () => {
@@ -79,7 +93,7 @@ test('built assets other than HTML may not carry the credit', () => {
   dirty('dist/sitemap-0.xml', `<loc>${CREDIT}</loc>`, /outside the credit files/);
 });
 
-test('commit messages may not carry any Pixora string, not even the credit', () => {
+test('commit messages may not carry the name at all, not even the credit', () => {
   assert.deepEqual(findCommitViolations('Add footer\n\nBody text'), []);
   assert.equal(findCommitViolations(`Add the ${CREDIT} credit`).length, 1);
   assert.equal(findCommitViolations(`Remove ${STEM} Clips`).length, 1);
