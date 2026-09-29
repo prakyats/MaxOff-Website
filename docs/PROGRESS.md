@@ -24,8 +24,8 @@
 - **Theme:** dark by default, following the system; the choice is kept in the visitor's own browser storage.
 - **URLs:** no trailing slashes (`build.format: 'file'` and `auto-trailing-slash`).
 - **The task loop** animates a registered custom property (`--on`) so dots and names fade in turn. It runs only when scripting is on and motion is allowed, has a Pause button (WCAG 2.2.2), and reads as a plain ordered list otherwise. Under reduced motion all four steps show as complete.
-- **Coming cards** use a dashed badge, a faint hatch and muted titles: dimmed, never green.
-- **The light and dark phone pair** forces each frame's tokens (`.phone--dark`, `.phone--light`), so the pair is the same in either page theme.
+- **Coming cards** (seven) use a dashed badge, a faint hatch and muted titles: dimmed, never green.
+- **The light and dark phone pair** (Staff My day in dark, Owner leave request in light; the hero keeps the Owner's Today) forces each frame's tokens (`.phone--dark`, `.phone--light`), so the pair is the same in either page theme.
 - **One red button per view.** The header's Request a demo shows only while no other primary button is on screen (it starts collapsed, and a small IntersectionObserver script sets `html[data-header-cta]` when no other primary button is visible).
 - **Astro 7 preview in tests:** `astro preview` detaches into a background daemon when it detects an agent environment, and pnpm's wrapper puts the server in its own process group. Playwright starts `node node_modules/astro/bin/astro.mjs preview --ignore-lock` directly, which stays in the foreground and stops cleanly.
 - **Playwright in sandboxes:** set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to a local Chromium when Playwright's own download is unavailable; CI installs Playwright's Chromium normally.

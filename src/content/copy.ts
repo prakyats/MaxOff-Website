@@ -173,6 +173,11 @@ export const comingFeatures = [
     text: 'Recurring client work in projects, cycles and items, kept apart from staff tasks.',
   },
   {
+    key: 'work',
+    title: 'Work submission',
+    text: 'Staff hand in their files at full quality, never re-encoded, and originals are kept.',
+  },
+  {
     key: 'revenue',
     title: 'Owner-only revenue and reports',
     text: 'Money is visible to you only, never to Admins or Staff.',
@@ -219,14 +224,14 @@ export const app = {
       text: 'Works on any modern phone.',
     },
   ],
-  darkLabel: 'Dark theme',
-  lightLabel: 'Light theme',
+  darkLabel: 'Staff view, dark theme',
+  lightLabel: 'Owner view, light theme',
 } as const;
 
 /** The second recreated screen: the Owner deciding a leave request. Demo data. */
 export const approvalScreen = {
   label:
-    'Illustration of a leave request as the Owner sees it: Kabir asks for two days, with Approve and Decline.',
+    'Illustration of a leave request as the Owner sees it: Kabir asks for two days, with Approve and Reject.',
   time: '10:31',
   zone: 'IST',
   back: 'Today',
@@ -236,9 +241,8 @@ export const approvalScreen = {
   dates: '6–7 Oct, 2 days',
   note: 'Family function',
   history: 'Requested by Kabir, 29 Sep 9:41',
-  history2: 'Recorded next to the original',
   approve: 'Approve',
-  decline: 'Decline',
+  reject: 'Reject',
   tabs: ['Today', 'People', 'Leave', 'Claims'],
 } as const;
 
@@ -397,6 +401,31 @@ export const footer = {
     { label: 'Sign in', href: site.appUrl },
   ],
   copyright: 'MaxOff',
+} as const;
+
+/** The recreated My day screen, as a team member sees it: their own day and their own week. Demo data. */
+export const myDayScreen = {
+  label:
+    'Illustration of a team member’s My day screen: the question “Started working?” with a Start day button, today’s date, and their own week below.',
+  time: '9:02',
+  zone: 'IST',
+  title: 'My day',
+  date: 'Tue 29 Sep',
+  company: 'Northwind Studio',
+  prompt: { question: 'Started working?', action: 'Start day' },
+  week: {
+    heading: 'This week',
+    days: [
+      { day: 'Mon 28', text: '9:05 to 6:40', state: 'Approved', today: false },
+      { day: 'Tue 29', text: 'Today', state: 'Not started', today: true },
+      { day: 'Wed 30', text: '', state: '', today: false },
+      { day: 'Thu 1', text: '', state: '', today: false },
+      { day: 'Fri 2', text: '', state: '', today: false },
+      { day: 'Sat 3', text: '', state: '', today: false },
+      { day: 'Sun 4', text: 'Weekly off', state: '', today: false },
+    ],
+  },
+  tabs: ['My day', 'Leave', 'Claims', 'Me'],
 } as const;
 
 /** The recreated Today screen, as the Owner sees it. Demo data. */

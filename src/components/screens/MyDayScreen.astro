@@ -1,0 +1,59 @@
+---
+/**
+ * A team member's My day screen, recreated in HTML/CSS with demo data: the "Started working?"
+ * prompt with a Start day button, today's date, and their own week below. Staff see only their
+ * own day. Shares the screen styles with TodayScreen (see components.css).
+ */
+import Calendar from '@lucide/astro/icons/calendar';
+import House from '@lucide/astro/icons/house';
+import Receipt from '@lucide/astro/icons/receipt';
+import User from '@lucide/astro/icons/user';
+import { myDayScreen as m } from '../../content/copy';
+
+const tabIcons = [House, Calendar, Receipt, User];
+---
+
+<div class="today">
+  <div class="today__status">
+    <span>
+      {m.time} {m.zone}
+    </span>
+  </div>
+  <div class="today__head">
+    <div>
+      <p class="today__title">{m.title}</p>
+      <p class="today__date">{m.date}</p>
+    </div>
+    <p class="today__company">{m.company}</p>
+  </div>
+
+  <div class="today__prompt">
+    <p class="today__prompt-question">{m.prompt.question}</p>
+    <span class="today__pill today__pill--wide">{m.prompt.action}</span>
+  </div>
+
+  <div class="today__section">
+    <div class="today__section-head">
+      <span>{m.week.heading}</span>
+    </div>
+    {m.week.days.map((day) => (
+      <div class:list={['today__week-row', { 'today__week-row--today': day.today }]}>
+        <span class="today__week-day">{day.day}</span>
+        <span class="today__week-text">{day.text || '–'}</span>
+        <span class="today__week-state">{day.state}</span>
+      </div>
+    ))}
+  </div>
+
+  <div class="today__tabs">
+    {m.tabs.map((label, i) => {
+      const Icon = tabIcons[i];
+      return (
+        <span class:list={['today__tab', { 'today__tab--on': i === 0 }]}>
+          {Icon && <Icon stroke-width={1.5} aria-hidden="true" />}
+          {label}
+        </span>
+      );
+    })}
+  </div>
+</div>

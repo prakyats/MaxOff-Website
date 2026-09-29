@@ -691,6 +691,10 @@
 /* ---------- Breakpoints ---------- */
 
 @media (min-width: 640px) {
+  /* An odd last cell in a two-column table spans the row, so no empty cell shows the border colour. */
+  .mo-grid--c2 > .mo-cell:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
   .mo-specs {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }

@@ -13,6 +13,7 @@ import FeatureTable from '../components/FeatureTable.astro';
 import PhoneFrame from '../components/PhoneFrame.astro';
 import RoleColumn from '../components/RoleColumn.astro';
 import ApprovalScreen from '../components/screens/ApprovalScreen.astro';
+import MyDayScreen from '../components/screens/MyDayScreen.astro';
 import TodayScreen from '../components/screens/TodayScreen.astro';
 import SectionHead from '../components/SectionHead.astro';
 import SiteFooter from '../components/SiteFooter.astro';
@@ -29,6 +30,7 @@ import {
   hero,
   how,
   liveFeatures,
+  myDayScreen,
   questions,
   roles,
   todayScreen,
@@ -173,8 +175,8 @@ import Base from '../layouts/Base.astro';
 
         <div class="mo-devices reveal">
           <figure class="mo-shot">
-            <PhoneFrame label={todayScreen.label} theme="dark">
-              <TodayScreen />
+            <PhoneFrame label={myDayScreen.label} theme="dark">
+              <MyDayScreen />
             </PhoneFrame>
             <figcaption>{app.darkLabel}</figcaption>
           </figure>

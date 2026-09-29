@@ -11,6 +11,7 @@ import CheckCheck from '@lucide/astro/icons/check-check';
 import Download from '@lucide/astro/icons/download';
 import EyeOff from '@lucide/astro/icons/eye-off';
 import FileClock from '@lucide/astro/icons/file-clock';
+import FileUp from '@lucide/astro/icons/file-up';
 import FolderKanban from '@lucide/astro/icons/folder-kanban';
 import HardDrive from '@lucide/astro/icons/hard-drive';
 import LayoutDashboard from '@lucide/astro/icons/layout-dashboard';
@@ -48,6 +49,7 @@ export const icons = {
   notifications: Bell,
   dashboards: LayoutDashboard,
   projects: FolderKanban,
+  work: FileUp,
   revenue: Wallet,
   // Feels like an app
   'app-install': Download,

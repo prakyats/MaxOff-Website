@@ -401,7 +401,7 @@ test.describe('the page', () => {
     const live = page.locator('#what .badge-live');
     const soon = page.locator('#coming .mo-grid .badge-coming');
     await expect(live).toHaveCount(8);
-    await expect(soon).toHaveCount(6);
+    await expect(soon).toHaveCount(7);
     const liveTitles = await page.locator('#what .mo-cell__title').allTextContents();
     expect(liveTitles).toEqual([
       'Attendance',
@@ -420,6 +420,7 @@ test.describe('the page', () => {
       'Notifications and reminders',
       'Dashboards and calendar',
       'Client projects',
+      'Work submission',
       'Owner-only revenue and reports',
     ]);
     // The second question depends on a Coming feature, so it is labelled Coming.
@@ -469,6 +470,44 @@ test.describe('the page', () => {
       );
       expect(backgrounds).toEqual(['#0a0a0b', '#fafafa']);
     }
+  });
+
+  test('the dark phone is the Staff view and the light phone is the Owner deciding a request', async ({
+    page,
+  }) => {
+    await page.goto(HOME);
+    const [dark, light] = await page.locator('#app .phone').all();
+    const staff = (await dark?.textContent()) ?? '';
+    expect(staff).toContain('My day');
+    expect(staff).toContain('Started working?');
+    expect(staff).toContain('Start day');
+    expect(staff).toContain('This week');
+    // The hero shows the Owner's Today, so the app section adds a different view.
+    expect(staff).not.toContain('Waiting on you');
+    const owner = (await light?.textContent()) ?? '';
+    expect(owner).toContain('Leave request');
+    expect(owner).toContain('Approve');
+    expect(owner).toContain('Reject');
+    expect(owner).not.toContain('Decline');
+    expect(owner).not.toContain('Recorded next to the original');
+    await expect(page.locator('#app figcaption')).toHaveText([
+      'Staff view, dark theme',
+      'Owner view, light theme',
+    ]);
+  });
+
+  test('the seventh Coming card spans the row, so no empty cell shows', async ({
+    page,
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'desktop', 'viewport is set explicitly; run once');
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(HOME);
+    await revealAll(page);
+    const cells = page.locator('#coming .mo-grid .mo-cell');
+    await expect(cells).toHaveCount(7);
+    const grid = await page.locator('#coming .mo-grid').boundingBox();
+    const last = await cells.last().boundingBox();
+    expect(Math.abs((last?.width ?? 0) - (grid?.width ?? 1))).toBeLessThan(4);
   });
 
   test('Northwind Studio is shown once in each recreated screen', async ({ page }) => {
