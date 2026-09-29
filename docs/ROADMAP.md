@@ -45,11 +45,11 @@ Each phase: its own branch and PR, `pnpm check` green, a short note in `docs/PRO
 ## Phase 3: Copy, SEO and sharing
 
 - Final copy in `src/content/copy.ts`, reviewed by the owner.
-- `/privacy`, simple: no form data is collected, cookie-less analytics only, emails answered by the developer (see `docs/BRIEF.md` §3), `/404` final, OG image at build time, meta, canonical, sitemap, JSON-LD `SoftwareApplication` (no ratings, no offers), favicons and Apple touch icon. All of it stays dormant until launch: the site is `noindex` and `robots.txt` disallows everything until Phase 6.
+- `/privacy`, simple: no form data is collected, cookie-less analytics only, emails answered by the developer (see `docs/BRIEF.md` §3), `/404` final, OG image at build time, meta, canonical, sitemap, JSON-LD `SoftwareApplication` (no ratings, no offers), favicons and Apple touch icon. It stayed dormant until launch (Phase 6).
 
 **Acceptance:** copy approved; every claim matches `docs/BRIEF.md`; SEO checks pass.
 
-**Status:** built on `phase-3/copy-seo`. The owner approved the copy with edits (`docs/BRIEF.md` §3). Delivered: the approved copy edits, `/privacy`, the social image (`/og.png`, 1200×630, drawn at build time with satori and resvg from the site's own fonts and mark), favicons (`favicon.ico` with 16, 32 and 48 px, `favicon.svg`, a 180 px Apple touch icon), Open Graph and Twitter tags, canonical URLs, the sitemap (`/` and `/privacy`, never `/404`) and JSON-LD `SoftwareApplication` on the home page (no ratings, offers, author or publisher). `/privacy` and the 404 page share the home header, so the phone menu (Request a demo, Sign in) works everywhere. Everything stays dormant until Phase 6: every page is `noindex` and `robots.txt` disallows everything.
+**Status:** built on `phase-3/copy-seo`. The owner approved the copy with edits (`docs/BRIEF.md` §3). Delivered: the approved copy edits, `/privacy`, the social image (`/og.png`, 1200×630, drawn at build time with satori and resvg from the site's own fonts and mark), favicons (`favicon.ico` with 16, 32 and 48 px, `favicon.svg`, a 180 px Apple touch icon), Open Graph and Twitter tags, canonical URLs, the sitemap (`/` and `/privacy`, never `/404`) and JSON-LD `SoftwareApplication` on the home page (no ratings, offers, author or publisher). `/privacy` and the 404 page share the home header, so the phone menu (Request a demo, Sign in) works everywhere.
 
 ## Phase 4: Contact by email (small)
 
@@ -63,18 +63,26 @@ The site is fully static and contact is email only. Most of this is built into t
 
 **Acceptance:** Request a demo opens a draft with the subject and body; a real email to hello@maxoff.in reaches the owner's inbox; Copy email works on a desktop and a phone.
 
+**Status:** done. The owner confirmed that email to hello@maxoff.in forwards to the inbox (tested, 29 Sep 2026).
+
 ## Phase 5: Polish
 
 - Critique and polish passes, accessibility audit (WCAG 2.2 AA), performance against the budgets on the preview URL, cross-browser check (Chrome Android, Safari iOS, desktop Chrome/Safari/Firefox).
 
 **Acceptance:** Lighthouse 95+ across the four categories on mobile; budgets met; no open a11y findings.
 
+**Status:** postponed by the owner until after launch; it will be a follow-up PR.
+
 ## Phase 6: Launch
 
-- The owner removes any remaining parked/GoDaddy records for the apex.
-- Set `PRE_LAUNCH` to `false` in `src/lib/launch.ts`. That removes the `noindex` meta from every page and the `Disallow: /` from `robots.txt` (which then allows all and lists the sitemap). Update the tests that assert them.
-- Custom domains `maxoff.in` and `www.maxoff.in` (www → apex 301) added in `wrangler.jsonc`.
-- **Owner step: enable Cloudflare Web Analytics for maxoff.in** (cookie-less, no banner) once the domain is attached. If Cloudflare does not add the beacon by itself, the owner passes the site's public beacon token so it can be added to the page; it is a public identifier, not a secret. `scripts/check-budget.mjs` already allows the one beacon host (`static.cloudflareinsights.com`); `pnpm check:static` and its tests must be updated in the same change if the beacon is added to the markup. Then read the Analytics line on `/privacy` again: "We count visits with cookie-less analytics. No cookies are set." must still be true.
-- Verify HTTPS, redirects, analytics, a real email to hello@maxoff.in end to end, and that `app.maxoff.in` is untouched.
+**Branch:** `phase-6/launch`. The owner decided to go live before Phase 5.
+
+- `PRE_LAUNCH` is `false` in `src/lib/launch.ts`: no `noindex` meta (the 404 page keeps it) and `robots.txt` allows crawling and lists `https://maxoff.in/sitemap-index.xml`. Tests updated.
+- `wrangler.jsonc` has the custom domains `maxoff.in` and `www.maxoff.in`. Canonical, Open Graph and sitemap URLs already use `https://maxoff.in`.
+- **Owner steps after merge:**
+  1. Remove any parked or GoDaddy records for the apex and `www` in DNS, so the custom domains can be created.
+  2. www → apex: in the Cloudflare dashboard, Rules → Redirect Rules → new rule. When hostname equals `www.maxoff.in`, redirect (dynamic) to `concat("https://maxoff.in", http.request.uri.path)`, status 301, and tick "Preserve query string". A static site has no code that could do this.
+  3. **Enable Cloudflare Web Analytics for maxoff.in** (cookie-less, no banner). If Cloudflare does not add the beacon by itself, pass the site's public beacon token so it can be added to the page; it is a public identifier, not a secret. `scripts/check-budget.mjs` already allows the one beacon host (`static.cloudflareinsights.com`); `pnpm check:static` and its tests must be updated in the same change if the beacon is added to the markup. Then read the Analytics line on `/privacy` again: "We count visits with cookie-less analytics. No cookies are set." must still be true.
+  4. Run the verification checklist in the PR.
 
 **Acceptance:** https://maxoff.in serves the site; the go/no-go checklist is complete.

@@ -2,20 +2,19 @@
 
 ## Current state
 
-- **Phases 0 to 2 are merged.** Phase 1 chose **Instrument** (with Glass's chips and Editorial's giant closing type); Phase 2 built the full page, and its review added the Staff My day phone, Approve and Reject, and the seventh Coming card.
-- **Phase 3** is built on `phase-3/copy-seo` (PR open, the owner merges): the approved copy edits, `/privacy`, the social image, favicons and Apple touch icon, Open Graph and Twitter tags, canonical URLs, the sitemap, and JSON-LD `SoftwareApplication` on the home page. `pnpm check` and the Playwright and axe suite pass.
-- Cloudflare: the Worker is `maxoff-website`. Email Routing for hello@maxoff.in is live. Until Phase 6 the site is `noindex` and `robots.txt` disallows everything.
+- **Phases 0 to 4 are done and merged** (Phase 3 in PR #5; contact by email confirmed working by the owner). Phase 5 (polish) is postponed until after launch.
+- **Phase 6 (launch)** is on `phase-6/launch`: the pre-launch switch is off (indexable, `robots.txt` allows crawling and lists the sitemap), and `wrangler.jsonc` has the custom domains `maxoff.in` and `www.maxoff.in`.
+- Cloudflare: the Worker is `maxoff-website`. Email Routing for hello@maxoff.in is live.
 
 ## Next step
 
-1. The owner merges the Phase 3 PR once its checks are green.
-2. Phase 4 (contact by email) is mostly built already; it verifies a real email reaches the owner's inbox and that Copy email works on a phone and a desktop.
-3. Phase 5 polish, then Phase 6 launch. Phase 6 includes an owner step: enable Cloudflare Web Analytics for maxoff.in (see `docs/ROADMAP.md`).
+1. The owner merges the launch PR, then does the owner steps in `docs/ROADMAP.md` Phase 6 (DNS cleanup, the www redirect rule, Web Analytics) and the verification checklist.
+2. Phase 5 as a follow-up PR: critique and polish, accessibility audit, Lighthouse on the live URL, cross-browser check.
 
 ## Decisions
 
 - **Stack:** Astro 7, Tailwind CSS 4, TypeScript 5.9 (TypeScript 7 is out but `astro check` and typescript-eslint do not support it yet), pnpm 12, Node 22.
-- **Not indexed until launch.** `PRE_LAUNCH` in `src/lib/launch.ts` (true) puts `noindex` on every page and `Disallow: /` in `robots.txt`. Phase 6 flips it. The workers.dev account subdomain contains a name the brand check bans, so docs use `<account>` instead of writing it.
+- **Indexable since launch.** `PRE_LAUNCH` in `src/lib/launch.ts` is now `false`; `true` would put `noindex` on every page and `Disallow: /` in `robots.txt`. The 404 page is always `noindex`. Preview URLs are indexable too, since they share the build. The workers.dev account subdomain contains a name the brand check bans, so docs use `<account>` instead of writing it.
 - **Branch builds need `"previews": {}`.** Cloudflare builds non-production branches with `npx wrangler preview` (production uses `npx wrangler deploy`). `wrangler preview` stops with "missing a `previews` block" unless `wrangler.jsonc` has one; it can be empty for a static site. This is what failed the first branch build on PR #3, after install and build had passed. `pnpm check:static` now requires the block.
 - **Fully static.** No form, no Worker, no third-party service, no API key, no environment variable. `wrangler.jsonc` holds static assets only. `pnpm check:static` fails on a Worker directory, Worker config, any address other than the contact address, or an address or plain mailto link in the built site.
 - **Contact is email only** (hello@maxoff.in, forwarded to the owner's inbox in Cloudflare). Every character of the address is written as an HTML entity by `src/lib/contact.ts`; Copy email assembles it at runtime from parts.
@@ -23,6 +22,7 @@
 - **Fonts:** Geist and Geist Mono (Vercel, SIL OFL), variable, Latin subset, copied into `public/fonts/` from fontsource, preloaded, `font-display: swap`. No Adobe Fonts.
 - **Icons:** Lucide via `@lucide/astro`, 1.5px stroke, imported one by one.
 - **Theme:** dark by default, following the system; the choice is kept in the visitor's own browser storage.
+- **www → apex** is a Redirect Rule in the Cloudflare dashboard: Workers static assets cannot match on hostname and the site has no Worker code.
 - **URLs:** no trailing slashes (`build.format: 'file'` and `auto-trailing-slash`).
 - **The task loop** animates a registered custom property (`--on`) so dots and names fade in turn. It runs only when scripting is on and motion is allowed, has a Pause button (WCAG 2.2.2), and reads as a plain ordered list otherwise. Under reduced motion all four steps show as complete.
 - **Coming cards** (seven) use a dashed badge, a faint hatch and muted titles: dimmed, never green.
