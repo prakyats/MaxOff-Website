@@ -1,0 +1,92 @@
+---
+/**
+ * Light/dark toggle. The choice is stored under "maxoff-theme" in localStorage (every access
+ * wrapped in try/catch) and applied before first paint by the inline script in Base.astro.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<button
+  type="button"
+  class:list={['theme-toggle', className]}
+  data-theme-toggle
+  aria-label="Switch theme"
+>
+  <svg
+    class="icon-sun"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <circle cx="12" cy="12" r="4"></circle>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+  </svg>
+  <svg
+    class="icon-moon"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+  </svg>
+</button>
+
+<script>
+  type Theme = 'light' | 'dark';
+
+  const KEY = 'maxoff-theme';
+  const root = document.documentElement;
+  const prefersLight = window.matchMedia('(prefers-color-scheme: light)');
+  const toggles = document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]');
+
+  function current(): Theme {
+    const explicit = root.getAttribute('data-theme');
+    if (explicit === 'light' || explicit === 'dark') return explicit;
+    return prefersLight.matches ? 'light' : 'dark';
+  }
+
+  function updateLabels(): void {
+    const next: Theme = current() === 'light' ? 'dark' : 'light';
+    for (const button of toggles) {
+      button.setAttribute('aria-label', `Switch to ${next} theme`);
+    }
+  }
+
+  function apply(theme: Theme): void {
+    root.setAttribute('data-theme', theme);
+    try {
+      localStorage.setItem(KEY, theme);
+    } catch {
+      /* storage unavailable: the theme still applies to this page */
+    }
+    const colour = theme === 'light' ? '#FAFAFA' : '#0A0A0B';
+    for (const meta of document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')) {
+      meta.content = colour;
+    }
+    updateLabels();
+  }
+
+  for (const button of toggles) {
+    button.addEventListener('click', () => apply(current() === 'light' ? 'dark' : 'light'));
+  }
+  prefersLight.addEventListener('change', updateLabels);
+  updateLabels();
+</script>

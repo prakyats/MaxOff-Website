@@ -1,0 +1,6 @@
+# pnpm settings (pnpm 10+ reads these from here, not from package.json).
+# Only these packages may run install scripts; everything else is blocked.
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true

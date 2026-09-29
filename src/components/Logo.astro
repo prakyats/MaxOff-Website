@@ -1,0 +1,24 @@
+---
+/** The MaxOff mark: red rounded square with a white "M", plus the wordmark as real text. */
+interface Props {
+  class?: string;
+  wordmark?: boolean;
+}
+
+const { class: className, wordmark = true } = Astro.props;
+---
+
+<span class:list={['inline-flex items-center gap-2.5', className]}>
+  <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+    <rect width="32" height="32" rx="8" fill="var(--accent)"></rect>
+    <path
+      d="M9 23V9l7 8 7-8v14"
+      fill="none"
+      stroke="var(--on-accent)"
+      stroke-width="3"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    ></path>
+  </svg>
+  {wordmark && <span class="text-lg font-semibold tracking-tight">MaxOff</span>}
+</span>

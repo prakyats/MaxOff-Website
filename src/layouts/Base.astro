@@ -1,0 +1,72 @@
+---
+import '../styles/global.css';
+import { site } from '../content/copy';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Path used for the canonical URL, e.g. "/privacy". Defaults to the home page. */
+  path?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = site.title,
+  description = site.description,
+  path = '/',
+  noindex = false,
+} = Astro.props;
+
+const canonical = new URL(path, site.url).href;
+---
+
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0A0A0B" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAFAFA" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="/fonts/geist-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/geist-mono-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <script is:inline>
+      // Apply a stored theme before first paint so there is no flash of the wrong theme.
+      // Nothing stored: the system preference decides, and dark wins when there is none.
+      (function () {
+        try {
+          const stored = localStorage.getItem('maxoff-theme');
+          if (stored === 'light' || stored === 'dark') {
+            document.documentElement.setAttribute('data-theme', stored);
+          }
+        } catch {
+          /* storage unavailable: fall back to the system preference */
+        }
+      })();
+    </script>
+    <slot name="head" />
+  </head>
+  <body class="text-text">
+    <a href="#main" class="skip-link">
+      Skip to content
+    </a>
+    <div class="site-grid" aria-hidden="true"></div>
+    <slot />
+  </body>
+</html>
