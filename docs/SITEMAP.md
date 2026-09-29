@@ -2,18 +2,20 @@
 
 ## Routes
 
-| Route      | Purpose                                                                  | Phase |
-| ---------- | ------------------------------------------------------------------------ | ----- |
-| `/`        | The landing page (sections below)                                        | 2     |
-| `/privacy` | Privacy policy for the website and the early-access form, plain language | 3     |
-| `/404`     | Not found, on brand, with a link home                                    | 0     |
-| `/og.png`  | Social share image (1200×630), generated at build time                   | 3     |
+| Route      | Purpose                                                                                                                              | Phase |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----- |
+| `/`        | The landing page (sections below)                                                                                                    | 2     |
+| `/privacy` | Privacy, plain language: no form data is collected, cookie-less analytics only, emails answered by the developer named in the footer | 3     |
+| `/404`     | Not found, on brand, with a link home                                                                                                | 0     |
+| `/og.png`  | Social share image (1200×630), generated at build time                                                                               | 3     |
+
+Until launch every page is noindex and `robots.txt` disallows everything (`PRE_LAUNCH` in `src/lib/launch.ts`); Phase 6 removes both.
 
 Later (not now): `/pricing`, `/security`, `/changelog`, a blog.
 
-`www.maxoff.in` redirects permanently to `maxoff.in` (Phase 6). `app.maxoff.in` is the app and is not part of this project; the site links to it through the Sign in button in the header (every width, including the phone menu), a Sign in link in the footer, and "Already on MaxOff? Sign in" under the demo form.
+`www.maxoff.in` redirects permanently to `maxoff.in` (Phase 6). `app.maxoff.in` is the app and is not part of this project; the site links to it through the Sign in button in the header (every width, including the phone menu), a Sign in link in the footer, and "Already on MaxOff? Sign in" under the contact block.
 
-The build emits `privacy.html`-style files (`build.format: 'file'`) and the Worker serves them without trailing slashes, so canonical URLs have none.
+The build emits `privacy.html`-style files (`build.format: 'file'`) and Cloudflare serves them without trailing slashes, so canonical URLs have none.
 
 ## The landing page, section by section
 
@@ -26,7 +28,7 @@ The build emits `privacy.html`-style files (`build.format: 'file'`) and the Work
 7. **Three roles.** Owner / Admin / Staff side by side: what each sees and does. Includes the line **"Money stays with the owner."**
 8. **Trust.** Invite-only; history never overwritten; every change recorded; permissions enforced by the database; nightly encrypted backups; clients never log in. No certifications or numbers.
 9. **How it starts.** Three steps: _Invite your team by link → They tap Start day → You decide._
-10. **Closing and demo form.** Headline "The final say is yours." and one short line, "Built by a working studio, used by its team every day." Then the form, headed "Tell us about your studio": Name, Email, Studio name, Team size (1–10 / 11–25 / 26–50 / 50+), What do you want to fix first? (optional). Consent line linking to `/privacy`. Submit button **Request a demo**. Success message: "Thanks. We'll get back to you within two working days." Under the form: "Already on MaxOff? Sign in".
+10. **Closing and contact.** Headline "The final say is yours." and one short line, "Built by a working studio, used by its team every day." Then the contact block, headed "Tell us about your studio": one sentence asking for name, studio, team size and what to fix first; the **Request a demo** button, which opens an email to hello@maxoff.in with the subject "MaxOff demo request" and a short prefilled body; the address as text; a **Copy email** control for people with no mail app. Under it: "Already on MaxOff? Sign in". There is no form.
 11. **Footer.** Logo, one-line description, the developer credit line, links (Privacy, Contact: hello@maxoff.in, Sign in), the theme toggle, © MaxOff and the year.
 
 Every section must work at 360, 390, 430, 768, 1280 and 1440px wide, in both themes, and at 200 % text size.

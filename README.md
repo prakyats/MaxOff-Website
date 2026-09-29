@@ -1,4 +1,4 @@
-# maxoff-site
+# maxoff-website
 
 The public marketing site for [MaxOff](https://maxoff.in), an operations app for small creative studios.
 

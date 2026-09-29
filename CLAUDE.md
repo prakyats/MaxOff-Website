@@ -8,7 +8,7 @@ Before writing copy, read `docs/BRIEF.md`. Before writing CSS, read `docs/DESIGN
 
 1. **The only brand is MaxOff.** MaxOff is developed by Pixora Agencies as an independent platform for any studio, not a tool for one company. Logo, titles, meta, OG image and headings say MaxOff, never the agency. The exact name "Pixora Agencies" may appear only in the developer credit: the footer line "MaxOff is developed by Pixora Agencies." and the privacy page (as the data controller). It lives in `src/content/copy.ts` and `src/pages/privacy.astro` and nowhere else. The closing-section line "Built by a working studio, used by its team every day." carries no name. "Pixora Clips" and every other name in that family stay banned everywhere: copy, alt text, metadata, code comments, commit messages, file names, demo data. Never name any other real company or person either. Demo company: **Northwind Studio**. Demo people: invented first names only (Aarav, Meera, Kabir, Isha, Rohan, Tara). `pnpm check:brand` fails on anything else, including the exact credit outside those two files, in a `<head>`, in a heading, in an attribute or in a commit message; the name is kept encoded in `scripts/check-brand.mjs` so the check does not trip itself, and `pnpm test:scripts` tests the check.
 2. **Honest labels.** Every feature is shown as **Live** or **Coming** and matches `docs/BRIEF.md` §1 exactly. Never claim certifications, uptime, customer counts, testimonials, customer logos, a data-hosting country, integrations that do not exist, AI features, or prices. If a section seems to need one, leave it out or ask.
-3. **No secrets in the repo or in chat.** API keys live only in the Cloudflare dashboard (Workers → project → Settings → Variables and Secrets). `.env.example` lists names only, with a comment each.
+3. **No secrets in the repo or in chat, and no backend.** The site is fully static: no form, no Worker, no third-party service, no API key, no environment variable. The only way to reach MaxOff is email to hello@maxoff.in, which forwards to the owner's inbox (set up in Cloudflare Email Routing, not in code). Never put any other address in the repo. The address is never a plain string in the built site: it is written as HTML entities and assembled at runtime, so simple scrapers do not pick it up. `pnpm check:static` enforces all of this.
 4. **App visuals are recreated in HTML/CSS**, never screenshots of the real app, so they stay sharp in both themes and never carry real data.
 5. **Red `#C42126` is rare:** the logo mark and the one primary button per view. Never decorative, never body text.
 6. **Accessibility is not optional:** WCAG 2.2 AA, keyboard reachable, visible focus, `prefers-reduced-motion` respected, real text (no text in images).
@@ -18,22 +18,22 @@ Before writing copy, read `docs/BRIEF.md`. Before writing CSS, read `docs/DESIGN
 
 ## Two calls to action ("the two doors")
 
-- **Studios who want to know more:** the one primary button (red) is **Request a demo**. It leads to the form, whose heading is "Tell us about your studio". Fields: Name, Email, Studio name, Team size (1–10 / 11–25 / 26–50 / 50+), "What do you want to fix first?" (optional). Success message: "Thanks. We'll get back to you within two working days."
-- **People already using MaxOff:** **Sign in** is a visible outline button (never red) in the header on every width, including the phone menu, linking to https://app.maxoff.in. There is also a Sign in link in the footer and "Already on MaxOff? Sign in" under the demo form.
+- **Studios who want to know more:** the one primary button (red) is **Request a demo**. It opens an email to hello@maxoff.in with the subject "MaxOff demo request" and a short prefilled body: Name, Studio name, Team size, What do you want to fix first? The closing section keeps the heading "Tell us about your studio" and shows the button, the address as text, and a **Copy email** control for people with no mail app on their device.
+- **People already using MaxOff:** **Sign in** is a visible outline button (never red) in the header on every width, including the phone menu, linking to https://app.maxoff.in. There is also a Sign in link in the footer and "Already on MaxOff? Sign in" under the contact block.
 - Red stays rare: one primary button per view. The header's Request a demo appears only while no other primary button is on screen.
 
 ## Commands
 
-| Command             | What it does                                                                                                                       |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm dev`          | Astro dev server on http://localhost:4321                                                                                          |
-| `pnpm build`        | Static build to `dist/`                                                                                                            |
-| `pnpm preview`      | Serve `dist/` locally                                                                                                              |
-| `pnpm check`        | **Must pass before every commit.** `astro check` + worker typecheck + ESLint + Prettier check + build + budget check + brand check |
-| `pnpm test`         | Build, then Playwright smoke tests and the axe accessibility check                                                                 |
-| `pnpm test:scripts` | Unit tests for the repo's own check scripts (the brand check)                                                                      |
-| `pnpm format`       | Prettier, write mode                                                                                                               |
-| `pnpm worker:dev`   | Run the site plus the `/api/early-access` Worker locally with Wrangler (reads `.dev.vars`, never committed)                        |
+| Command             | What it does                                                                                                                                  |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm dev`          | Astro dev server on http://localhost:4321                                                                                                     |
+| `pnpm build`        | Static build to `dist/`                                                                                                                       |
+| `pnpm preview`      | Serve `dist/` locally                                                                                                                         |
+| `pnpm check`        | **Must pass before every commit.** `astro check` + ESLint + Prettier check + build + budget check + brand check + static check + script tests |
+| `pnpm test`         | Build, then Playwright smoke tests and the axe accessibility check                                                                            |
+| `pnpm test:scripts` | Unit tests for the repo's own check scripts (brand check, static check)                                                                       |
+| `pnpm format`       | Prettier, write mode                                                                                                                          |
+| `pnpm preview:cf`   | Serve `dist/` with Wrangler, the same static-asset rules as production                                                                        |
 
 ## Budgets (hard limits, checked before every merge)
 
@@ -56,27 +56,30 @@ Before writing copy, read `docs/BRIEF.md`. Before writing CSS, read `docs/DESIGN
 ## Layout
 
 ```
-src/pages         index.astro, 404.astro (privacy.astro in Phase 3)
+src/pages         index.astro, 404.astro, preview/ (Phase 1 only); privacy.astro in Phase 3
 src/layouts       Base.astro (head, theme bootstrap, fonts, skip link)
 src/components    UI components; recreated app screens under screens/
 src/styles        tokens.css (design tokens), global.css (Tailwind v4 + theme mapping)
 src/content       copy.ts: all page copy in one place
-worker/           the /api/early-access handler (Turnstile verify + Resend send)
+src/lib           contact.ts (the address and mailto links as entities), launch.ts (the pre-launch noindex switch)
+src/scripts       small client scripts (reveal on scroll)
 public/           favicon set, robots.txt
-scripts/          check-budget.mjs, check-brand.mjs
+scripts/          check-budget.mjs, check-brand.mjs, check-static.mjs (+ tests)
 tests/            Playwright smoke tests + axe
 docs/             BRIEF.md, DESIGN.md, SITEMAP.md, ROADMAP.md, PROGRESS.md, BRIEF-ORIGINAL.md
-wrangler.jsonc    Workers static assets + the worker route; custom domains are added in Phase 6 only
+wrangler.jsonc    Workers static assets only, no Worker code; custom domains are added in Phase 6 only
 ```
 
 ## Stack
 
-Astro (static output), TypeScript strict, Tailwind CSS v4 (Vite plugin), pnpm. Islands only where interaction needs JS. Hosting: Cloudflare Workers with static assets, deployed by Workers Builds from `main`; every branch gets a preview URL. Analytics: Cloudflare Web Analytics only, cookie-less, no banner.
+Astro (static output), TypeScript strict, Tailwind CSS v4 (Vite plugin), pnpm. Islands only where interaction needs JS. Hosting: Cloudflare static assets (no Worker code), deployed by Workers Builds from `main`; every branch gets a preview URL. Analytics: Cloudflare Web Analytics only, cookie-less, no banner.
+
+**Until launch the site is not indexed.** Every page carries `<meta name="robots" content="noindex">` and `robots.txt` says `Disallow: /`. Both come from one switch, `PRE_LAUNCH` in `src/lib/launch.ts`. Phase 6 sets it to false when maxoff.in is attached. The Cloudflare Worker is named `maxoff-website`; its production and preview URLs live under the owner's workers.dev account subdomain, which is not written into the repo.
 
 ## Working rules for every session
 
 - Commit and push at every step so nothing is lost.
 - No loops polling CI: one check when it is likely done. No scheduled check-ins either: when waiting on the owner, stop; the owner will message.
-- Never put keys in files or chat. Owner-side setup is written as steps for the owner.
+- Never put keys or any other email address in files or chat. Owner-side setup is written as steps for the owner.
 - If context gets heavy, write a handoff in `docs/PROGRESS.md` before anything else.
 - Plugins and skills are advisors. If one conflicts with the brief or this file, the brief wins; mention the suggestion instead of applying it.

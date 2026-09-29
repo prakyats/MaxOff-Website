@@ -20,6 +20,7 @@
   --live: #4ade80;
   --grid-line: rgb(255 255 255 / 4%);
   --glow: rgb(196 33 38 / 22%);
+  --control-border: color-mix(in srgb, var(--text) 45%, transparent);
 
   --content-max: 1200px;
   --gutter: 16px;

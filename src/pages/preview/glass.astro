@@ -1,0 +1,175 @@
+---
+/**
+ * Direction 2: Glass. Depth and soft light: frosted surfaces, one large red glow behind a
+ * floating phone, a bento of cards. Phase 1 preview only. Copy comes from src/content/copy.ts.
+ */
+import ArrowRight from '@lucide/astro/icons/arrow-right';
+import ContactBlock from '../../components/ContactBlock.astro';
+import EmailLink from '../../components/EmailLink.astro';
+import FeatureIcon from '../../components/FeatureIcon.astro';
+import PhoneFrame from '../../components/PhoneFrame.astro';
+import PreviewBar from '../../components/PreviewBar.astro';
+import TodayScreen from '../../components/screens/TodayScreen.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import { closing, cta, hero, liveFeatures, site, todayScreen, what } from '../../content/copy';
+import Base from '../../layouts/Base.astro';
+import '../../styles/directions/glass.css';
+
+/** Small illustrative chips per feature. Decorative, demo data only. */
+const chips: Record<string, readonly string[]> = {
+  attendance: ['Start day 9:12', 'End day 6:48', 'Approved by you'],
+  leave: ['Kabir, 6–7 Oct', 'Requested', 'Approved by you'],
+  'comp-leave': ['½ day', '1 day', 'Nothing', 'Expires at month end'],
+  'expense-claims': ['Receipt attached', 'Approved', 'Paid'],
+  clients: ['Contacts', 'Brand details', 'Custom fields'],
+  people: ['Invite link', 'Roles', 'Job titles'],
+  settings: ['Holidays', 'Days off', 'Thresholds'],
+};
+
+const bars = [
+  { name: 'Aarav', width: '92%' },
+  { name: 'Meera', width: '100%' },
+  { name: 'Tara', width: '84%' },
+  { name: 'Kabir', width: '70%' },
+] as const;
+
+const waiting = todayScreen.waiting.items;
+const board = todayScreen.board.people.slice(0, 4);
+---
+
+<Base
+  title={site.title}
+  description={site.description}
+  path="/preview/glass"
+  bodyClass="dir-glass"
+  noindex
+>
+  <PreviewBar current="glass" />
+  <SiteHeader homeHref="/preview/glass" />
+
+  <main id="main">
+    <section class="gls-hero" aria-labelledby="hero-title">
+      <div class="gls-hero__glow" aria-hidden="true"></div>
+      <div class="container-site gls-hero__inner">
+        <p class="gls-pill">
+          <span aria-hidden="true"></span>
+          {hero.eyebrow}
+        </p>
+        <h1 id="hero-title" class="gls-h1">
+          {hero.headline}
+        </h1>
+        <p class="gls-lead">{hero.supporting}</p>
+        <div class="gls-actions">
+          <EmailLink kind="demo" class="button-primary" primary hint>
+            {cta.demo}
+          </EmailLink>
+          <a class="link-arrow" href="#what">
+            {cta.seeHow}
+            <ArrowRight size={16} stroke-width={1.5} aria-hidden="true" />
+          </a>
+        </div>
+
+        <div class="gls-stage">
+          <aside class="gls-float gls-float--left" aria-hidden="true">
+            <p class="gls-float__title">{todayScreen.waiting.heading}</p>
+            {waiting.map((item) => (
+              <div class="gls-float__row">
+                <span class="gls-float__avatar">{item.who.slice(0, 1)}</span>
+                <span class="gls-float__text">
+                  <strong>{item.who}</strong>
+                  <small>
+                    {item.kind}: {item.what}
+                  </small>
+                </span>
+              </div>
+            ))}
+          </aside>
+
+          <PhoneFrame label={todayScreen.label} class="gls-phone">
+            <TodayScreen />
+          </PhoneFrame>
+
+          <aside class="gls-float gls-float--right" aria-hidden="true">
+            <p class="gls-float__title">{todayScreen.board.heading}</p>
+            {board.map((person) => (
+              <div class="gls-float__row">
+                <span class="gls-float__avatar">{person.name.slice(0, 1)}</span>
+                <span class="gls-float__text">
+                  <strong>{person.name}</strong>
+                  <small>
+                    {person.since ? `${person.state} since ${person.since}` : person.state}
+                  </small>
+                </span>
+              </div>
+            ))}
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="what" class="gls-section" aria-labelledby="what-title">
+      <div class="container-site">
+        <header class="gls-sechead reveal">
+          <p class="gls-pill">
+            <span aria-hidden="true"></span>
+            {what.eyebrow}
+          </p>
+          <h2 id="what-title" class="gls-h2">
+            {what.headline}
+          </h2>
+          <p class="gls-sechead__intro">{what.intro}</p>
+        </header>
+
+        <ul class="gls-bento">
+          {liveFeatures.map((feature, i) => (
+            <li
+              class:list={['gls-card', `gls-card--${feature.key}`, 'reveal']}
+              style={`--reveal-delay: ${(i % 3) * 70}ms`}
+            >
+              <div class="gls-card__top">
+                <span class="gls-card__icon">
+                  <FeatureIcon name={feature.key} />
+                </span>
+                <span class="badge-live">{what.badge}</span>
+              </div>
+              <h3 class="gls-card__title">{feature.title}</h3>
+              <p class="gls-card__text">{feature.text}</p>
+              {chips[feature.key] && (
+                <div class="gls-chips" aria-hidden="true">
+                  {chips[feature.key]?.map((chip) => (
+                    <span class="gls-chip">{chip}</span>
+                  ))}
+                </div>
+              )}
+              {feature.key === 'month-summary' && (
+                <div class="gls-bars" aria-hidden="true">
+                  {bars.map((bar) => (
+                    <div class="gls-bar">
+                      <span>{bar.name}</span>
+                      <i style={`width: ${bar.width}`} />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section id="demo" class="gls-section" aria-labelledby="close-title">
+      <div class="container-site">
+        <div class="gls-panel reveal">
+          <h2 id="close-title" class="gls-h2">
+            {closing.headline}
+          </h2>
+          <p class="gls-lead">{closing.line}</p>
+          <ContactBlock class="gls-panel__contact" />
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <SiteFooter />
+</Base>

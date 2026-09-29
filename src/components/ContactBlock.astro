@@ -1,0 +1,124 @@
+---
+/**
+ * "Tell us about your studio": contact is email only. The one red button opens a mailto: with a
+ * subject and a short prefilled body. The address is also shown as text, with a Copy email
+ * control for people with no mail app on their device. The address is never a plain string in the
+ * built HTML: it is written as entities, and the Copy button assembles it at runtime from parts.
+ */
+import Check from '@lucide/astro/icons/check';
+import Copy from '@lucide/astro/icons/copy';
+import { contact, cta } from '../content/copy';
+import EmailLink from './EmailLink.astro';
+import EmailText from './EmailText.astro';
+
+interface Props {
+  headingLevel?: 'h2' | 'h3';
+  class?: string;
+}
+
+const { headingLevel: Heading = 'h3', class: className } = Astro.props;
+---
+
+<div class:list={['contact', className]} data-contact>
+  <Heading class="contact__heading">{contact.heading}</Heading>
+  <p class="contact__intro">{contact.intro}</p>
+
+  <EmailLink kind="demo" class="button-primary contact__cta" primary hint>
+    {contact.cta}
+  </EmailLink>
+
+  <div class="contact__fallback">
+    <p class="contact__label">{contact.noMailApp}</p>
+    <div class="contact__row">
+      <p class="contact__address">
+        <EmailText />
+      </p>
+      <button
+        type="button"
+        class="button-outline contact__copy"
+        data-copy
+        data-user={contact.address.user}
+        data-domain={contact.address.domain}
+        data-idle-label={contact.copy}
+        data-done-label={contact.copied}
+        data-done-message={contact.copiedStatus}
+        data-fail-message={contact.copyFailed}
+      >
+        <Copy class="icon-copy" size={16} stroke-width={1.5} aria-hidden="true" />
+        <Check class="icon-done" size={16} stroke-width={1.5} aria-hidden="true" />
+        <span data-copy-label>{contact.copy}</span>
+      </button>
+    </div>
+    <p class="contact__status" role="status" data-copy-status></p>
+  </div>
+
+  <p class="contact__signin">
+    {contact.alreadyOn} <a href={cta.signInHref}>{contact.signIn}</a>
+  </p>
+</div>
+
+<script>
+  /**
+   * Copy the address to the clipboard. The address is assembled here from data attributes and
+   * is never written out in the HTML. Falls back to the old copy command, and finally to selecting
+   * the visible address so the person can copy it by hand.
+   */
+  async function copyText(value: string, visible: Element | null): Promise<boolean> {
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(value);
+        return true;
+      }
+    } catch {
+      /* fall through to the next method */
+    }
+    try {
+      const field = document.createElement('textarea');
+      field.value = value;
+      field.setAttribute('readonly', '');
+      field.style.position = 'fixed';
+      field.style.opacity = '0';
+      document.body.append(field);
+      field.select();
+      const done = document.execCommand('copy');
+      field.remove();
+      if (done) return true;
+    } catch {
+      /* fall through to selecting the visible address */
+    }
+    const selection = window.getSelection();
+    if (selection && visible) {
+      const range = document.createRange();
+      range.selectNodeContents(visible);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+    return false;
+  }
+
+  for (const root of document.querySelectorAll<HTMLElement>('[data-contact]')) {
+    const button = root.querySelector<HTMLButtonElement>('[data-copy]');
+    const label = root.querySelector<HTMLElement>('[data-copy-label]');
+    const status = root.querySelector<HTMLElement>('[data-copy-status]');
+    const visible = root.querySelector('.contact__address');
+    if (!button || !label || !status) continue;
+
+    const address = `${button.dataset['user'] ?? ''}@${button.dataset['domain'] ?? ''}`;
+    const idleLabel = button.dataset['idleLabel'] ?? '';
+    let timer: number | undefined;
+
+    button.addEventListener('click', async () => {
+      const copied = await copyText(address, visible);
+      button.toggleAttribute('data-done', copied);
+      label.textContent = copied ? (button.dataset['doneLabel'] ?? '') : idleLabel;
+      status.textContent =
+        (copied ? button.dataset['doneMessage'] : button.dataset['failMessage']) ?? '';
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        button.removeAttribute('data-done');
+        label.textContent = idleLabel;
+        status.textContent = '';
+      }, 4000);
+    });
+  }
+</script>

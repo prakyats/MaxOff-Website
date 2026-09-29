@@ -1,12 +1,146 @@
 ---
-/** Phase 0 header: logo and theme toggle. Phase 2 adds section links, Sign in and the primary button. */
+/**
+ * The two doors live here. "Sign in" is a visible outline button at every width, including inside
+ * the phone menu. "Request a demo" is the one red button: it shows in the bar only while no other
+ * primary button is on screen (the script sets html[data-header-cta]).
+ */
+import Menu from '@lucide/astro/icons/menu';
+import X from '@lucide/astro/icons/x';
+import { cta, nav } from '../content/copy';
+import EmailLink from './EmailLink.astro';
 import Logo from './Logo.astro';
-import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  /** Where the logo leads. */
+  homeHref?: string;
+  /** Show the section links. Off on pages that do not have those sections. */
+  showNav?: boolean;
+  class?: string;
+}
+
+const { homeHref = '/', showNav = true, class: className } = Astro.props;
+const links = showNav ? nav : [];
 ---
 
-<header class="container-site flex items-center justify-between py-5">
-  <a href="/" aria-label="MaxOff home" class="rounded-button">
-    <Logo />
-  </a>
-  <ThemeToggle />
+<header class:list={['site-header', className]} data-site-header>
+  <div class="container-site site-header__bar">
+    <a href={homeHref} class="site-header__brand" aria-label="MaxOff home">
+      <Logo />
+    </a>
+
+    {links.length > 0 && (
+      <nav class="site-header__nav" aria-label="Primary">
+        <ul>
+          {links.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
+
+    <div class="site-header__actions">
+      <a class="button-outline site-header__signin" href={cta.signInHref}>
+        {cta.signIn}
+      </a>
+      <EmailLink kind="demo" class="button-primary site-header__demo">
+        {cta.demo}
+      </EmailLink>
+      {links.length > 0 && (
+        <button
+          type="button"
+          class="site-header__menu-button"
+          aria-expanded="false"
+          aria-controls="site-menu"
+          data-menu-button
+        >
+          <span class="sr-only">{cta.menu}</span>
+          <Menu class="icon-open" size={22} stroke-width={1.5} aria-hidden="true" />
+          <X class="icon-close" size={22} stroke-width={1.5} aria-hidden="true" />
+        </button>
+      )}
+    </div>
+  </div>
+
+  {links.length > 0 && (
+    <div id="site-menu" class="site-header__menu" data-menu hidden>
+      <div class="container-site">
+        <ul>
+          {links.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+        <div class="site-header__menu-actions">
+          <EmailLink kind="demo" class="button-primary">
+            {cta.demo}
+          </EmailLink>
+          <a class="button-outline" href={cta.signInHref}>
+            {cta.signIn}
+          </a>
+        </div>
+      </div>
+    </div>
+  )}
 </header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  const button = header?.querySelector<HTMLButtonElement>('[data-menu-button]') ?? null;
+  const menu = header?.querySelector<HTMLElement>('[data-menu]') ?? null;
+
+  if (header) {
+    const onScroll = (): void => {
+      header.toggleAttribute('data-scrolled', window.scrollY > 8);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  if (button && menu) {
+    const setOpen = (open: boolean): void => {
+      button.setAttribute('aria-expanded', String(open));
+      menu.hidden = !open;
+    };
+    button.addEventListener('click', () => {
+      setOpen(button.getAttribute('aria-expanded') !== 'true');
+    });
+    menu.addEventListener('click', (event) => {
+      if (event.target instanceof Element && event.target.closest('a')) setOpen(false);
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !menu.hidden) {
+        setOpen(false);
+        button.focus();
+      }
+    });
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', (event) => {
+      if (event.matches) setOpen(false);
+    });
+  }
+
+  // One red button per view: the header's Request a demo shows only while no other primary button
+  // is on screen. It starts collapsed (see components.css), so nothing flashes at load.
+  const primaries = document.querySelectorAll('[data-primary-cta]');
+  const showHeaderCta = (show: boolean): void => {
+    document.documentElement.toggleAttribute('data-header-cta', show);
+  };
+  if (primaries.length === 0 || !('IntersectionObserver' in window)) {
+    showHeaderCta(true);
+  } else {
+    const visible = new Set<Element>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.add(entry.target);
+          else visible.delete(entry.target);
+        }
+        showHeaderCta(visible.size === 0);
+      },
+      { rootMargin: '-72px 0px 0px 0px' },
+    );
+    for (const primary of primaries) observer.observe(primary);
+  }
+</script>
