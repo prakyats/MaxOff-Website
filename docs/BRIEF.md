@@ -86,7 +86,11 @@ These supersede `docs/BRIEF-ORIGINAL.md` where they differ.
 - **Privacy page (Phase 3), simple:** no form data is collected, because there is no form. Analytics are cookie-less only (Cloudflare Web Analytics). Emails are answered by Pixora Agencies.
 - **Footer:** "© MaxOff" (with the year), the developer credit, Privacy, Contact (email), Sign in. No founder or company name beyond the credit.
 - **Theme:** dark by default, following the system preference.
-- **Fonts:** Google Fonts, self-hosted (Geist, Geist Mono, Inter Tight). No Adobe Fonts.
+- **Direction (Phase 1):** Instrument, with two borrowings: small chips inside the feature cards (from Glass, restyled in Instrument's hairline and mono language) and giant type for the closing line (from Editorial). See `docs/DESIGN.md`.
+- **Closing section:** the headline "The final say is yours." and, in the card, the heading "Tell us about your studio". Keep both. Under the contact block: "We usually reply within two working days."
+- **Privacy page (Phase 3):** one plain line saying the theme choice is saved only in the visitor's own browser and never sent anywhere.
+- **The phone mock-up** shows Northwind Studio once.
+- **Fonts:** Google Fonts, self-hosted (Geist and Geist Mono). No Adobe Fonts.
 
 ## 4. Demo data
 

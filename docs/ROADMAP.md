@@ -27,9 +27,13 @@ Each phase: its own branch and PR, `pnpm check` green, a short note in `docs/PRO
 
 **Acceptance:** the owner has chosen; DESIGN.md is no longer a draft.
 
+**Status:** done. The owner chose Instrument, borrowing Glass's chips and Editorial's giant closing type. `docs/DESIGN.md` is final.
+
 ## Phase 2: Build the page
 
-- Every section in `docs/SITEMAP.md` in the chosen direction.
+- Every section in `docs/SITEMAP.md` in the chosen direction (Instrument), on `phase-2/build-page`.
+- Two borrowings: chips inside the feature cards, restyled in Instrument's hairline and mono language; giant type for the closing line.
+- The `/preview` pages, the Glass and Editorial styles and Inter Tight are removed.
 - Recreated app screens: Today, a task card, an approval. The task-state loop.
 - Responsive at every width, both themes, 200 % text.
 

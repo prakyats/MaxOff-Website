@@ -30,7 +30,4 @@
 
 ## Open questions
 
-1. The old success message promised a reply "within two working days". With email contact I dropped that line. Keep it under the contact block?
-2. The closing section has both the headline "The final say is yours." and, below it, the block heading "Tell us about your studio". Keep both, or make it one?
-3. The privacy page (Phase 3) says only cookie-less analytics. The theme choice is kept in the visitor's own browser storage and never sent anywhere. Should the page say so?
-4. The Privacy link in the footer points at `/privacy`, which arrives in Phase 3. Until then it shows the 404 page.
+None open. Answered on 29 Sep 2026: direction Instrument with two borrowings; keep "We usually reply within two working days." under the contact block; keep both closing headings; one plain line about the theme choice on the privacy page. Phase 3 note: the footer Privacy link shows the 404 page until `/privacy` exists.
