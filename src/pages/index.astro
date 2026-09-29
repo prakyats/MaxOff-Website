@@ -1,0 +1,24 @@
+---
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import { placeholder, site } from '../content/copy';
+import Base from '../layouts/Base.astro';
+---
+
+<Base>
+  <SiteHeader />
+  <main id="main" class="relative flex flex-1 flex-col overflow-x-clip">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <section class="container-site flex flex-1 flex-col justify-center py-16 md:py-24">
+      <p class="font-mono text-xs tracking-[0.18em] text-muted uppercase">{placeholder.eyebrow}</p>
+      <h1 class="mt-4 max-w-4xl text-hero font-semibold text-balance">{placeholder.headline}</h1>
+      <p class="mt-6 max-w-xl text-lg text-muted text-pretty">{placeholder.supporting}</p>
+      <div class="mt-10 flex flex-wrap items-center gap-4">
+        <a href={`mailto:${site.contactEmail}?subject=Early%20access`} class="button-primary">
+          {placeholder.primaryCta}
+        </a>
+      </div>
+    </section>
+  </main>
+  <SiteFooter />
+</Base>

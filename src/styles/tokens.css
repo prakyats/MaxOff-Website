@@ -1,0 +1,61 @@
+/*
+  MaxOff design tokens. See docs/DESIGN.md.
+
+  Dark is the default. Light applies under [data-theme="light"], and under
+  prefers-color-scheme: light when the visitor has not chosen a theme.
+  Type scale, fonts, radii and easing live in global.css under @theme so that
+  Tailwind utilities (text-hero, rounded-card, font-mono) map to them.
+*/
+
+:root {
+  color-scheme: dark;
+
+  --bg: #0a0a0b;
+  --surface: #121214;
+  --border: #232326;
+  --text: #f4f4f5;
+  --muted: #a1a1aa;
+  --accent: #c42126;
+  --on-accent: #ffffff;
+  --live: #4ade80;
+  --grid-line: rgb(255 255 255 / 4%);
+  --glow: rgb(196 33 38 / 22%);
+
+  --content-max: 1200px;
+  --gutter: 16px;
+  --section-gap: clamp(4rem, 10vw, 8rem);
+  --duration-reveal: 500ms;
+  --duration-hover: 200ms;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --border: #e4e4e7;
+  --text: #16161a;
+  --muted: #52525b;
+  --live: #15803d;
+  --grid-line: rgb(0 0 0 / 6%);
+  --glow: rgb(196 33 38 / 14%);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    color-scheme: light;
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --border: #e4e4e7;
+    --text: #16161a;
+    --muted: #52525b;
+    --live: #15803d;
+    --grid-line: rgb(0 0 0 / 6%);
+    --glow: rgb(196 33 38 / 14%);
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 24px;
+  }
+}

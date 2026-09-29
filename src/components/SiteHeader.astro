@@ -1,0 +1,12 @@
+---
+/** Phase 0 header: logo and theme toggle. Phase 2 adds section links, Sign in and the primary button. */
+import Logo from './Logo.astro';
+import ThemeToggle from './ThemeToggle.astro';
+---
+
+<header class="container-site flex items-center justify-between py-5">
+  <a href="/" aria-label="MaxOff home" class="rounded-button">
+    <Logo />
+  </a>
+  <ThemeToggle />
+</header>

@@ -1,0 +1,19 @@
+---
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import { notFound } from '../content/copy';
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Page not found: MaxOff" description={notFound.body} path="/404" noindex>
+  <SiteHeader />
+  <main id="main" class="container-site flex flex-1 flex-col justify-center py-16">
+    <p class="font-mono text-xs tracking-[0.18em] text-muted uppercase">{notFound.eyebrow}</p>
+    <h1 class="mt-4 text-2xl font-semibold">{notFound.headline}</h1>
+    <p class="mt-4 max-w-md text-muted">{notFound.body}</p>
+    <a href="/" class="button-primary mt-8 self-start">
+      {notFound.cta}
+    </a>
+  </main>
+  <SiteFooter />
+</Base>
