@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { site } from '../content/copy';
+import { hero, site } from '../content/copy';
 import { PRE_LAUNCH } from '../lib/launch';
 
 interface Props {
@@ -20,6 +20,9 @@ const {
 } = Astro.props;
 
 const canonical = new URL(path, site.url).href;
+// Social previews need absolute URLs. The image is generated at build time (src/pages/og.png.ts).
+const image = new URL('/og.png', site.url).href;
+const imageAlt = `${site.name}: ${hero.headline}`;
 ---
 
 <!doctype html>
@@ -33,7 +36,25 @@ const canonical = new URL(path, site.url).href;
     {(PRE_LAUNCH || noindex) && <meta name="robots" content="noindex" />}
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0A0A0B" />
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAFAFA" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="en_IN" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <meta name="twitter:image:alt" content={imageAlt} />
     <link
       rel="preload"
       href="/fonts/geist-latin-wght-normal.woff2"

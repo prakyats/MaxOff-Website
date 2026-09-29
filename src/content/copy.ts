@@ -66,7 +66,7 @@ export const questions = {
     {
       question: 'What’s waiting on me?',
       answer:
-        'Days to approve, leave, comp leave and expense claims wait in one place, and the final say is yours.',
+        'Days to approve, leave requests, comp leave and expense claims wait in one place, and the final say is yours.',
       status: 'live',
     },
   ],
@@ -271,7 +271,7 @@ export const roles = {
     {
       key: 'admin',
       name: 'Admin',
-      tagline: 'Runs the team day to day.',
+      tagline: 'Runs clients and work, day to day.',
       can: [
         'Marks their own attendance and requests leave, like Staff.',
         'Sees the team list and who is in today, but not attendance history.',
@@ -288,7 +288,7 @@ export const roles = {
     {
       key: 'staff',
       name: 'Staff',
-      tagline: 'Everyone else on the team.',
+      tagline: 'The people doing the work.',
       can: [
         'Taps Start day and End day.',
         'Sees only their own day.',
@@ -330,7 +330,7 @@ export const trust = {
     {
       key: 'trust-backups',
       title: 'Nightly encrypted backups',
-      text: 'Every night, encrypted.',
+      text: 'Encrypted every night and kept for a month.',
     },
     {
       key: 'trust-clients',
@@ -459,6 +459,44 @@ export const todayScreen = {
     ],
   },
   tabs: ['Today', 'People', 'Leave', 'Claims'],
+} as const;
+
+/**
+ * The privacy page: short and plain. No form data (there is no form), cookie-less analytics only,
+ * emails answered by the developer. The agency name may appear here (the data controller).
+ */
+export const privacy = {
+  title: 'Privacy: MaxOff',
+  description:
+    'What the MaxOff website collects: no form data, cookie-less analytics, and emails answered by the developer.',
+  headline: 'Privacy',
+  intro: 'This site collects very little.',
+  items: [
+    {
+      heading: 'No form data',
+      paragraphs: ['There is no form on this site, so none is collected.'],
+    },
+    {
+      heading: 'Analytics',
+      paragraphs: [
+        'We count visits with cookie-less analytics. No cookies are set.',
+        'Like any website, our host processes technical data such as IP addresses to deliver these pages; it is not used to track you.',
+      ],
+    },
+    {
+      heading: 'Your theme choice',
+      paragraphs: [
+        'If you switch between light and dark, that choice is saved only in your own browser and never sent anywhere.',
+      ],
+    },
+  ],
+  email: {
+    heading: 'Email',
+    /** The address sits between these two, written as entities (see src/lib/contact.ts). */
+    before: 'Emails to ',
+    after:
+      ' are answered by Pixora Agencies, the developer of MaxOff and the data controller for those emails.',
+  },
 } as const;
 
 export const notFound = {

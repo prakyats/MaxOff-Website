@@ -1,0 +1,42 @@
+---
+/**
+ * The privacy page. Plain language, from src/content/copy.ts. The developer's name (the data
+ * controller) lives in that file; this page only lays it out. The email address is written as
+ * entities, like everywhere else (see src/lib/contact.ts).
+ */
+import EmailText from '../components/EmailText.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import { privacy } from '../content/copy';
+import Base from '../layouts/Base.astro';
+---
+
+<Base title={privacy.title} description={privacy.description} path="/privacy">
+  <SiteHeader navBase="/" />
+
+  <main id="main" class="container-site mo-legal">
+    <h1 class="mo-h1">{privacy.headline}</h1>
+    <p class="mo-legal__lead">{privacy.intro}</p>
+
+    <ul class="mo-legal__list">
+      {privacy.items.map((item) => (
+        <li class="mo-legal__item">
+          <h2 class="mo-legal__heading">{item.heading}</h2>
+          {item.paragraphs.map((text) => (
+            <p>{text}</p>
+          ))}
+        </li>
+      ))}
+      <li class="mo-legal__item">
+        <h2 class="mo-legal__heading">{privacy.email.heading}</h2>
+        <p>
+          {privacy.email.before}
+          <EmailText />
+          {privacy.email.after}
+        </p>
+      </li>
+    </ul>
+  </main>
+
+  <SiteFooter />
+</Base>

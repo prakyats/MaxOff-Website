@@ -2,7 +2,8 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
 const HOME = '/';
-const PAGES = [HOME] as const;
+const PRIVACY = '/privacy';
+const PAGES = [HOME, PRIVACY] as const;
 const WIDTHS = [360, 390, 430, 768, 1280, 1440] as const;
 
 const APP = 'https://app.maxoff.in';
@@ -28,19 +29,13 @@ async function horizontalOverflow(page: Page): Promise<number> {
 
 for (const path of PAGES) {
   test.describe(path, () => {
-    test('loads with one h1, a main landmark and the primary action', async ({ page }) => {
+    test('loads with one h1 and a main landmark', async ({ page }) => {
       const response = await page.goto(path);
       expect(response?.status()).toBe(200);
       await expect(page).toHaveTitle(/MaxOff/);
       await expect(page).not.toHaveTitle(AGENCY);
       await expect(page.locator('h1')).toHaveCount(1);
       await expect(page.getByRole('main')).toBeVisible();
-      await expect(
-        page
-          .getByRole('main')
-          .getByRole('link', { name: /Request a demo/ })
-          .first(),
-      ).toBeVisible();
     });
 
     test('the developer credit is in the footer, in body text only', async ({ page }) => {
@@ -67,7 +62,8 @@ for (const path of PAGES) {
 
     test('Request a demo opens an email with the subject and prefilled body', async ({ page }) => {
       await page.goto(path);
-      const links = page.getByRole('link', { name: /Request a demo/ });
+      // By text, not role: on a phone some of these sit in the closed menu or the collapsed header.
+      const links = page.locator('a', { hasText: /Request a demo/ });
       expect(await links.count()).toBeGreaterThan(0);
       for (const link of await links.all()) {
         const href = (await link.getAttribute('href')) ?? '';
@@ -234,7 +230,7 @@ for (const path of PAGES) {
 
 // ---------- One red button per view ----------
 
-for (const path of PAGES) {
+for (const path of [HOME]) {
   test(`${path}: the header's Request a demo shows only while no other primary button is on screen`, async ({
     page,
   }, testInfo) => {
@@ -254,7 +250,7 @@ for (const path of PAGES) {
 
 // ---------- Contact block: address as text, Copy email ----------
 
-for (const path of PAGES) {
+for (const path of [HOME]) {
   test.describe(`${path}: contact block`, () => {
     test('is headed "Tell us about your studio" and shows the address as text', async ({
       page,
@@ -338,6 +334,204 @@ test('unknown paths get the 404 page with a link home', async ({ page }) => {
   expect(response?.status()).toBe(404);
   await expect(page.locator('h1')).toHaveText('Page not found');
   await expect(page.getByRole('link', { name: 'Back to home' })).toHaveAttribute('href', '/');
+});
+
+// ---------- Privacy ----------
+
+test.describe('/privacy', () => {
+  test('says what the site collects, in the approved words', async ({ page }) => {
+    await page.goto(PRIVACY);
+    await expect(page.locator('h1')).toHaveText('Privacy');
+    const main = page.getByRole('main');
+    await expect(main.locator('h2')).toHaveText([
+      'No form data',
+      'Analytics',
+      'Your theme choice',
+      'Email',
+    ]);
+    await expect(main).toContainText('This site collects very little.');
+    await expect(main).toContainText('There is no form on this site, so none is collected.');
+    await expect(main).toContainText(
+      'We count visits with cookie-less analytics. No cookies are set.',
+    );
+    await expect(main).toContainText(
+      'Like any website, our host processes technical data such as IP addresses to deliver these pages; it is not used to track you.',
+    );
+    await expect(main).toContainText('saved only in your own browser and never sent anywhere');
+  });
+
+  test('names the developer once, as the data controller for emails, in body text', async ({
+    page,
+    request,
+  }) => {
+    await page.goto(PRIVACY);
+    const email = page.getByRole('main').locator('.mo-legal__list > li').last();
+    await expect(email.getByRole('heading', { name: 'Email' })).toBeVisible();
+    await expect(email).toContainText(ADDRESS);
+    await expect(email).toContainText(
+      `are answered by ${['Pix', 'ora'].join('')} Agencies, the developer of MaxOff and the data controller for those emails.`,
+    );
+    for (const heading of await page.locator('h1, h2, h3').allTextContents()) {
+      expect(heading).not.toMatch(AGENCY);
+    }
+    // Nothing in the head (title, meta, links) may carry the name.
+    const html = await (await request.get(PRIVACY)).text();
+    const head = html.slice(0, html.indexOf('</head>'));
+    expect(head).not.toMatch(AGENCY);
+  });
+
+  test('is linked from the footer of every page and is not a dead end', async ({
+    page,
+    request,
+  }) => {
+    expect((await request.get(PRIVACY)).status()).toBe(200);
+    await page.goto(PRIVACY);
+    await expect(
+      page.getByRole('contentinfo').getByRole('link', { name: 'Privacy' }),
+    ).toBeVisible();
+    await expect(
+      page
+        .getByRole('banner')
+        .getByRole('link', { name: /MaxOff/ })
+        .first(),
+    ).toHaveAttribute('href', '/');
+  });
+
+  test("shows the header's Request a demo, as there is no other primary button", async ({
+    page,
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'desktop', 'viewport is set explicitly; run once');
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto(PRIVACY);
+    await expect(page.locator('.site-header__demo')).toBeVisible();
+    await expect(page.locator('[data-primary-cta]')).toHaveCount(0);
+  });
+});
+
+// ---------- Sharing, canonical, sitemap, structured data, icons ----------
+
+const SITE = 'https://maxoff.in';
+
+for (const path of PAGES) {
+  test(`${path}: canonical, description, Open Graph and Twitter tags agree`, async ({ page }) => {
+    await page.goto(path);
+    const url = new URL(path, SITE).href;
+    const meta = (selector: string) => page.locator(selector).getAttribute('content');
+    const title = await page.title();
+
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', url);
+    const description = (await meta('meta[name="description"]')) ?? '';
+    expect(description.length).toBeGreaterThan(50);
+    expect(description.length).toBeLessThanOrEqual(155);
+
+    expect(await meta('meta[property="og:type"]')).toBe('website');
+    expect(await meta('meta[property="og:site_name"]')).toBe('MaxOff');
+    expect(await meta('meta[property="og:locale"]')).toBe('en_IN');
+    expect(await meta('meta[property="og:title"]')).toBe(title);
+    expect(await meta('meta[property="og:description"]')).toBe(description);
+    expect(await meta('meta[property="og:url"]')).toBe(url);
+    expect(await meta('meta[property="og:image"]')).toBe(`${SITE}/og.png`);
+    expect(await meta('meta[property="og:image:width"]')).toBe('1200');
+    expect(await meta('meta[property="og:image:height"]')).toBe('630');
+    expect(await meta('meta[property="og:image:type"]')).toBe('image/png');
+    const alt = (await meta('meta[property="og:image:alt"]')) ?? '';
+    expect(alt).toContain('MaxOff');
+    expect(alt).not.toMatch(AGENCY);
+
+    expect(await meta('meta[name="twitter:card"]')).toBe('summary_large_image');
+    expect(await meta('meta[name="twitter:title"]')).toBe(title);
+    expect(await meta('meta[name="twitter:description"]')).toBe(description);
+    expect(await meta('meta[name="twitter:image"]')).toBe(`${SITE}/og.png`);
+    expect(await meta('meta[name="twitter:image:alt"]')).toBe(alt);
+  });
+}
+
+test('the home page carries SoftwareApplication data that claims nothing it cannot show', async ({
+  page,
+}) => {
+  await page.goto(HOME);
+  const scripts = await page.locator('script[type="application/ld+json"]').allTextContents();
+  expect(scripts).toHaveLength(1);
+  const data = JSON.parse(scripts[0] ?? '{}') as Record<string, unknown>;
+  expect(data['@context']).toBe('https://schema.org');
+  expect(data['@type']).toBe('SoftwareApplication');
+  expect(data['name']).toBe('MaxOff');
+  expect(data['url']).toBe(SITE);
+  expect(data['applicationCategory']).toBe('BusinessApplication');
+  expect(data['operatingSystem']).toBe('Web');
+  // No prices, ratings, reviews or people or companies behind it.
+  for (const key of [
+    'offers',
+    'aggregateRating',
+    'review',
+    'author',
+    'publisher',
+    'creator',
+    'provider',
+    'sameAs',
+  ]) {
+    expect(data).not.toHaveProperty(key);
+  }
+  expect(scripts[0]).not.toMatch(AGENCY);
+});
+
+test('only the home page has structured data, and the 404 page has none', async ({ request }) => {
+  for (const path of [PRIVACY, '/404']) {
+    const html = await (await request.get(path)).text();
+    expect(html).not.toContain('ld+json');
+  }
+});
+
+test('the sitemap lists the home page and privacy, and never the 404 page', async ({ request }) => {
+  const index = await request.get('/sitemap-index.xml');
+  expect(index.status()).toBe(200);
+  expect(await index.text()).toContain(`${SITE}/sitemap-0.xml`);
+  const sitemap = await (await request.get('/sitemap-0.xml')).text();
+  const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+  expect(urls).toEqual([`${SITE}/`, `${SITE}/privacy`]);
+});
+
+/** Width and height of a PNG, read from its IHDR chunk. */
+function pngSize(bytes: Buffer): { width: number; height: number } {
+  expect(bytes.subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a');
+  return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
+}
+
+test('the social image is a 1200 by 630 PNG, light enough to share', async ({ request }) => {
+  const response = await request.get('/og.png');
+  expect(response.status()).toBe(200);
+  expect(response.headers()['content-type']).toContain('image/png');
+  const body = await response.body();
+  expect(pngSize(body)).toEqual({ width: 1200, height: 630 });
+  expect(body.length).toBeLessThan(300 * 1024);
+});
+
+test('the icons exist: favicon.ico, favicon.svg and a 180 px Apple touch icon', async ({
+  page,
+  request,
+}) => {
+  await page.goto(HOME);
+  await expect(page.locator('link[rel="icon"][href="/favicon.ico"]')).toHaveCount(1);
+  await expect(page.locator('link[rel="icon"][href="/favicon.svg"]')).toHaveCount(1);
+  await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute(
+    'href',
+    '/apple-touch-icon.png',
+  );
+
+  const touch = await request.get('/apple-touch-icon.png');
+  expect(touch.status()).toBe(200);
+  expect(pngSize(await touch.body())).toEqual({ width: 180, height: 180 });
+
+  const ico = await request.get('/favicon.ico');
+  expect(ico.status()).toBe(200);
+  const bytes = await ico.body();
+  expect(bytes.readUInt16LE(0)).toBe(0); // reserved
+  expect(bytes.readUInt16LE(2)).toBe(1); // type: icon
+  expect(bytes.readUInt16LE(4)).toBe(3); // 16, 32 and 48 px
+
+  const svg = await request.get('/favicon.svg');
+  expect(svg.status()).toBe(200);
+  expect(await svg.text()).toContain('<svg');
 });
 
 // ---------- The full page: sections, labels, loop, phones ----------
