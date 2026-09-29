@@ -66,9 +66,23 @@ test('ordinary words are not mistaken for the banned ones', () => {
 });
 
 test('wrangler.jsonc may hold static assets only', () => {
-  const ok = `{ "name": "maxoff-website", "assets": { "directory": "./dist" }, // main is not set\n "workers_dev": true }`;
+  const ok = `{ "name": "maxoff-website", "assets": { "directory": "./dist" }, // main is not set\n "workers_dev": true, "previews": {} }`;
   assert.deepEqual(findWranglerProblems(ok), []);
-  assert.equal(findWranglerProblems(`{ "main": "worker/index.ts" }`).length, 1);
-  assert.equal(findWranglerProblems(`{ "assets": { "run_worker_first": ["/x/*"] } }`).length, 1);
-  assert.equal(findWranglerProblems(`{ "vars": { "A": "b" } }`).length, 1);
+  assert.equal(findWranglerProblems(`{ "main": "worker/index.ts", "previews": {} }`).length, 1);
+  assert.equal(
+    findWranglerProblems(`{ "assets": { "run_worker_first": ["/x/*"] }, "previews": {} }`).length,
+    1,
+  );
+  assert.equal(findWranglerProblems(`{ "vars": { "A": "b" }, "previews": {} }`).length, 1);
+});
+
+test('wrangler.jsonc must keep the empty previews block that branch builds need', () => {
+  const problems = findWranglerProblems(
+    `{ "name": "maxoff-website", "assets": { "directory": "./dist" } }`,
+  );
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /previews/);
+  assert.deepEqual(findWranglerProblems(`{ "name": "x", "previews": {} }`), []);
+  // A comment that mentions the block does not count as having it.
+  assert.equal(findWranglerProblems(`{ "name": "x" } // "previews": {}`).length, 1);
 });

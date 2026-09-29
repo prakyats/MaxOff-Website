@@ -7,7 +7,8 @@
  *      raw HTML; the address must be written as entities or assembled at runtime);
  *   2. the repo contains an email address other than the one contact address;
  *   3. the repo mentions a form backend, a mail API or a bot-check service, or an /api route;
- *   4. wrangler.jsonc configures a Worker, a binding, a variable or a route to a Worker;
+ *   4. wrangler.jsonc configures a Worker, a binding, a variable or a route to a Worker, or lacks
+ *      the (empty) "previews" block that Cloudflare's branch builds need;
  *   5. a worker/ directory exists.
  *
  * The contact address and the banned words are stored as fragments so this script never trips
@@ -109,6 +110,12 @@ export function findWranglerProblems(text) {
         `wrangler.jsonc: "${key}" configures code or a binding; the site is fully static`,
       );
     }
+  }
+  // Cloudflare builds non-production branches with `wrangler preview`, which fails without this block.
+  if (!/"previews"\s*:/.test(code)) {
+    problems.push(
+      'wrangler.jsonc: missing the "previews" block that branch builds need (it can be empty)',
+    );
   }
   return problems;
 }
