@@ -1,0 +1,280 @@
+/*
+  Direction 3: Editorial.
+  Big type and whitespace, almost no boxes. Inter Tight for text, Geist Mono for small labels.
+  Everything is scoped under .dir-editorial (set on <body>) or an .edi-* class.
+*/
+
+.dir-editorial {
+  --font-sans:
+    'Inter Tight Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --section-gap: clamp(6rem, 14vw, 11rem);
+  --duration-reveal: 700ms;
+  --reveal-distance: 22px;
+  --glow: rgb(196 33 38 / 16%);
+  font-family: var(--font-sans);
+}
+:root[data-theme='light'] .dir-editorial {
+  --glow: rgb(196 33 38 / 11%);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) .dir-editorial {
+    --glow: rgb(196 33 38 / 11%);
+  }
+}
+
+/* No grid here: whitespace is the structure. */
+.dir-editorial .site-grid {
+  display: none;
+}
+
+/* ---------- Shared pieces, restyled ---------- */
+
+.dir-editorial .site-header__bar {
+  min-height: 76px;
+}
+.dir-editorial .site-header__nav a {
+  font-size: 0.9375rem;
+}
+.dir-editorial main .button-primary,
+.dir-editorial main .button-outline {
+  min-height: 48px;
+  padding-inline: 1.4rem;
+}
+.dir-editorial .site-footer {
+  padding-block: clamp(3rem, 8vw, 6rem) 2.5rem;
+  border-top: 0;
+}
+.dir-editorial .site-footer__inner {
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+.dir-editorial .site-footer__meta {
+  border-top: 0;
+  padding-top: 0;
+}
+.dir-editorial .site-footer__nav a {
+  font-size: 1.0625rem;
+}
+
+/* ---------- Type ---------- */
+
+.edi-eyebrow {
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.edi-h1,
+.edi-h2,
+.edi-close__title {
+  margin: 0;
+  overflow-wrap: break-word;
+  font-weight: 500;
+  text-wrap: balance;
+}
+.edi-h1 {
+  font-size: clamp(3rem, 1rem + 9.4vw, 9rem);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+}
+.edi-h2 {
+  font-size: clamp(2.25rem, 1.2rem + 4vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.edi-lead {
+  max-width: 30rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(1.125rem, 1.02rem + 0.5vw, 1.5rem);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+.edi-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.75rem;
+  margin-top: 2.25rem;
+}
+
+/* ---------- Hero ---------- */
+
+.edi-hero {
+  padding-top: clamp(2.5rem, 7vw, 6rem);
+  overflow-x: clip;
+}
+.edi-hero__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+  margin-top: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+}
+/* A cropped phone, rising out of the bottom of the hero, with the one soft glow behind it. */
+.edi-hero__phone {
+  position: relative;
+  isolation: isolate;
+  height: clamp(15rem, 34vw, 27rem);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(#000 55%, transparent);
+  mask-image: linear-gradient(#000 55%, transparent);
+}
+.edi-hero__phone::before {
+  content: '';
+  position: absolute;
+  inset: -30% -20% 0;
+  z-index: -1;
+  background: radial-gradient(closest-side, var(--glow), transparent);
+  filter: blur(30px);
+}
+.edi-hero__phone .phone {
+  width: min(17rem, 100%);
+  margin-inline: auto;
+  box-shadow: none;
+}
+
+/* ---------- Sections ---------- */
+
+.edi-section {
+  margin-top: var(--section-gap);
+}
+.edi-what {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+}
+.edi-what__head {
+  align-self: start;
+}
+.edi-what__head .edi-eyebrow {
+  margin-bottom: 1.25rem;
+}
+.edi-what__intro {
+  max-width: 22rem;
+  margin: 1.5rem 0 0;
+  color: var(--muted);
+}
+
+/* A numbered list with hairlines instead of cards. */
+.edi-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--border);
+}
+.edi-row {
+  display: grid;
+  gap: 0.75rem 1.5rem;
+  padding-block: 1.75rem;
+  border-top: 1px solid var(--border);
+}
+.edi-row__index {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+.edi-row__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+.edi-row__icon {
+  color: var(--muted);
+  transition: color var(--duration-hover) var(--ease-out);
+}
+.edi-row:hover .edi-row__icon {
+  color: var(--text);
+}
+.edi-row__title {
+  margin: 0;
+  font-size: clamp(1.625rem, 1.2rem + 1.4vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+.edi-row__body {
+  display: grid;
+  justify-items: start;
+  gap: 0.9rem;
+}
+.edi-row__text {
+  max-width: 34rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+
+/* ---------- Closing ---------- */
+
+.edi-close__title {
+  font-size: clamp(2.75rem, 0.6rem + 8.4vw, 8rem);
+  line-height: 0.97;
+  letter-spacing: -0.045em;
+}
+.edi-close__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+  margin-top: clamp(2.5rem, 6vw, 5rem);
+  align-items: start;
+}
+.edi-close__line {
+  max-width: 22rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.25rem;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+.dir-editorial .contact__heading {
+  font-size: clamp(1.75rem, 1.3rem + 1.4vw, 2.5rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+.dir-editorial .contact__intro {
+  font-size: 1.125rem;
+}
+.dir-editorial .contact__address {
+  padding: 0.5rem 0;
+  border: 0;
+  border-bottom: 1px solid var(--control-border);
+  border-radius: 0;
+  background: transparent;
+}
+
+@media (min-width: 768px) {
+  .edi-hero__row {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 4rem;
+  }
+  .edi-row {
+    grid-template-columns: 3rem minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: baseline;
+    padding-block: 2.25rem;
+  }
+  .edi-row__index {
+    align-self: baseline;
+  }
+}
+@media (min-width: 1024px) {
+  .edi-what {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: 4rem;
+  }
+  .edi-what__head {
+    position: sticky;
+    top: 7rem;
+  }
+  .edi-close__grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 4rem;
+  }
+}

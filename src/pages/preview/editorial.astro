@@ -1,0 +1,109 @@
+---
+/**
+ * Direction 3: Editorial. Big type and whitespace, almost no boxes: a giant headline, a numbered
+ * list instead of cards, a cropped phone. Inter Tight for text, Geist Mono for small labels.
+ * Phase 1 preview only. Copy comes from src/content/copy.ts.
+ */
+import ArrowDown from '@lucide/astro/icons/arrow-down';
+import ContactBlock from '../../components/ContactBlock.astro';
+import EmailLink from '../../components/EmailLink.astro';
+import FeatureIcon from '../../components/FeatureIcon.astro';
+import PhoneFrame from '../../components/PhoneFrame.astro';
+import PreviewBar from '../../components/PreviewBar.astro';
+import TodayScreen from '../../components/screens/TodayScreen.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import { closing, cta, hero, liveFeatures, site, todayScreen, what } from '../../content/copy';
+import Base from '../../layouts/Base.astro';
+import '../../styles/directions/editorial.css';
+
+const index = (n: number): string => String(n).padStart(2, '0');
+---
+
+<Base
+  title={site.title}
+  description={site.description}
+  path="/preview/editorial"
+  sans="inter-tight"
+  bodyClass="dir-editorial"
+  noindex
+>
+  <PreviewBar current="editorial" />
+  <SiteHeader homeHref="/preview/editorial" />
+
+  <main id="main">
+    <section class="edi-hero" aria-labelledby="hero-title">
+      <div class="container-site">
+        <p class="edi-eyebrow">{hero.eyebrow}</p>
+        <h1 id="hero-title" class="edi-h1">
+          {hero.headline}
+        </h1>
+
+        <div class="edi-hero__row">
+          <div class="edi-hero__copy">
+            <p class="edi-lead">{hero.supporting}</p>
+            <div class="edi-actions">
+              <EmailLink kind="demo" class="button-primary" primary hint>
+                {cta.demo}
+              </EmailLink>
+              <a class="link-arrow" href="#what">
+                {cta.seeHow}
+                <ArrowDown size={16} stroke-width={1.5} aria-hidden="true" />
+              </a>
+            </div>
+          </div>
+
+          <div class="edi-hero__phone">
+            <PhoneFrame label={todayScreen.label}>
+              <TodayScreen />
+            </PhoneFrame>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="what" class="edi-section" aria-labelledby="what-title">
+      <div class="container-site edi-what">
+        <header class="edi-what__head reveal">
+          <p class="edi-eyebrow">01 — {what.eyebrow}</p>
+          <h2 id="what-title" class="edi-h2">
+            {what.headline}
+          </h2>
+          <p class="edi-what__intro">{what.intro}</p>
+        </header>
+
+        <ol class="edi-list">
+          {liveFeatures.map((feature, i) => (
+            <li class="edi-row reveal">
+              <span class="edi-row__index" aria-hidden="true">
+                {index(i + 1)}
+              </span>
+              <div class="edi-row__head">
+                <FeatureIcon name={feature.key} class="edi-row__icon" />
+                <h3 class="edi-row__title">{feature.title}</h3>
+              </div>
+              <div class="edi-row__body">
+                <p class="edi-row__text">{feature.text}</p>
+                <span class="badge-live">{what.badge}</span>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section id="demo" class="edi-section edi-close" aria-labelledby="close-title">
+      <div class="container-site">
+        <h2 id="close-title" class="edi-close__title reveal">
+          {closing.headline}
+        </h2>
+        <div class="edi-close__grid">
+          <p class="edi-close__line reveal">{closing.line}</p>
+          <ContactBlock class="edi-close__contact reveal" />
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <SiteFooter />
+</Base>

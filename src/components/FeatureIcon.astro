@@ -1,0 +1,33 @@
+---
+/** One consistent line icon set (Lucide, 1.5px stroke), keyed by feature. Decorative. */
+import Briefcase from '@lucide/astro/icons/briefcase';
+import CalendarCheck from '@lucide/astro/icons/calendar-check';
+import ChartColumn from '@lucide/astro/icons/chart-column';
+import ReceiptText from '@lucide/astro/icons/receipt-text';
+import SlidersHorizontal from '@lucide/astro/icons/sliders-horizontal';
+import TimerReset from '@lucide/astro/icons/timer-reset';
+import TreePalm from '@lucide/astro/icons/tree-palm';
+import Users from '@lucide/astro/icons/users';
+
+const icons = {
+  attendance: CalendarCheck,
+  leave: TreePalm,
+  'comp-leave': TimerReset,
+  'expense-claims': ReceiptText,
+  'month-summary': ChartColumn,
+  clients: Briefcase,
+  people: Users,
+  settings: SlidersHorizontal,
+} as const;
+
+interface Props {
+  name: keyof typeof icons;
+  size?: number;
+  class?: string;
+}
+
+const { name, size = 20, class: className = '' } = Astro.props;
+const Icon = icons[name];
+---
+
+<Icon size={size} stroke-width={1.5} aria-hidden="true" focusable="false" class={className} />

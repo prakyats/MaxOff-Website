@@ -1,0 +1,448 @@
+/*
+  Direction 2: Glass.
+  Depth and soft light: frosted surfaces, one large red glow behind a floating phone, a bento of
+  cards. Everything is scoped under .dir-glass (set on <body>) or a .gls-* class.
+*/
+
+.dir-glass {
+  --duration-reveal: 650ms;
+  --reveal-distance: 18px;
+  --glow: rgb(196 33 38 / 36%);
+  --glass: color-mix(in srgb, var(--text) 5%, transparent);
+  --glass-strong: color-mix(in srgb, var(--text) 9%, transparent);
+  --glass-edge: color-mix(in srgb, var(--text) 14%, transparent);
+  --glass-shine: color-mix(in srgb, var(--text) 16%, transparent);
+  --shadow-soft: 0 30px 80px -30px rgb(0 0 0 / 55%);
+}
+:root[data-theme='light'] .dir-glass {
+  --glow: rgb(196 33 38 / 22%);
+  --glass: color-mix(in srgb, var(--surface) 70%, transparent);
+  --glass-strong: color-mix(in srgb, var(--surface) 88%, transparent);
+  --glass-edge: color-mix(in srgb, var(--text) 12%, transparent);
+  --glass-shine: rgb(255 255 255 / 90%);
+  --shadow-soft: 0 30px 70px -30px rgb(22 22 26 / 22%);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) .dir-glass {
+    --glow: rgb(196 33 38 / 22%);
+    --glass: color-mix(in srgb, var(--surface) 70%, transparent);
+    --glass-strong: color-mix(in srgb, var(--surface) 88%, transparent);
+    --glass-edge: color-mix(in srgb, var(--text) 12%, transparent);
+    --glass-shine: rgb(255 255 255 / 90%);
+    --shadow-soft: 0 30px 70px -30px rgb(22 22 26 / 22%);
+  }
+}
+
+/* The grid stays, but very faint: the light does the work here. */
+.dir-glass .site-grid {
+  opacity: 0.55;
+  mask-image: radial-gradient(ellipse 80% 55% at 50% 12%, #000 20%, transparent 100%);
+}
+
+/* ---------- Frosted surface, with a solid fallback ---------- */
+
+.gls-card,
+.gls-float,
+.gls-panel,
+.gls-pill,
+.dir-glass .site-header__bar,
+.dir-glass .site-header__menu {
+  border: 1px solid var(--glass-edge);
+  background: var(--surface);
+  box-shadow: inset 0 1px 0 var(--glass-shine);
+}
+@supports (backdrop-filter: blur(1px)) {
+  .gls-card,
+  .gls-float,
+  .gls-panel,
+  .gls-pill,
+  .dir-glass .site-header__bar,
+  .dir-glass .site-header__menu {
+    background: linear-gradient(180deg, var(--glass-strong), var(--glass));
+    backdrop-filter: blur(18px) saturate(1.5);
+  }
+}
+
+/* ---------- Shared pieces, restyled ---------- */
+
+.dir-glass .site-header {
+  top: 0;
+  padding-top: 0.5rem;
+  border-bottom-color: transparent;
+}
+.dir-glass .site-header[data-scrolled] {
+  background: transparent;
+  backdrop-filter: none;
+  border-bottom-color: transparent;
+}
+.dir-glass .site-header__bar {
+  min-height: 60px;
+  padding-inline: 1rem;
+  border-radius: var(--radius-card);
+  box-shadow:
+    inset 0 1px 0 var(--glass-shine),
+    var(--shadow-soft);
+}
+.dir-glass .site-header__menu {
+  margin-top: 0.5rem;
+  padding-block: 0.25rem 1.25rem;
+  border-radius: var(--radius-card);
+}
+.dir-glass .site-header__menu .container-site {
+  padding-inline: 1.25rem;
+}
+.dir-glass .site-header__nav a:hover {
+  background: var(--glass-strong);
+}
+.dir-glass .site-footer {
+  border-top-color: var(--glass-edge);
+}
+.dir-glass .site-footer__meta {
+  border-top-color: var(--glass-edge);
+}
+
+.dir-glass .phone {
+  border-color: var(--glass-edge);
+  background: var(--glass-strong);
+  box-shadow:
+    inset 0 1px 0 var(--glass-shine),
+    var(--shadow-soft);
+}
+
+.dir-glass .contact {
+  justify-items: center;
+  text-align: center;
+}
+.dir-glass .contact__fallback {
+  justify-items: center;
+  border-top-color: var(--glass-edge);
+}
+.dir-glass .contact__row {
+  justify-content: center;
+}
+.dir-glass .contact__address {
+  background: var(--glass);
+  border-color: var(--glass-edge);
+}
+
+/* ---------- Type ---------- */
+
+.gls-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.gls-pill span {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--text);
+}
+
+.gls-h1,
+.gls-h2 {
+  margin: 0;
+  overflow-wrap: break-word;
+  font-weight: 600;
+  text-wrap: balance;
+}
+.gls-h1 {
+  max-width: 16ch;
+  font-size: clamp(2.5rem, 1.3rem + 5.2vw, 5.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+}
+.gls-h2 {
+  font-size: clamp(2rem, 1.3rem + 2.8vw, 3.5rem);
+  line-height: 1.06;
+  letter-spacing: -0.04em;
+}
+.gls-lead {
+  max-width: 34rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--text-lg);
+  text-wrap: pretty;
+}
+.gls-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 1.5rem;
+}
+
+/* ---------- Hero ---------- */
+
+.gls-hero {
+  position: relative;
+  padding-top: clamp(2.5rem, 6vw, 5rem);
+  overflow-x: clip;
+}
+/* The one glow, large and soft, behind the phone. */
+.gls-hero__glow {
+  position: absolute;
+  top: 34%;
+  left: 50%;
+  z-index: -1;
+  width: min(1200px, 150vw);
+  aspect-ratio: 1;
+  transform: translate(-50%, -20%);
+  background: radial-gradient(closest-side, var(--glow), transparent 72%);
+  filter: blur(24px);
+  pointer-events: none;
+}
+.gls-hero__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+.gls-hero__inner > .gls-actions {
+  margin-top: 0.5rem;
+}
+
+.gls-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  margin-top: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+  justify-items: center;
+}
+.gls-stage .gls-phone {
+  position: relative;
+  z-index: 1;
+}
+@media (min-width: 1024px) {
+  /* An auto grid column cannot resolve a percentage width, so give the phone a real one. */
+  .gls-stage .gls-phone {
+    width: 19rem;
+  }
+}
+.gls-float {
+  display: none;
+  width: min(17rem, 100%);
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-card);
+  box-shadow:
+    inset 0 1px 0 var(--glass-shine),
+    var(--shadow-soft);
+  text-align: left;
+}
+.gls-float__title {
+  margin: 0 0 0.6rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.gls-float__row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--glass-edge);
+}
+.gls-float__avatar {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--glass-strong);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.gls-float__text {
+  display: grid;
+  min-width: 0;
+  font-size: 0.875rem;
+}
+.gls-float__text small {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Sections ---------- */
+
+.gls-section {
+  margin-top: var(--section-gap);
+}
+.gls-sechead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: 1rem;
+  margin-bottom: clamp(2rem, 4vw, 3.5rem);
+  text-align: center;
+}
+.gls-sechead__intro {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* ---------- Bento ---------- */
+
+.gls-bento {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.gls-card {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-radius: var(--radius-card);
+  transition:
+    transform var(--duration-hover) var(--ease-out),
+    border-color var(--duration-hover) var(--ease-out);
+}
+.gls-card:hover {
+  border-color: color-mix(in srgb, var(--text) 28%, transparent);
+  transform: translateY(-2px);
+}
+.gls-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.gls-card__icon {
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius-button);
+  background: var(--glass-strong);
+}
+.gls-card__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.gls-card__text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+.gls-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+.gls-chip {
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--glass-edge);
+  border-radius: 999px;
+  background: var(--glass);
+  font-size: 0.75rem;
+}
+.gls-bars {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.gls-bar {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.gls-bar i {
+  display: block;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text) 40%, transparent);
+}
+
+/* ---------- Closing ---------- */
+
+.gls-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: 1.5rem;
+  padding: clamp(1.75rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3rem);
+  border-radius: var(--radius-card);
+  box-shadow:
+    inset 0 1px 0 var(--glass-shine),
+    var(--shadow-soft);
+  text-align: center;
+}
+.gls-panel__contact {
+  width: 100%;
+  max-width: 34rem;
+  margin-top: 1rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--glass-edge);
+}
+
+@media (min-width: 640px) {
+  .gls-bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .gls-card--attendance,
+  .gls-card--settings {
+    grid-column: span 2;
+  }
+}
+@media (min-width: 1024px) {
+  .gls-bento {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .gls-card {
+    grid-column: span 2;
+  }
+  .gls-card--attendance {
+    grid-column: span 4;
+  }
+  .gls-card--settings {
+    grid-column: span 2;
+  }
+
+  .gls-stage {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 0;
+  }
+  .gls-float {
+    display: block;
+    position: relative;
+    z-index: 2;
+  }
+  .gls-float--left {
+    justify-self: end;
+    margin-right: -3.5rem;
+    transform: translateY(-3rem);
+  }
+  .gls-float--right {
+    justify-self: start;
+    margin-left: -3.5rem;
+    transform: translateY(4rem);
+  }
+}

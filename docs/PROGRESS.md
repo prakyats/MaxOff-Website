@@ -2,33 +2,32 @@
 
 ## Current state
 
-Phase 0 in progress on branch `claude/zealous-curie-92bmzb`: docs kit, Astro + Tailwind v4 + TypeScript strict scaffold, tokens and theme toggle, placeholder page and 404, `pnpm check` (typecheck, lint, format, build, budget, brand), Playwright + axe smoke tests, `wrangler.jsonc`, Worker stub, `.env.example`, CI workflow.
+- **Phase 0** is merged (PR #1). The owner connected Cloudflare Workers Builds: the Worker is `maxoff-website`, production at `maxoff-website.<account>.workers.dev`, previews at `<id>-maxoff-website.<account>.workers.dev`. Email Routing for hello@maxoff.in is live.
+- **Phase 1** (design directions) is in progress on `phase-1/design-directions`. The first slice (owner decisions, the developer credit and its brand check) is merged (PR #2). This slice adds the shared header, footer, contact block and Today screen, the fully static setup, the pre-launch noindex switch, and the three directions with a chooser at `/preview`.
 
 ## Next step
 
-1. Owner connects the repo to Cloudflare Workers Builds (steps in the Phase 0 PR) and confirms a preview URL works. No custom domain yet.
-2. Owner answers the open questions below.
-3. Phase 1: 2–3 design directions as preview pages.
+1. Get every test green, open the Phase 1 PR, share screenshots.
+2. The owner picks a direction. Then Phase 2 builds the full page in it and removes `/preview`.
 
 ## Decisions
 
-- **Stack versions:** Astro 7, Tailwind CSS 4, TypeScript 5.9 (TypeScript 7 is out but `astro check` and typescript-eslint do not support it yet), pnpm 12, Node 22.
-- **Fonts:** Geist and Geist Mono, variable, Latin subset only, copied into `public/fonts/` from the fontsource packages (SIL OFL). Preloaded, `font-display: swap`. Phase 1 may swap to Inter Tight.
-- **Theme default:** dark, following the system preference when the visitor has not chosen. Pending the owner's confirmation.
-- **URLs:** no trailing slashes (`build.format: 'file'` + Workers `auto-trailing-slash`).
-- **Worker routing:** only `/api/*` runs the Worker (`run_worker_first`); everything else is served straight from static assets. `keep_vars: true` so dashboard-set variables survive deploys.
-- **ESLint:** ESLint 10 with `eslint-plugin-astro` and `eslint-plugin-jsx-a11y-x` (the original jsx-a11y plugin does not support ESLint 10).
-- **Astro 7 preview in tests:** `astro preview` detaches into a background daemon when it detects an agent environment, and pnpm's wrapper puts the server in its own process group. Playwright therefore starts `node node_modules/astro/bin/astro.mjs preview --ignore-lock` directly, which stays in the foreground and stops cleanly.
+- **Stack:** Astro 7, Tailwind CSS 4, TypeScript 5.9 (TypeScript 7 is out but `astro check` and typescript-eslint do not support it yet), pnpm 12, Node 22.
+- **Not indexed until launch.** `PRE_LAUNCH` in `src/lib/launch.ts` (true) puts `noindex` on every page and `Disallow: /` in `robots.txt`. Phase 6 flips it. The workers.dev account subdomain contains a name the brand check bans, so docs use `<account>` instead of writing it.
+- **Branch builds need `"previews": {}`.** Cloudflare builds non-production branches with `npx wrangler preview` (production uses `npx wrangler deploy`). `wrangler preview` stops with "missing a `previews` block" unless `wrangler.jsonc` has one; it can be empty for a static site. This is what failed the first branch build on PR #3, after install and build had passed. `pnpm check:static` now requires the block.
+- **Fully static.** No form, no Worker, no third-party service, no API key, no environment variable. `wrangler.jsonc` holds static assets only. `pnpm check:static` fails on a Worker directory, Worker config, any address other than the contact address, or an address or plain mailto link in the built site.
+- **Contact is email only** (hello@maxoff.in, forwarded to the owner's inbox in Cloudflare). Every character of the address is written as an HTML entity by `src/lib/contact.ts`; Copy email assembles it at runtime from parts.
+- **Developer credit** and the brand rule: see `CLAUDE.md` rule 1. `pnpm check:brand` allows exactly one string, in two files; `pnpm test:scripts` tests it.
+- **Fonts:** Geist and Geist Mono (Vercel, SIL OFL) and Inter Tight (SIL OFL), variable, Latin subset, copied into `public/fonts/` from fontsource, preloaded, `font-display: swap`. No Adobe Fonts.
+- **Icons:** Lucide via `@lucide/astro`, 1.5px stroke, imported one by one.
+- **Theme:** dark by default, following the system; the choice is kept in the visitor's own browser storage.
+- **URLs:** no trailing slashes (`build.format: 'file'` and `auto-trailing-slash`).
+- **One red button per view.** The header's Request a demo shows only while no other primary button is on screen (it starts collapsed, and a small IntersectionObserver script sets `html[data-header-cta]` when no other primary button is visible).
+- **Astro 7 preview in tests:** `astro preview` detaches into a background daemon when it detects an agent environment, and pnpm's wrapper puts the server in its own process group. Playwright starts `node node_modules/astro/bin/astro.mjs preview --ignore-lock` directly, which stays in the foreground and stops cleanly.
 - **Playwright in sandboxes:** set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to a local Chromium when Playwright's own download is unavailable; CI installs Playwright's Chromium normally.
-- **Brand check:** `scripts/check-brand.mjs` scans tracked files and `dist/`; the banned term is stored as joined fragments so the check never trips on itself.
-- **Session skills:** none of the §10 plugins (`marketing`, `design`, `frontend-design`, `cloudflare`, `adobe-for-creativity`, `impeccable`, `agent-skills`) are enabled in this session. The first five exist in the catalog and can be enabled by the owner; `impeccable` and `agent-skills` are not in the catalog. The competitive-brief refinement of `docs/BRIEF.md` §2 is deferred until the marketing plugin is available.
+- **ESLint:** ESLint 10 with `eslint-plugin-astro` and `eslint-plugin-jsx-a11y-x` (the original jsx-a11y plugin does not support ESLint 10).
+- **Session skills:** none of the §10 plugins are enabled in this session. `marketing`, `design`, `frontend-design` and `Cloudflare` exist in the catalog and the owner is enabling them; `impeccable` and `agent-skills` are not in the catalog and will be run from a local session. The competitive-brief refinement of `docs/BRIEF.md` §2 is deferred until the marketing plugin is available.
 
-## Open questions (asked in the Phase 0 PR / session)
+## Open questions
 
-1. Headline (3 options offered) and positioning line (2 options offered).
-2. Form fields as in §8, and the inbox address for leads (`LEADS_TO`).
-3. Show "Sign in" in the header now?
-4. Footer: "© MaxOff" only, or a founder or company name?
-5. Default theme: dark following the system?
-6. Sending address for lead emails (`hello@maxoff.in` needs domain verification in Resend).
-7. Clarifications on §1: what a Staff member sees of Attendance for others ("who's in"); whether Admins approve anything today; whether comp-leave credits are earned automatically or granted by the Owner.
+None open. Answered on 29 Sep 2026: direction Instrument with two borrowings; keep "We usually reply within two working days." under the contact block; keep both closing headings; one plain line about the theme choice on the privacy page. Phase 3 note: the footer Privacy link shows the 404 page until `/privacy` exists.

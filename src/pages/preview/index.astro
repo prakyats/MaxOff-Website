@@ -1,0 +1,147 @@
+---
+/** Phase 1 only: a page to compare the three design directions. Removed in Phase 2. */
+import ArrowRight from '@lucide/astro/icons/arrow-right';
+import PreviewBar from '../../components/PreviewBar.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import Base from '../../layouts/Base.astro';
+
+const directions = [
+  {
+    n: '1',
+    name: 'Instrument',
+    href: '/preview/instrument',
+    text: 'A strict grid, mono labels and hairlines everywhere. Dense and precise, like a control panel. The features sit in one shared-border table.',
+    fonts: 'Geist and Geist Mono',
+  },
+  {
+    n: '2',
+    name: 'Glass',
+    href: '/preview/glass',
+    text: 'Depth and soft light. Frosted surfaces, a large red glow behind a floating phone, and a bento of cards with small illustrations.',
+    fonts: 'Geist and Geist Mono',
+  },
+  {
+    n: '3',
+    name: 'Editorial',
+    href: '/preview/editorial',
+    text: 'Big type and whitespace, almost no boxes. A giant headline, a cropped phone, and the features as a numbered list.',
+    fonts: 'Inter Tight and Geist Mono',
+  },
+] as const;
+---
+
+<Base
+  title="Design directions: MaxOff"
+  description="Three design directions for the MaxOff website."
+  path="/preview"
+  noindex
+>
+  <PreviewBar current="index" />
+  <SiteHeader showNav={false} homeHref="/preview" />
+
+  <main id="main" class="container-site chooser">
+    <p class="chooser__eyebrow">Phase 1</p>
+    <h1 class="chooser__title">Three design directions</h1>
+    <p class="chooser__lead">
+      Each preview has the header with Sign in, the hero with Request a demo, the Live features, the
+      closing section with contact by email, and the footer with the developer credit. Use the
+      toggle in the footer for light and dark, and resize the window to see phone widths. In the
+      header, only "What it does" links anywhere yet; the other section links arrive in Phase 2.
+    </p>
+
+    <ol class="chooser__list">
+      {directions.map((d) => (
+        <li class="chooser__item">
+          <span class="chooser__n" aria-hidden="true">
+            {d.n}
+          </span>
+          <div>
+            <h2 class="chooser__name">{d.name}</h2>
+            <p>{d.text}</p>
+            <p class="chooser__fonts">{d.fonts}</p>
+          </div>
+          <a class="button-outline" href={d.href}>
+            Open {d.name}
+            <ArrowRight size={16} stroke-width={1.5} aria-hidden="true" class="chooser__arrow" />
+          </a>
+        </li>
+      ))}
+    </ol>
+  </main>
+
+  <SiteFooter />
+</Base>
+
+<style>
+  .chooser {
+    padding-block: clamp(2.5rem, 7vw, 5rem) 0;
+  }
+  .chooser__eyebrow {
+    margin: 0 0 1rem;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .chooser__title {
+    margin: 0;
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+  }
+  .chooser__lead {
+    max-width: 44rem;
+    margin: 1.5rem 0 0;
+    color: var(--muted);
+  }
+  .chooser__list {
+    display: grid;
+    gap: 1rem;
+    margin: 3rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .chooser__item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem 1.5rem;
+    align-items: center;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: var(--surface);
+  }
+  .chooser__n {
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+  .chooser__name {
+    margin: 0 0 0.5rem;
+    font-size: var(--text-xl);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  .chooser__item p {
+    max-width: 40rem;
+    margin: 0;
+    color: var(--muted);
+  }
+  .chooser__item .chooser__fonts {
+    margin-top: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+  }
+  .chooser__arrow {
+    margin-left: 0.5rem;
+  }
+  @media (min-width: 768px) {
+    .chooser__item {
+      grid-template-columns: 2rem minmax(0, 1fr) auto;
+    }
+  }
+</style>

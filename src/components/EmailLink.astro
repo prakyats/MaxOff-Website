@@ -1,0 +1,29 @@
+---
+/**
+ * A mailto: link whose address never appears as a plain string in the built HTML (see
+ * src/lib/contact.ts). The link text is the slot. Output is raw HTML, so the href can be written
+ * entirely as entities. `kind="demo"` adds the subject and prefilled body.
+ */
+import { contact } from '../content/copy';
+import { demoMailto, entities, plainMailto } from '../lib/contact';
+
+interface Props {
+  kind?: 'demo' | 'plain';
+  class?: string;
+  /** Mark as the one primary button, so the header's copy of it hides while this is on screen. */
+  primary?: boolean;
+  /** Add a screen-reader-only note that the link opens an email. */
+  hint?: boolean;
+}
+
+const { kind = 'demo', class: className = '', primary = false, hint = false } = Astro.props;
+
+const inner = await Astro.slots.render('default');
+const href = entities(kind === 'demo' ? demoMailto() : plainMailto());
+const note = hint ? ` <span class="sr-only">(${contact.opensEmail})</span>` : '';
+const attributes = [`class="${className}"`, `href="${href}"`, primary ? 'data-primary-cta' : '']
+  .filter(Boolean)
+  .join(' ');
+---
+
+<Fragment set:html={`<a ${attributes}>${inner}${note}</a>`} />

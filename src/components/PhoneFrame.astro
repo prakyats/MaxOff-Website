@@ -1,0 +1,15 @@
+---
+/** A phone frame, recreated in HTML/CSS. The screen inside is an illustration, not the real app. */
+interface Props {
+  label: string;
+  class?: string;
+}
+
+const { label, class: className } = Astro.props;
+---
+
+<div class:list={['phone', className]} role="img" aria-label={label}>
+  <div class="phone__screen">
+    <slot />
+  </div>
+</div>

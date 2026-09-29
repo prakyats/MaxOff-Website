@@ -1,0 +1,82 @@
+---
+/**
+ * The Owner's Today screen, recreated in HTML/CSS with demo data (Northwind Studio, invented
+ * first names). Sizes use container units so the whole screen scales with its phone frame.
+ * Only live features appear: attendance, leave, expense claims, comp leave. No tasks.
+ */
+import Calendar from '@lucide/astro/icons/calendar';
+import House from '@lucide/astro/icons/house';
+import Receipt from '@lucide/astro/icons/receipt';
+import Users from '@lucide/astro/icons/users';
+import { todayScreen as t } from '../../content/copy';
+
+const tabIcons = [House, Users, Calendar, Receipt];
+---
+
+<div class="today">
+  <div class="today__status">
+    <span>
+      {t.time} {t.zone}
+    </span>
+  </div>
+  <div class="today__head">
+    <div>
+      <p class="today__title">{t.title}</p>
+      <p class="today__date">{t.date}</p>
+    </div>
+    <p class="today__company">{t.company}</p>
+  </div>
+
+  <div class="today__day">
+    <div>
+      <p class="today__day-label">{t.day.label}</p>
+      <p class="today__day-status">{t.day.status}</p>
+    </div>
+    <span class="today__pill">{t.day.action}</span>
+  </div>
+
+  <div class="today__section">
+    <div class="today__section-head">
+      <span>{t.waiting.heading}</span>
+      <span class="today__count">{t.waiting.items.length}</span>
+    </div>
+    {t.waiting.items.map((item) => (
+      <div class="today__row">
+        <span class="today__avatar">{item.who.slice(0, 1)}</span>
+        <div class="today__row-text">
+          <p class="today__row-title">
+            {item.who}: {item.kind}
+          </p>
+          <p class="today__row-sub">{item.what}</p>
+        </div>
+        <span class="today__pill today__pill--quiet">{t.waiting.action}</span>
+      </div>
+    ))}
+  </div>
+
+  <div class="today__section">
+    <div class="today__section-head">
+      <span>{t.board.heading}</span>
+    </div>
+    <div class="today__board">
+      {t.board.people.map((person) => (
+        <div class="today__person">
+          {person.name}
+          <span>{person.since ? `${person.state} since ${person.since}` : person.state}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="today__tabs">
+    {t.tabs.map((label, i) => {
+      const Icon = tabIcons[i];
+      return (
+        <span class:list={['today__tab', { 'today__tab--on': i === 0 }]}>
+          {Icon && <Icon stroke-width={1.5} aria-hidden="true" />}
+          {label}
+        </span>
+      );
+    })}
+  </div>
+</div>

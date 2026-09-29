@@ -1,0 +1,6 @@
+---
+/** The address as text, written as entities so it is not a plain string in the built HTML. */
+import { address, entities } from '../lib/contact';
+---
+
+<Fragment set:html={entities(address())} />
