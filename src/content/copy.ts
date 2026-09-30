@@ -175,7 +175,7 @@ export const comingFeatures = [
   {
     key: 'work',
     title: 'Work submission',
-    text: 'Crew hand in their files at full quality, never re-encoded, and originals are kept.',
+    text: 'Crew members hand in their files at full quality, never re-encoded, and originals are kept.',
   },
   {
     key: 'revenue',
