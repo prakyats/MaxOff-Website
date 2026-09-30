@@ -309,6 +309,160 @@ for (const path of [HOME]) {
   });
 }
 
+// ---------- Touch: every control works on a phone (the phone project has a touchscreen) ----------
+
+/** Records which control each tap reached, and stops mailto: links from leaving the page. */
+async function recordTaps(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const taps: string[] = [];
+    (window as unknown as { __taps: string[] }).__taps = taps;
+    document.addEventListener(
+      'click',
+      (event) => {
+        const control = (event.target as Element).closest('a, button');
+        taps.push(control?.getAttribute('href') ?? control?.textContent?.trim() ?? 'nothing');
+        if (control?.getAttribute('href')?.startsWith('mailto:')) event.preventDefault();
+      },
+      true,
+    );
+  });
+}
+
+async function taps(page: Page): Promise<string[]> {
+  return page.evaluate(() => (window as unknown as { __taps: string[] }).__taps);
+}
+
+test.describe('on a phone', () => {
+  test.skip(({ hasTouch }) => !hasTouch, 'needs a touchscreen: the phone project has one');
+
+  test('the hero buttons take the tap, not the glow behind the phone', async ({ page }) => {
+    await recordTaps(page);
+    await page.goto(HOME);
+    await page.locator('.mo-hero .button-primary').tap();
+    await page.locator('.mo-hero .link-arrow').tap();
+    const reached = await taps(page);
+    expect(reached[0]).toMatch(/^mailto:/);
+    expect(reached[1]).toBe('#how');
+  });
+
+  test('section links from the menu land below the sticky header', async ({ page }) => {
+    await page.goto(HOME);
+    for (const [label, id] of [
+      ['What it does', 'what'],
+      ['How it works', 'how'],
+      ['Roles', 'roles'],
+      ['Trust', 'trust'],
+    ] as const) {
+      await page.getByRole('button', { name: 'Menu' }).tap();
+      await page.locator('#site-menu').getByRole('link', { name: label }).tap();
+      await expect(page.locator('#site-menu')).toBeHidden();
+      await expect
+        .poll(
+          () =>
+            page.evaluate((id) => {
+              const section = document.getElementById(id)!.getBoundingClientRect().top;
+              const header = document.querySelector('.site-header')!.getBoundingClientRect().bottom;
+              return section - header;
+            }, id),
+          { timeout: 4000 },
+        )
+        .toBeGreaterThanOrEqual(0);
+    }
+  });
+
+  for (const [name, zoom] of [
+    ['normal text', ''],
+    ['200% text', 'html{font-size:200%}'],
+  ] as const) {
+    test(`in landscape with ${name}, the whole menu can be reached`, async ({ page }) => {
+      await page.setViewportSize({ width: 740, height: 360 });
+      await page.goto(HOME);
+      if (zoom) await page.addStyleTag({ content: zoom });
+      // Wide enough for the bar's Request a demo, which shows while the hero's is off screen.
+      const barDemo = page.locator('.site-header__demo');
+      await expect(barDemo).toBeVisible();
+      await page.getByRole('button', { name: 'Menu' }).tap();
+      // One red button per view: the menu has its own, so the bar's collapses while it is open.
+      await expect(barDemo).toBeHidden();
+      const signIn = page.locator('#site-menu').getByRole('link', { name: 'Sign in' });
+      await signIn.scrollIntoViewIfNeeded();
+      await expect(signIn).toBeInViewport({ ratio: 1 });
+      await expect(
+        page.locator('#site-menu').getByRole('link', { name: /Request a demo/ }),
+      ).toBeInViewport();
+      await page.keyboard.press('Escape');
+      await expect(barDemo).toBeVisible();
+    });
+  }
+
+  test('the menu, Pause, Copy email and the theme toggle respond to taps', async ({
+    page,
+    context,
+  }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await recordTaps(page);
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await page.goto(HOME);
+    await revealAll(page);
+
+    const menuButton = page.getByRole('button', { name: 'Menu' });
+    await menuButton.tap();
+    await expect(menuButton).toHaveAttribute('aria-expanded', 'true');
+    await page
+      .locator('#site-menu')
+      .getByRole('link', { name: /Request a demo/ })
+      .tap();
+    await expect(page.locator('#site-menu')).toBeHidden();
+
+    const pause = page.locator('[data-loop-pause]'); // its label flips to "Play animation"
+    await expect(pause).toHaveText('Pause animation');
+    await pause.tap();
+    await expect(pause).toHaveAttribute('aria-pressed', 'true');
+    await expect(pause).toHaveText('Play animation');
+
+    await page.locator('[data-copy]').tap();
+    await expect(page.locator('[data-copy-status]')).toHaveText('Email address copied.');
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(ADDRESS);
+
+    await page.getByRole('button', { name: 'Switch to light theme' }).tap();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+
+    await page.locator('.contact__cta').tap();
+    expect((await taps(page)).filter((tap) => tap.startsWith('mailto:'))).toHaveLength(2);
+  });
+
+  for (const path of PAGES) {
+    test(`${path}: every link and button is at least 44px tall and wide`, async ({ page }) => {
+      await page.goto(path);
+      await revealAll(page);
+      await page.getByRole('button', { name: 'Menu' }).tap();
+      const small = await page.evaluate(() =>
+        [...document.querySelectorAll<HTMLElement>('a[href], button')]
+          .filter((el) => {
+            const style = getComputedStyle(el);
+            const box = el.getBoundingClientRect();
+            return (
+              box.width > 0 &&
+              box.height > 0 &&
+              style.visibility !== 'hidden' &&
+              style.pointerEvents !== 'none' &&
+              !el.closest('[hidden]')
+            );
+          })
+          .map((el) => {
+            const box = el.getBoundingClientRect();
+            return `${el.textContent?.trim().slice(0, 24) ?? ''} ${Math.round(box.width)}x${Math.round(box.height)}`;
+          })
+          .filter((entry) => {
+            const [width, height] = entry.split(' ').pop()!.split('x').map(Number);
+            return (width ?? 0) < 44 || (height ?? 0) < 44;
+          }),
+      );
+      expect(small).toEqual([]);
+    });
+  }
+});
+
 // ---------- Live: crawlable, except the 404 page ----------
 
 test('robots.txt allows crawling and points at the sitemap on maxoff.in', async ({ request }) => {

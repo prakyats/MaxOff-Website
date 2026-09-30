@@ -123,6 +123,8 @@
   z-index: -1;
   background: radial-gradient(closest-side, var(--glow), transparent);
   filter: blur(30px);
+  /* It reaches over the hero's buttons when the device sits below the copy; taps must pass through. */
+  pointer-events: none;
 }
 
 .mo-frame {

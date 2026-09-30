@@ -71,7 +71,7 @@ The site is fully static and contact is email only. Most of this is built into t
 
 **Acceptance:** Lighthouse 95+ across the four categories on mobile; budgets met; no open a11y findings.
 
-**Status:** postponed by the owner until after launch; it will be a follow-up PR.
+**Status:** postponed by the owner until after launch. First slice, `phase-5/mobile-controls`: every control checked by touch on phone profiles (portrait, landscape, 200 % text). Fixed: the hero's buttons took no taps because the glow behind the phone covered them (`pointer-events: none` on the glow); the open menu was cut off on short screens and its last buttons unreachable (the header scrolls inside itself while the menu is open); section links landed under the sticky header (`scroll-padding-top`); the logo link, skip link and the contact block's inline Sign in were under 44 px. Touch tests added (tap, not click), phone project only.
 
 ## Phase 6: Launch
 

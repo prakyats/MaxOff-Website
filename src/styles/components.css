@@ -136,8 +136,24 @@
     padding-block: 0.5rem;
   }
   .site-header__brand {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
     border-radius: 8px;
     text-decoration: none;
+  }
+  /*
+    A sticky header taller than the screen can never be scrolled into view, so on a short screen
+    (a phone in landscape, or large text) the open menu would lose its last buttons. While the menu
+    is open the header scrolls inside itself instead. The script sets data-menu-open.
+  */
+  @media (max-width: 1023.98px) {
+    .site-header[data-menu-open] {
+      max-height: 100vh;
+      max-height: 100dvh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
   }
   .site-header__nav {
     display: none;
@@ -205,6 +221,15 @@
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+  }
+  /* The open menu holds its own Request a demo: one red button per view, so the bar's collapses. */
+  html[data-header-cta] .site-header[data-menu-open] .site-header__actions .site-header__demo {
+    max-width: 0;
+    margin-left: -0.5rem;
+    padding-inline: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
   }
 
   .site-header__menu-button {
@@ -422,6 +447,8 @@
     font-size: 0.9375rem;
   }
   .contact__signin a {
+    /* Vertical padding on an inline link enlarges the tap area without changing the line. */
+    padding-block: 0.8rem;
     color: var(--text);
     text-decoration: underline;
     text-underline-offset: 3px;
