@@ -59,7 +59,7 @@ export const icons = {
   // Roles
   owner: Crown,
   admin: Shield,
-  staff: User,
+  crew: User,
   // Trust
   'trust-invite': Link2,
   'trust-history': Archive,

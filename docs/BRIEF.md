@@ -10,7 +10,7 @@ The app is a separate product at https://app.maxoff.in. This repository is only 
 
 ### Hard facts about the product (use only these; never invent features)
 
-**Roles:** exactly three: **Owner** (one per company), **Admin**, **Staff**. Job titles are just labels, not permissions.
+**Roles:** exactly three: **Owner** (one per company), **Admin**, **Crew**. Job titles are just labels, not permissions.
 
 **Live now:**
 
@@ -29,9 +29,9 @@ The app is a separate product at https://app.maxoff.in. This repository is only 
 - **Approvals that end with the Owner:** Done → approving Admin (if any) → **Owner**. Final completion is always the Owner's.
 - **Notifications and reminders:** in-app, push to the phone, email for the important few; escalations when a task is not acknowledged; quiet hours at night.
 - **Dashboards and calendar** for each role.
-- **Client projects:** recurring client work (projects → cycles → items) kept separate from staff tasks.
+- **Client projects:** recurring client work (projects → cycles → items) kept separate from crew tasks.
 - **Work submission** with original-quality files.
-- **Owner-only revenue and reports:** money is visible to the Owner only, never to Admins or Staff.
+- **Owner-only revenue and reports:** money is visible to the Owner only, never to Admins or Crew.
 
 **True principles the site may state:**
 
@@ -46,8 +46,8 @@ The app is a separate product at https://app.maxoff.in. This repository is only 
 
 ### Clarifications from the owner (29 Sep 2026): use exactly these
 
-- **Who's in today:** the Owner sees everyone's day (a people board on Today). Admins can see today's presence and availability, but not attendance history. Staff see only their own day. The hero phone shows the Owner's Today.
-- **Admins:** they mark their own attendance and request leave like Staff, see the team list and availability, edit the clients assigned to them (details, contacts, brand, custom fields), and manage lists and templates. They never decide attendance or leave, and never see money. Coming with tasks: they create and assign tasks, do the Admin approval step before the Owner's, and get work reports for their own scope.
+- **Who's in today:** the Owner sees everyone's day (a people board on Today). Admins can see today's presence and availability, but not attendance history. Crew see only their own day. The hero phone shows the Owner's Today.
+- **Admins:** they mark their own attendance and request leave like Crew, see the team list and availability, edit the clients assigned to them (details, contacts, brand, custom fields), and manage lists and templates. They never decide attendance or leave, and never see money. Coming with tasks: they create and assign tasks, do the Admin approval step before the Owner's, and get work reports for their own scope.
 - **Comp leave:** never automatic. A person adds an extra-work note (for example "I worked on a day off"), and the Owner grants ½ or 1 day, or nothing. The Owner can also grant comp leave at any time. Credits expire at the end of the calendar month, and using one is a leave request the Owner approves.
 - **Expense claims:** the member adds a claim (a receipt photo is required above an amount the Owner sets), the Owner approves or rejects it, then marks it paid. Expenses belong under "What's waiting on me".
 - **Month summary:** Owner-only (per person and a team report). Each person sees only their own recent attendance, comp leave credits and claims.
@@ -94,6 +94,7 @@ These supersede `docs/BRIEF-ORIGINAL.md` where they differ.
 - **Phase 3 copy review (29 Sep 2026):** copy approved with these edits. Q3 answer: "Days to approve, leave requests, comp leave and expense claims wait in one place, and the final say is yours." Role taglines: Admin "Runs clients and work, day to day."; Staff "The people doing the work." Backups: "Encrypted every night and kept for a month." "Add it to your home screen. There is no app store." is approved.
 - **Privacy page, final text:** intro "This site collects very little." Four items. _No form data_: "There is no form on this site, so none is collected." _Analytics_: "We count visits with cookie-less analytics. No cookies are set." and "Like any website, our host processes technical data such as IP addresses to deliver these pages; it is not used to track you." _Your theme choice_: the plain line about the visitor's own browser. _Email_: "Emails to hello@maxoff.in are answered by Pixora Agencies, the developer of MaxOff and the data controller for those emails." (the address is written as entities in the page).
 - **Web Analytics:** the owner enables Cloudflare Web Analytics at launch (listed as an owner step in Phase 6 of `docs/ROADMAP.md`). Until then the Analytics line stays as it is.
+- **Role name (30 Sep 2026):** the third role is called **Crew**, not Staff, everywhere on the site: the Roles section, the role lists, all copy, the phone mock-ups and the social image. Owner and Admin stay. The facts about the role are unchanged. The Work submission card reads "Crew members hand in their files at full quality, never re-encoded, and originals are kept." The earlier dated entries in this section say Staff; read Crew.
 - **Fonts:** Google Fonts, self-hosted (Geist and Geist Mono). No Adobe Fonts.
 
 ## 4. Demo data

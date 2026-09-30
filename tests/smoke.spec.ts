@@ -936,7 +936,7 @@ test.describe('the page', () => {
   }) => {
     await page.goto(HOME);
     await revealAll(page);
-    await expect(page.locator('#roles .mo-role__name')).toHaveText(['Owner', 'Admin', 'Staff']);
+    await expect(page.locator('#roles .mo-role__name')).toHaveText(['Owner', 'Admin', 'Crew']);
     await expect(page.locator('#roles')).toContainText('Money stays with the owner.');
     const admin = page.locator('#roles .mo-role').nth(1);
     await expect(admin).toContainText('Decides attendance or leave.');
@@ -944,6 +944,14 @@ test.describe('the page', () => {
     // Admin tasks are Coming, not live.
     const adminSoon = admin.locator('.mo-list--soon');
     await expect(adminSoon).toContainText('Creates and assigns tasks.');
+  });
+
+  test('the third role is Crew everywhere: no page says Staff', async ({ request }) => {
+    for (const path of PAGES) {
+      const html = await (await request.get(path)).text();
+      expect(html).not.toMatch(/\bstaff\b/i);
+    }
+    expect(await (await request.get(HOME)).text()).toContain('Owner, Admin, Crew');
   });
 
   test('the closing section keeps both headings and the reply line', async ({ page }) => {
@@ -973,18 +981,18 @@ test.describe('the page', () => {
     }
   });
 
-  test('the dark phone is the Staff view and the light phone is the Owner deciding a request', async ({
+  test('the dark phone is the Crew view and the light phone is the Owner deciding a request', async ({
     page,
   }) => {
     await page.goto(HOME);
     const [dark, light] = await page.locator('#app .phone').all();
-    const staff = (await dark?.textContent()) ?? '';
-    expect(staff).toContain('My day');
-    expect(staff).toContain('Started working?');
-    expect(staff).toContain('Start day');
-    expect(staff).toContain('This week');
+    const crew = (await dark?.textContent()) ?? '';
+    expect(crew).toContain('My day');
+    expect(crew).toContain('Started working?');
+    expect(crew).toContain('Start day');
+    expect(crew).toContain('This week');
     // The hero shows the Owner's Today, so the app section adds a different view.
-    expect(staff).not.toContain('Waiting on you');
+    expect(crew).not.toContain('Waiting on you');
     const owner = (await light?.textContent()) ?? '';
     expect(owner).toContain('Leave request');
     expect(owner).toContain('Approve');
@@ -992,7 +1000,7 @@ test.describe('the page', () => {
     expect(owner).not.toContain('Decline');
     expect(owner).not.toContain('Recorded next to the original');
     await expect(page.locator('#app figcaption')).toHaveText([
-      'Staff view, dark theme',
+      'Crew view, dark theme',
       'Owner view, light theme',
     ]);
   });

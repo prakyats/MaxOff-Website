@@ -5,12 +5,13 @@
 - **Phases 0 to 4 are done and merged** (Phase 3 in PR #5; contact by email confirmed working by the owner). Phase 5 (polish) is postponed until after launch.
 - **Phase 6 (launch) is merged** (PR #6): the pre-launch switch is off and `wrangler.jsonc` has the custom domains `maxoff.in` and `www.maxoff.in`. The owner's post-merge steps (DNS cleanup, the www redirect rule, Web Analytics, the verification checklist) are in `docs/ROADMAP.md` Phase 6.
 - **Phase 5, first slice** (mobile controls, PR #7) is merged.
-- **Phase 5, second slice** on `phase-5/audit`: Lighthouse and an accessibility audit past axe. Lighthouse 100 across the four categories locally with production-like compression; five defects fixed (task loop idle cost, a forced layout at load, light-theme button borders, and two forced-colours problems), each with a test.
+- **Phase 5, second slice** (Lighthouse and an accessibility audit past axe, PR #8) is merged: Lighthouse 100 across the four categories locally with production-like compression; five defects fixed, each with a test.
+- **The third role is now Crew** (owner decision, 30 Sep 2026; `docs/BRIEF.md` §3), on `copy/crew-role`: every "Staff" on the site, in the phone mock-up caption and on the social image now says Crew. The facts are unchanged. A test fails if "staff" appears on any page.
 - Cloudflare: the Worker is `maxoff-website`. Email Routing for hello@maxoff.in is live.
 
 ## Next step
 
-1. The owner merges the audit PR, then runs PageSpeed Insights on https://maxoff.in (mobile) and checks the site on an iPhone in Safari: tap the hero's Request a demo, open the menu in landscape.
+1. The owner merges the Crew PR, runs PageSpeed Insights on https://maxoff.in (mobile) and checks the site on an iPhone in Safari: tap the hero's Request a demo, open the menu in landscape.
 2. The owner's critique and polish pass (the design skills run from a local session), and the Phase 6 owner steps still open (the www redirect rule, Web Analytics).
 
 ## Decisions
@@ -28,7 +29,7 @@
 - **URLs:** no trailing slashes (`build.format: 'file'` and `auto-trailing-slash`).
 - **The task loop** animates a registered custom property (`--on`) so dots and names fade in turn. It runs only when scripting is on and motion is allowed, has a Pause button (WCAG 2.2.2), and reads as a plain ordered list otherwise. Under reduced motion all four steps show as complete.
 - **Coming cards** (seven) use a dashed badge, a faint hatch and muted titles: dimmed, never green.
-- **The light and dark phone pair** (Staff My day in dark, Owner leave request in light; the hero keeps the Owner's Today) forces each frame's tokens (`.phone--dark`, `.phone--light`), so the pair is the same in either page theme.
+- **The light and dark phone pair** (Crew My day in dark, Owner leave request in light; the hero keeps the Owner's Today) forces each frame's tokens (`.phone--dark`, `.phone--light`), so the pair is the same in either page theme.
 - **One red button per view.** The header's Request a demo shows only while no other primary button is on screen (it starts collapsed, and a small IntersectionObserver script sets `html[data-header-cta]` when no other primary button is visible).
 - **Social image and icons are drawn at build time** by endpoints (`src/pages/og.png.ts`, `apple-touch-icon.png.ts`, `favicon.ico.ts`): satori turns an element tree into SVG, `@resvg/resvg-js` turns that into PNG, and the fonts are the static `.woff` files from `@fontsource/geist` and `@fontsource/geist-mono`, read from `node_modules` relative to the project root. They are dev dependencies only and nothing from them ships to the browser. `src/lib/brand-mark.ts` holds the one drawing of the logo mark (used by the images) and `src/lib/render.ts` the PNG and ICO helpers. The image says MaxOff, never the developer.
 - **Structured data** is one JSON-LD `SoftwareApplication` (name, url, description, category "BusinessApplication", operating system "Web") on the home page only. No ratings, offers, author or publisher, so no company name appears in any `<head>`.

@@ -30,8 +30,8 @@ The build emits `privacy.html`-style files (`build.format: 'file'`) and Cloudfla
 3. **The three questions.** Three cards, each question in large type with the one-line answer beneath: _Who's in today?_ / _Did they actually see the task?_ / _What's waiting on me?_
 4. **What it does (Live).** Feature cards with a **Live** badge: Attendance, Leave, Comp leave, Expense claims, Month summary, Clients, People, Settings. Each: icon, title, one sentence.
 5. **Coming next.** The same card style, dimmed, with a **Coming** badge: Tasks with "Noted", Owner-final approvals, Notifications & reminders, Dashboards & calendar, Client projects, Work submission, Owner-only revenue & reports. One short loop animation: a task card moving _Assigned → Noted → Done → Approved_.
-6. **Feels like an app.** Installs from the browser, no app store; back gesture like a native app; light and dark; works on any modern phone. Visual: two phone frames, the Staff's My day (dark) and the Owner deciding a leave request (light), so with the hero's Owner Today a visitor sees both the Owner view and the team view.
-7. **Three roles.** Owner / Admin / Staff side by side: what each sees and does. Includes the line **"Money stays with the owner."**
+6. **Feels like an app.** Installs from the browser, no app store; back gesture like a native app; light and dark; works on any modern phone. Visual: two phone frames, the Crew's My day (dark) and the Owner deciding a leave request (light), so with the hero's Owner Today a visitor sees both the Owner view and the team view.
+7. **Three roles.** Owner / Admin / Crew side by side: what each sees and does. Includes the line **"Money stays with the owner."**
 8. **Trust.** Invite-only; history never overwritten; every change recorded; permissions enforced by the database; nightly encrypted backups; clients never log in. No certifications or numbers.
 9. **How it starts.** Three steps: _Invite your team by link → They tap Start day → You decide._
 10. **Closing and contact.** Headline "The final say is yours." and one short line, "Built by a working studio, used by its team every day." Then the contact block, headed "Tell us about your studio": one sentence asking for name, studio, team size and what to fix first; the **Request a demo** button, which opens an email to hello@maxoff.in with the subject "MaxOff demo request" and a short prefilled body; the address as text; a **Copy email** control for people with no mail app. Under it: "Already on MaxOff? Sign in". There is no form.
@@ -42,7 +42,7 @@ Every section must work at 360, 390, 430, 768, 1280 and 1440px wide, in both the
 ## Recreated app screens (HTML/CSS, never screenshots)
 
 - **Today** (hero): Start day strip, pending approvals, who's in (the Owner's view).
-- **My day** (Feels like an app, dark): the Staff view, a "Started working?" prompt with Start day, and their own week.
+- **My day** (Feels like an app, dark): the Crew view, a "Started working?" prompt with Start day, and their own week.
 - **A leave request** (Feels like an app, light): the Owner deciding, with Approve and Reject.
 - **A task card** (Coming section): Assigned → Noted → Done → Approved.
 
