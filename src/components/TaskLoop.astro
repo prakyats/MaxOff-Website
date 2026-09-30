@@ -38,7 +38,19 @@ import { badges, taskLoop } from '../content/copy';
 </div>
 
 <script>
+  // Run the animation only while the loop is on screen (see the task loop in sections.css).
+  const onScreen =
+    'IntersectionObserver' in window
+      ? new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            entry.target.toggleAttribute('data-inview', entry.isIntersecting);
+          }
+        })
+      : null;
+
   for (const loop of document.querySelectorAll<HTMLElement>('[data-loop]')) {
+    if (onScreen) onScreen.observe(loop);
+    else loop.setAttribute('data-inview', '');
     const button = loop.querySelector<HTMLButtonElement>('[data-loop-pause]');
     if (!button) continue;
     button.addEventListener('click', () => {

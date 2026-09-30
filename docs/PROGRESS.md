@@ -4,13 +4,14 @@
 
 - **Phases 0 to 4 are done and merged** (Phase 3 in PR #5; contact by email confirmed working by the owner). Phase 5 (polish) is postponed until after launch.
 - **Phase 6 (launch) is merged** (PR #6): the pre-launch switch is off and `wrangler.jsonc` has the custom domains `maxoff.in` and `www.maxoff.in`. The owner's post-merge steps (DNS cleanup, the www redirect rule, Web Analytics, the verification checklist) are in `docs/ROADMAP.md` Phase 6.
-- **Phase 5, first slice** on `phase-5/mobile-controls`: mobile controls. Measured by touch on phone profiles; four defects fixed (below, Decisions) and touch tests added.
+- **Phase 5, first slice** (mobile controls, PR #7) is merged.
+- **Phase 5, second slice** on `phase-5/audit`: Lighthouse and an accessibility audit past axe. Lighthouse 100 across the four categories locally with production-like compression; five defects fixed (task loop idle cost, a forced layout at load, light-theme button borders, and two forced-colours problems), each with a test.
 - Cloudflare: the Worker is `maxoff-website`. Email Routing for hello@maxoff.in is live.
 
 ## Next step
 
-1. The owner does the Phase 6 owner steps (DNS cleanup, the www redirect rule, Web Analytics) and the verification checklist, and merges the mobile-controls PR.
-2. The rest of Phase 5: critique and polish, accessibility audit, Lighthouse on the live URL, cross-browser check (Safari on iOS in particular, which no test here runs).
+1. The owner merges the audit PR, then runs PageSpeed Insights on https://maxoff.in (mobile) and checks the site on an iPhone in Safari: tap the hero's Request a demo, open the menu in landscape.
+2. The owner's critique and polish pass (the design skills run from a local session), and the Phase 6 owner steps still open (the www redirect rule, Web Analytics).
 
 ## Decisions
 
@@ -33,6 +34,10 @@
 - **Structured data** is one JSON-LD `SoftwareApplication` (name, url, description, category "BusinessApplication", operating system "Web") on the home page only. No ratings, offers, author or publisher, so no company name appears in any `<head>`.
 - **Sub-pages use the full header.** `/privacy` and `/404` pass `navBase="/"` to `SiteHeader`, so the section links become `/#what` and so on and the phone menu, with Request a demo and Sign in, exists on every page. Without it a phone had no way to reach Request a demo from the header on those pages.
 - **Touch is tested with taps, not clicks.** Playwright's `tap()` (phone project, `hasTouch`) refuses an element that another element covers at the tap point, which is how the hero bug would have been caught: the glow behind the phone (`.mo-hero__device::before`, `inset: -15%`) painted over the hero's buttons on stacked layouts and took every tap. It is `pointer-events: none` now. Two more rules from the same pass: `scroll-padding-top: 5rem` on `html`, so section links and the skip link land below the sticky header; and `.site-header[data-menu-open]` caps the header at the screen height and lets it scroll, because a sticky header taller than the screen can never be scrolled into view (the menu's last buttons were unreachable in landscape and at 200 % text).
+- **Measuring performance here:** Astro's preview server and a plain static server send the HTML and CSS uncompressed (69 KB and 41 KB), which pushes the simulated LCP to 1.8 s and makes Lighthouse noisy. Cloudflare sends them with Brotli (about 10 KB and 8 KB). A small Brotli server in the scratchpad gives stable, production-like numbers: 100 on all four categories, LCP 1.4 s. The live URL, through PageSpeed Insights, is still the number that counts.
+- **The task loop pauses off screen.** `@property --on` animations are main-thread: Chrome restyles the steps every frame for the whole ten-second cycle, not just during the fades. An `IntersectionObserver` sets `data-inview`, and the steps are paused without it, the same way the Pause button pauses them. A test counts style recalculations over 1.5 s at the top of the page (must be 2 or fewer).
+- **Forced colours** (Windows high contrast) strip backgrounds. The red button gets a `LinkText` outline there, and the loop's dots opt out with `forced-color-adjust: none` and use `CanvasText` and `Canvas`, so done and not-done steps still differ.
+- **Contrast of text over the grid and glow:** axe cannot decide text over pseudo-element backgrounds and reports it as needing review. The audit screenshots the page with and without text and compares each text colour with the background pixels under its glyphs. All 107 such nodes pass; the tightest is the light-theme phone caption at 4.57:1.
 - **Astro 7 preview in tests:** `astro preview` detaches into a background daemon when it detects an agent environment, and pnpm's wrapper puts the server in its own process group. Playwright starts `node node_modules/astro/bin/astro.mjs preview --ignore-lock` directly, which stays in the foreground and stops cleanly.
 - **Playwright in sandboxes:** set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to a local Chromium when Playwright's own download is unavailable; CI installs Playwright's Chromium normally.
 - **ESLint:** ESLint 10 with `eslint-plugin-astro` and `eslint-plugin-jsx-a11y-x` (the original jsx-a11y plugin does not support ESLint 10).

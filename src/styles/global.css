@@ -174,6 +174,12 @@
   .button-primary:active {
     transform: translateY(1px);
   }
+  /* High-contrast modes remove backgrounds; an outline keeps it looking like a button. */
+  @media (forced-colors: active) {
+    .button-primary {
+      border: 1px solid LinkText;
+    }
+  }
 
   /* Faint grid behind the whole page, fading out towards the edges. */
   .site-grid {

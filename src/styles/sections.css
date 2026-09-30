@@ -541,8 +541,22 @@
   .loop__step:nth-child(4) {
     animation: loop-4 10s linear infinite;
   }
-  .loop[data-paused] .loop__step {
+  /*
+    Paused by the Pause button, and whenever the loop is off screen: an animated custom property
+    costs a style recalculation every frame, seen or not. The script sets data-inview.
+  */
+  .loop[data-paused] .loop__step,
+  .loop:not([data-inview]) .loop__step {
     animation-play-state: paused;
+  }
+}
+
+/* High-contrast modes remove backgrounds, and a filled dot is how a step shows it is done. */
+@media (forced-colors: active) {
+  .loop__dot {
+    forced-color-adjust: none;
+    border-color: CanvasText;
+    background: color-mix(in srgb, CanvasText calc(var(--on) * 100%), Canvas);
   }
 }
 

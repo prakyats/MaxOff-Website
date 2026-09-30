@@ -73,6 +73,13 @@ The site is fully static and contact is email only. Most of this is built into t
 
 **Status:** postponed by the owner until after launch. First slice, `phase-5/mobile-controls`: every control checked by touch on phone profiles (portrait, landscape, 200 % text). Fixed: the hero's buttons took no taps because the glow behind the phone covered them (`pointer-events: none` on the glow); the open menu was cut off on short screens and its last buttons unreachable (the header scrolls inside itself while the menu is open); section links landed under the sticky header (`scroll-padding-top`); the logo link, skip link and the contact block's inline Sign in were under 44 px. Touch tests added (tap, not click), phone project only.
 
+Second slice, `phase-5/audit`: performance and an accessibility audit past axe.
+
+- **Lighthouse (mobile, simulated 4G), measured locally the way Cloudflare serves the site (Brotli, keep-alive):** 100 / 100 / 100 / 100 in three runs out of three; LCP 1.4 s, TBT 0 ms, CLS 0. Inlining the CSS or dropping the mono-font preload did not help, so delivery is unchanged. Fixed: the task loop recalculated style on every frame (about 60 a second), even off screen, because an animated custom property runs on the main thread; it now runs only while on screen (idle style work at the top of the page: 182 recalculations per 3 s before, 0 after). The header no longer forces a layout at load.
+- **WCAG 2.2 beyond axe:** a full keyboard walk (every stop has a focus ring and none is hidden under the sticky header, 2.4.7 and 2.4.11), reflow at 320 px (1.4.10), the text-spacing override (1.4.12), and text contrast against the real pixels for the 107 nodes axe could not decide (all pass; tightest 4.57:1). Fixed: outline-button borders were 2.94:1 in the light theme (1.4.11, now 3.6:1); in forced colours (Windows high contrast) the red button lost its outline and the task loop lost its state (both fixed).
+- Tests for each fix, each shown to fail without it.
+- **Still open:** Lighthouse on the live URL (PageSpeed Insights; this sandbox cannot reach maxoff.in), Safari and Firefox (no WebKit or Firefox build here), and the owner's critique and polish pass.
+
 ## Phase 6: Launch
 
 **Branch:** `phase-6/launch`. The owner decided to go live before Phase 5.
