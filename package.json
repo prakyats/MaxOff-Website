@@ -22,7 +22,8 @@
     "test:e2e": "playwright test",
     "test:scripts": "node --test \"scripts/*.test.mjs\"",
     "preview:cf": "wrangler dev",
-    "check:static": "node scripts/check-static.mjs"
+    "check:static": "node scripts/check-static.mjs",
+    "check:www": "node scripts/check-www.mjs"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
