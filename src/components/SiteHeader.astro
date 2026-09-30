@@ -93,7 +93,8 @@ const links = nav.map((item) => ({ ...item, href: `${navBase}${item.href}` }));
       header.toggleAttribute('data-scrolled', window.scrollY > 8);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    // Reading scrollY while the page is still being laid out forces an early layout; wait a frame.
+    requestAnimationFrame(onScroll);
   }
 
   if (button && menu) {

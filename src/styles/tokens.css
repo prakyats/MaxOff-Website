@@ -40,6 +40,8 @@
   --live: #15803d;
   --grid-line: rgb(0 0 0 / 7%);
   --glow: rgb(196 33 38 / 14%);
+  /* 52%, not the dark theme's 45%: outline buttons need 3:1 against the page (3.6:1 here). */
+  --control-border: color-mix(in srgb, var(--text) 52%, transparent);
 }
 
 @media (prefers-color-scheme: light) {
@@ -53,6 +55,7 @@
     --live: #15803d;
     --grid-line: rgb(0 0 0 / 7%);
     --glow: rgb(196 33 38 / 14%);
+    --control-border: color-mix(in srgb, var(--text) 52%, transparent);
   }
 }
 

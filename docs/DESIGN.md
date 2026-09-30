@@ -8,19 +8,19 @@
 
 CSS custom properties on `:root` in `src/styles/tokens.css`. Dark is the default. Light applies under `[data-theme="light"]`, and also under `prefers-color-scheme: light` when the visitor has not chosen a theme. Tailwind utilities map to these through `@theme inline` in `src/styles/global.css` (`bg-bg`, `bg-surface`, `text-text`, `text-muted`, `border-border`, `bg-accent`, `text-live`).
 
-| Token              | Dark             | Light            | Use                                                                            |
-| ------------------ | ---------------- | ---------------- | ------------------------------------------------------------------------------ |
-| `--bg`             | `#0A0A0B`        | `#FAFAFA`        | Page background                                                                |
-| `--surface`        | `#121214`        | `#FFFFFF`        | Cards, phone screens, the contact panel                                        |
-| `--border`         | `#232326`        | `#E4E4E7`        | Hairline borders (1px)                                                         |
-| `--text`           | `#F4F4F5`        | `#16161A`        | Body and headings                                                              |
-| `--muted`          | `#A1A1AA`        | `#52525B`        | Secondary text. Contrast at least 7:1 on `--bg` and `--surface` in both themes |
-| `--control-border` | 45 % of `--text` | 45 % of `--text` | Borders of controls and chips (at least 3:1 on the page)                       |
-| `--accent`         | `#C42126`        | `#C42126`        | **Rare.** Logo mark, the one primary button per view, the hero glow            |
-| `--on-accent`      | `#FFFFFF`        | `#FFFFFF`        | Text on the primary button (5.8:1 on the accent)                               |
-| `--live`           | `#4ADE80`        | `#15803D`        | The "Live" badge only                                                          |
-| `--grid-line`      | 5.5 % white      | 7 % black        | The background grid                                                            |
-| `--glow`           | 22 % red         | 14 % red         | The single soft radial glow behind the hero device                             |
+| Token              | Dark             | Light            | Use                                                                               |
+| ------------------ | ---------------- | ---------------- | --------------------------------------------------------------------------------- |
+| `--bg`             | `#0A0A0B`        | `#FAFAFA`        | Page background                                                                   |
+| `--surface`        | `#121214`        | `#FFFFFF`        | Cards, phone screens, the contact panel                                           |
+| `--border`         | `#232326`        | `#E4E4E7`        | Hairline borders (1px)                                                            |
+| `--text`           | `#F4F4F5`        | `#16161A`        | Body and headings                                                                 |
+| `--muted`          | `#A1A1AA`        | `#52525B`        | Secondary text. Contrast at least 7:1 on `--bg` and `--surface` in both themes    |
+| `--control-border` | 45 % of `--text` | 52 % of `--text` | Borders of controls and chips (at least 3:1 on the page: 4.2:1 dark, 3.6:1 light) |
+| `--accent`         | `#C42126`        | `#C42126`        | **Rare.** Logo mark, the one primary button per view, the hero glow               |
+| `--on-accent`      | `#FFFFFF`        | `#FFFFFF`        | Text on the primary button (5.8:1 on the accent)                                  |
+| `--live`           | `#4ADE80`        | `#15803D`        | The "Live" badge only                                                             |
+| `--grid-line`      | 5.5 % white      | 7 % black        | The background grid                                                               |
+| `--glow`           | 22 % red         | 14 % red         | The single soft radial glow behind the hero device                                |
 
 Rules: red is never decorative and never body text. Success green appears only on the "Live" badge. "Coming" badges and cards are dimmed with `--muted`, never green.
 

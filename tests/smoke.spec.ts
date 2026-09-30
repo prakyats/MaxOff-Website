@@ -463,6 +463,158 @@ test.describe('on a phone', () => {
   }
 });
 
+// ---------- WCAG 2.2 checks axe does not make, and idle cost ----------
+
+const TEXT_SPACING =
+  '*{line-height:1.5!important;letter-spacing:0.12em!important;word-spacing:0.16em!important}p{margin-bottom:2em!important}';
+
+test.describe('beyond axe', () => {
+  test.skip(
+    ({ isMobile }) => isMobile,
+    'viewports are set explicitly; the desktop project runs these',
+  );
+
+  for (const path of PAGES) {
+    for (const width of [390, 1280] as const) {
+      test(`${path} at ${width}px: every focus stop shows a focus ring and is not hidden under the header`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto(path);
+        await revealAll(page);
+        await page.addStyleTag({ content: 'html{scroll-behavior:auto!important}' });
+        const problems = new Set<string>();
+        let stops = 0;
+        for (const key of ['Tab', 'Shift+Tab']) {
+          for (let i = 0; i < 70; i++) {
+            await page.keyboard.press(key);
+            const stop = await page.evaluate(() => {
+              const el = document.activeElement;
+              if (!el || el === document.body || el.classList.contains('skip-link')) return null;
+              const style = getComputedStyle(el);
+              const box = el.getBoundingClientRect();
+              const header = document.querySelector('.site-header')!;
+              const ring =
+                (style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0) ||
+                style.boxShadow !== 'none';
+              return {
+                name: (el.textContent ?? '').trim().slice(0, 30),
+                ring,
+                hidden: !header.contains(el) && box.bottom <= header.getBoundingClientRect().bottom,
+                offscreen: box.bottom < 0 || box.top > window.innerHeight,
+              };
+            });
+            if (!stop) continue;
+            stops++;
+            if (!stop.ring) problems.add(`"${stop.name}" has no focus ring`);
+            if (stop.hidden) problems.add(`"${stop.name}" is hidden under the header`);
+            if (stop.offscreen) problems.add(`"${stop.name}" is focused off screen`);
+          }
+        }
+        expect(stops).toBeGreaterThan(20);
+        expect([...problems]).toEqual([]);
+      });
+    }
+
+    for (const [width, spacing] of [
+      [320, false],
+      [320, true],
+      [1280, true],
+    ] as const) {
+      test(`${path} at ${width}px${spacing ? ' with WCAG text spacing' : ''}: nothing scrolls sideways or clips`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto(path);
+        await revealAll(page);
+        if (spacing) await page.addStyleTag({ content: TEXT_SPACING });
+        expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
+        const clipped = await page.evaluate(() =>
+          [...document.querySelectorAll<HTMLElement>('a[href], button')]
+            .filter((el) => getComputedStyle(el).visibility === 'visible' && el.offsetWidth > 0)
+            .filter((el) => el.scrollWidth > el.clientWidth + 1)
+            .map((el) => (el.textContent ?? '').trim()),
+        );
+        expect(clipped).toEqual([]);
+      });
+    }
+  }
+
+  for (const colorScheme of ['dark', 'light'] as const) {
+    test(`outline buttons have a 3:1 border against the page (${colorScheme})`, async ({
+      page,
+    }) => {
+      await page.emulateMedia({ colorScheme });
+      await page.goto(HOME);
+      const ratios = await page.evaluate(() => {
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = 1;
+        const context = canvas.getContext('2d', { willReadFrequently: true })!;
+        const paint = (color: string, under: string): number[] => {
+          context.fillStyle = under;
+          context.fillRect(0, 0, 1, 1);
+          context.fillStyle = color;
+          context.fillRect(0, 0, 1, 1);
+          return [...context.getImageData(0, 0, 1, 1).data].slice(0, 3);
+        };
+        const luminance = (rgb: number[]): number =>
+          rgb
+            .map((v) => v / 255)
+            .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
+            .reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i]!, 0);
+        const page = getComputedStyle(document.documentElement).backgroundColor;
+        const background = paint(page, '#000');
+        return ['.site-header__signin', '.contact__copy', '.loop__pause'].map((selector) => {
+          const border = paint(
+            getComputedStyle(document.querySelector(selector)!).borderTopColor,
+            page,
+          );
+          const [light, dark] = [luminance(border), luminance(background)].sort((a, b) => b - a);
+          return (light! + 0.05) / (dark! + 0.05);
+        });
+      });
+      for (const ratio of ratios) expect(ratio).toBeGreaterThanOrEqual(3);
+    });
+  }
+
+  test('in forced colours the red button keeps an outline and the loop keeps its state', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ forcedColors: 'active' });
+    await page.goto(HOME);
+    const hero = page.locator('.mo-hero .button-primary');
+    expect(await hero.evaluate((el) => getComputedStyle(el).borderTopStyle)).toBe('solid');
+    await page.locator('[data-loop]').scrollIntoViewIfNeeded();
+    const fills = await page.evaluate(() => {
+      for (const animation of document.getAnimations()) {
+        animation.pause();
+        animation.currentTime = 3500; // Assigned and Noted done, Done and Approved not yet
+      }
+      return [...document.querySelectorAll('.loop__dot')].map(
+        (dot) => getComputedStyle(dot).backgroundColor,
+      );
+    });
+    expect(fills[0]).toBe(fills[1]);
+    expect(fills[2]).toBe(fills[3]);
+    expect(fills[1]).not.toBe(fills[2]);
+  });
+
+  test('the page does no style work while it sits still', async ({ page }) => {
+    await page.goto(HOME);
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Performance.enable');
+    await page.waitForTimeout(1000); // let the load settle
+    const recalcs = async (): Promise<number> => {
+      const { metrics } = await cdp.send('Performance.getMetrics');
+      return metrics.find((metric) => metric.name === 'RecalcStyleCount')?.value ?? 0;
+    };
+    const before = await recalcs();
+    await page.waitForTimeout(1500);
+    // The task loop is below the fold, so its animation must not be running.
+    expect((await recalcs()) - before).toBeLessThanOrEqual(2);
+  });
+});
+
 // ---------- Live: crawlable, except the 404 page ----------
 
 test('robots.txt allows crawling and points at the sitemap on maxoff.in', async ({ request }) => {
@@ -893,6 +1045,19 @@ test.describe('the task loop', () => {
     expect(states.slice(1)).toEqual(['paused', 'paused', 'paused']);
     await play.click();
     await expect(loop).not.toHaveAttribute('data-paused', '');
+  });
+
+  test('runs only while it is on screen', async ({ page }) => {
+    await page.goto(HOME);
+    const playState = () =>
+      page.evaluate(
+        () => getComputedStyle(document.querySelectorAll('.loop__step')[1]!).animationPlayState,
+      );
+    expect(await playState()).toBe('paused'); // below the fold at load
+    await page.locator('[data-loop]').scrollIntoViewIfNeeded();
+    await expect.poll(playState).toBe('running');
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect.poll(playState).toBe('paused');
   });
 
   test('the steps really animate: they are not all lit at once', async ({ page }) => {
