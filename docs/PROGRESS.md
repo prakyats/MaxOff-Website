@@ -7,11 +7,12 @@
 - **Phase 5, first slice** (mobile controls, PR #7) is merged.
 - **Phase 5, second slice** (Lighthouse and an accessibility audit past axe, PR #8) is merged: Lighthouse 100 across the four categories locally with production-like compression; five defects fixed, each with a test.
 - **The third role is now Crew** (owner decision, 30 Sep 2026; `docs/BRIEF.md` §3), on `copy/crew-role`: every "Staff" on the site, in the phone mock-up caption and on the social image now says Crew. The facts are unchanged. A test fails if "staff" appears on any page.
+- **www redirect** (branch `fix/www-and-crew`, 30 Sep 2026): www.maxoff.in still answered 200 with the page, so the Redirect Rule was never created. The exact dashboard steps are in `docs/ROADMAP.md` Phase 6 step 2; `pnpm check:www` checks the live redirect (it fails until the rule is deployed). Crew was already live from PR #9: no page says Staff.
 - Cloudflare: the Worker is `maxoff-website`. Email Routing for hello@maxoff.in is live.
 
 ## Next step
 
-1. The owner merges the Crew PR, runs PageSpeed Insights on https://maxoff.in (mobile) and checks the site on an iPhone in Safari: tap the hero's Request a demo, open the menu in landscape.
+1. The owner creates the www Redirect Rule (`docs/ROADMAP.md` Phase 6 step 2) and runs `pnpm check:www`; then merges `fix/www-and-crew`, runs PageSpeed Insights on https://maxoff.in (mobile) and checks the site on an iPhone in Safari: tap the hero's Request a demo, open the menu in landscape.
 2. The owner's critique and polish pass (the design skills run from a local session), and the Phase 6 owner steps still open (the www redirect rule, Web Analytics).
 
 ## Decisions
