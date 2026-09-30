@@ -40,7 +40,7 @@ export const hero = {
     'Attendance, leave and approvals in one app your team already has on their phone. The final say is always yours.',
   /** Facts about the product, shown as a strip under the hero. */
   specs: [
-    { term: 'Roles', value: 'Owner, Admin, Staff' },
+    { term: 'Roles', value: 'Owner, Admin, Crew' },
     { term: 'Times', value: 'IST' },
     { term: 'History', value: 'Never overwritten' },
     { term: 'Install', value: 'From the browser' },
@@ -170,17 +170,17 @@ export const comingFeatures = [
   {
     key: 'projects',
     title: 'Client projects',
-    text: 'Recurring client work in projects, cycles and items, kept apart from staff tasks.',
+    text: 'Recurring client work in projects, cycles and items, kept apart from crew tasks.',
   },
   {
     key: 'work',
     title: 'Work submission',
-    text: 'Staff hand in their files at full quality, never re-encoded, and originals are kept.',
+    text: 'Crew hand in their files at full quality, never re-encoded, and originals are kept.',
   },
   {
     key: 'revenue',
     title: 'Owner-only revenue and reports',
-    text: 'Money is visible to you only, never to Admins or Staff.',
+    text: 'Money is visible to you only, never to Admins or Crew.',
   },
 ] as const;
 
@@ -224,7 +224,7 @@ export const app = {
       text: 'Works on any modern phone.',
     },
   ],
-  darkLabel: 'Staff view, dark theme',
+  darkLabel: 'Crew view, dark theme',
   lightLabel: 'Owner view, light theme',
 } as const;
 
@@ -273,7 +273,7 @@ export const roles = {
       name: 'Admin',
       tagline: 'Runs clients and work, day to day.',
       can: [
-        'Marks their own attendance and requests leave, like Staff.',
+        'Marks their own attendance and requests leave, like Crew.',
         'Sees the team list and who is in today, but not attendance history.',
         'Edits the clients assigned to them: details, contacts, brand and custom fields.',
         'Manages lists and templates.',
@@ -286,8 +286,8 @@ export const roles = {
       ],
     },
     {
-      key: 'staff',
-      name: 'Staff',
+      key: 'crew',
+      name: 'Crew',
       tagline: 'The people doing the work.',
       can: [
         'Taps Start day and End day.',
