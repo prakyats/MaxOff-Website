@@ -4,13 +4,12 @@
  * with or without the animation. The animation is CSS only, runs only when scripting and motion are
  * allowed, and has a Pause button (WCAG 2.2.2: it loops for more than five seconds).
  */
-import { badges, taskLoop } from '../content/copy';
+import { taskLoop } from '../content/copy';
 ---
 
 <div class="loop" data-loop>
   <div class="loop__head">
     <span class="loop__label">{taskLoop.label}</span>
-    <span class="badge-coming">{badges.coming}</span>
   </div>
   <p class="loop__title">{taskLoop.title}</p>
   <p class="loop__meta">{taskLoop.meta}</p>

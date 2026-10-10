@@ -1,0 +1,79 @@
+---
+/**
+ * An Admin's own Today, recreated in HTML/CSS with demo data: their approval step on a done
+ * task, their own clients' project items, the team's presence (not attendance history) and their
+ * work report. No money anywhere.
+ */
+import Briefcase from '@lucide/astro/icons/briefcase';
+import Calendar from '@lucide/astro/icons/calendar';
+import House from '@lucide/astro/icons/house';
+import ListChecks from '@lucide/astro/icons/list-checks';
+import { adminTodayScreen as a } from '../../content/copy';
+
+const tabIcons = [House, ListChecks, Briefcase, Calendar];
+---
+
+<div class="today">
+  <div class="today__status">
+    <span>
+      {a.time} {a.zone}
+    </span>
+  </div>
+  <div class="today__head">
+    <div>
+      <p class="today__title">{a.title}</p>
+      <p class="today__date">{a.date}</p>
+    </div>
+    <p class="today__company">{a.company}</p>
+  </div>
+
+  <div class="today__section">
+    <div class="today__section-head">
+      <span>{a.needs.heading}</span>
+      <span class="today__count">{a.needs.rows.length}</span>
+    </div>
+    {a.needs.rows.map((row) => (
+      <div class="today__row">
+        <span class="today__avatar">{row.who}</span>
+        <div class="today__row-text">
+          <p class="today__row-title">{row.title}</p>
+          <p class="today__row-sub">{row.sub}</p>
+        </div>
+        <span class="today__pill today__pill--quiet">{row.action}</span>
+      </div>
+    ))}
+  </div>
+
+  <div class="today__section">
+    <div class="today__section-head">
+      <span>{a.team.heading}</span>
+    </div>
+    <p class="today__line">{a.team.text}</p>
+  </div>
+
+  <div class="today__section">
+    <div class="today__section-head">
+      <span>{a.report.heading}</span>
+    </div>
+    <div class="today__stats">
+      {a.report.stats.map((stat) => (
+        <p class="today__stat">
+          <span>{stat.value}</span>
+          {stat.label}
+        </p>
+      ))}
+    </div>
+  </div>
+
+  <div class="today__tabs">
+    {a.tabs.map((label, i) => {
+      const Icon = tabIcons[i];
+      return (
+        <span class:list={['today__tab', { 'today__tab--on': i === 0 }]}>
+          {Icon && <Icon stroke-width={1.5} aria-hidden="true" />}
+          {label}
+        </span>
+      );
+    })}
+  </div>
+</div>

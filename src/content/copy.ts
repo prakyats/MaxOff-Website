@@ -11,9 +11,9 @@ export const site = {
   name: 'MaxOff',
   url: 'https://maxoff.in',
   appUrl: 'https://app.maxoff.in',
-  title: 'MaxOff: operations for small studios',
+  title: 'MaxOff — Your studio, in one place',
   description:
-    'Attendance, leave and approvals in one app your team already has on their phone. The final say is always yours.',
+    'Attendance, leave, tasks, client projects and approvals in one app your team already has on their phone. The final say is always yours.',
 } as const;
 
 /** Section links in the header. */
@@ -36,8 +36,9 @@ export const cta = {
 export const hero = {
   eyebrow: 'Operations for studios',
   headline: 'Run your studio from your phone.',
+  /** The positioning line, approved by the owner (10 Oct 2026). */
   supporting:
-    'Attendance, leave and approvals in one app your team already has on their phone. The final say is always yours.',
+    'MaxOff is the operating system for small studios: attendance, leave, tasks, client projects and approvals in one app your team already has on their phone, and the final say is always yours.',
   /** Facts about the product, shown as a strip under the hero. */
   specs: [
     { term: 'Roles', value: 'Owner, Admin, Crew' },
@@ -47,7 +48,6 @@ export const hero = {
   ],
 } as const;
 
-/** The three questions every studio owner asks: the spine of the page. */
 export const questions = {
   eyebrow: 'Questions',
   headline: 'Three questions every studio owner asks.',
@@ -55,18 +55,18 @@ export const questions = {
     {
       question: 'Who’s in today?',
       answer:
-        'Attendance with Start day and End day, approved by you. Your Today screen shows everyone’s day.',
+        'Attendance with Start day and End day, approved by you. Today shows the day’s attendance in one row; one tap opens everyone’s day.',
       status: 'live',
     },
     {
       question: 'Did they actually see the task?',
-      answer: 'Every assignee taps “Noted”, so you know the task was seen.',
-      status: 'coming',
+      answer: 'Every assignee taps Task Noted. If they don’t, you hear about it.',
+      status: 'live',
     },
     {
       question: 'What’s waiting on me?',
       answer:
-        'Days to approve, leave requests, comp leave and expense claims wait in one place, and the final say is yours.',
+        'Days to approve, leave, comp leave, expense claims and crew tasks waiting for your final approval, all in one place, with how long each has waited.',
       status: 'live',
     },
   ],
@@ -80,57 +80,176 @@ export const what = {
   intro: 'Everything here is live in the app now.',
 } as const;
 
-/** Live features. `chips` are small decorative illustrations of each card, in demo data. */
-export const liveFeatures = [
+/**
+ * Live features, in four groups for the bento grid. `size: 'large'` tiles carry a small recreated
+ * visual (the task loop, a month calendar, a client project cycle). `chips` are decorative
+ * illustrations in demo data.
+ */
+export const liveGroups = [
   {
-    key: 'attendance',
-    title: 'Attendance',
-    text: 'Each person taps Start day and End day on their phone. You approve the day, and corrections sit beside the original.',
-    chips: ['Start day 9:12', 'End day 6:48', 'Approved by you'],
+    key: 'team',
+    label: 'Your team’s day',
+    items: [
+      {
+        key: 'attendance',
+        title: 'Attendance',
+        text: 'Each person taps Start day and End day on their phone. You approve the day, and corrections sit beside the original.',
+        chips: ['Start day 9:12', 'End day 6:48', 'Approved by you'],
+      },
+      {
+        key: 'leave',
+        title: 'Leave',
+        text: 'People request leave and only you decide. Holidays and weekly offs are yours to set.',
+        chips: ['Kabir, 6–7 Oct', 'Approved by you'],
+      },
+      {
+        key: 'comp-leave',
+        title: 'Comp leave',
+        text: 'Extra work is noted, and you grant half a day, a full day or nothing. Credits expire at the end of the month.',
+        chips: ['½ day', '1 day', 'Nothing'],
+      },
+      {
+        key: 'expense-claims',
+        title: 'Expense claims',
+        text: 'A member adds a claim, you approve or reject it, then mark it paid. Only the two of you see it.',
+        chips: ['Receipt attached', 'Approved', 'Paid'],
+      },
+      {
+        key: 'month-summary',
+        title: 'Month summary',
+        text: 'Attendance, leave and comp leave for each person and for the whole team. Yours alone to see.',
+        chips: [],
+      },
+    ],
   },
   {
-    key: 'leave',
-    title: 'Leave',
-    text: 'People request leave and only you decide. Holidays and weekly offs are yours to set.',
-    chips: ['Kabir, 6–7 Oct', 'Requested', 'Approved by you'],
-  },
-  {
-    key: 'comp-leave',
-    title: 'Comp leave',
-    text: 'Extra work is noted, and you grant half a day, a full day or nothing. Credits expire at the end of the month.',
-    chips: ['½ day', '1 day', 'Nothing', 'Expires at month end'],
-  },
-  {
-    key: 'expense-claims',
-    title: 'Expense claims',
-    text: 'A member adds a claim, you approve or reject it, then mark it paid. Only the two of you see it.',
-    chips: ['Receipt attached', 'Approved', 'Paid'],
-  },
-  {
-    key: 'month-summary',
-    title: 'Month summary',
-    text: 'Attendance, leave and comp leave for each person and for the whole team. Yours alone to see.',
-    chips: [],
+    key: 'work',
+    label: 'The work',
+    items: [
+      {
+        key: 'tasks',
+        size: 'large',
+        title: 'Tasks with “Noted”',
+        text: 'Every assignee taps Task Noted, and one primary owner marks it Done. A task has a type, a due date and time, a priority, optional stages and its own chat. Crew can suggest a task; you or an Admin turn it into one.',
+        chips: [],
+      },
+      {
+        key: 'dashboards',
+        size: 'large',
+        title: 'Today, My Day and a calendar',
+        text: 'You get Today: what needs you first. Crew get My Day: only what needs them. The calendar has day, week and month views, with shoots and meetings, leave, holidays and who’s free.',
+        chips: [],
+      },
+      {
+        key: 'approvals',
+        title: 'Owner-final approvals',
+        text: 'Done goes to the approving Admin, if there is one, then to you. Final completion of a crew task is always yours.',
+        chips: ['Done', 'Admin', 'You'],
+      },
+      {
+        key: 'notifications',
+        title: 'Notifications and reminders',
+        text: 'A bell in the app, push to the phone, and email only for the important few. Reminders before a deadline, escalations when a task isn’t noted, and quiet hours at night.',
+        chips: ['Bell', 'Push', 'Quiet hours'],
+      },
+      {
+        key: 'reports',
+        title: 'End-of-day report',
+        text: 'A report for you at the end of every day, saved and never rewritten, and a weekly summary email on the day you pick.',
+        chips: ['Every evening', 'Weekly email'],
+      },
+    ],
   },
   {
     key: 'clients',
-    title: 'Clients',
-    text: 'Client records with contacts, brand details and custom fields. Admins edit the clients assigned to them.',
-    chips: ['Contacts', 'Brand details', 'Custom fields'],
+    label: 'Clients',
+    items: [
+      {
+        key: 'projects',
+        size: 'large',
+        title: 'Client projects',
+        text: 'One-time, weekly or monthly. Each cycle starts by itself from its item list, and every item moves through its own stages. Admins run their own clients’ projects end to end, and crew never see client work.',
+        chips: [],
+      },
+      {
+        key: 'clients',
+        title: 'Clients',
+        text: 'Client records with contacts, brand details and custom fields. Admins edit the clients assigned to them.',
+        chips: ['Contacts', 'Brand details', 'Custom fields'],
+      },
+    ],
   },
   {
-    key: 'people',
-    title: 'People',
-    text: 'Invite by link, set roles and job titles, and deactivate someone without losing their history.',
-    chips: ['Invite link', 'Roles', 'Job titles'],
-  },
-  {
-    key: 'settings',
-    title: 'Settings',
-    text: 'Holidays, days off, thresholds, job titles and custom fields. All editable by you, no developer needed.',
-    chips: ['Holidays', 'Days off', 'Thresholds'],
+    key: 'setup',
+    label: 'Set up once',
+    items: [
+      {
+        key: 'people',
+        title: 'People',
+        text: 'Invite by link, set roles and job titles, and deactivate someone without losing their history.',
+        chips: ['Invite link', 'Roles', 'Job titles'],
+      },
+      {
+        key: 'settings',
+        title: 'Settings',
+        text: 'Holidays, days off, thresholds, job titles and custom fields. All editable by you, no developer needed.',
+        chips: ['Holidays', 'Days off', 'Thresholds'],
+      },
+      {
+        key: 'templates',
+        title: 'Templates',
+        text: 'Task templates, project templates and stage presets for the work you repeat.',
+        chips: ['Task templates', 'Stage presets'],
+      },
+    ],
   },
 ] as const;
+
+/** Every live feature, flat (for tests and the structured data). */
+export const liveFeatures: readonly { key: string; title: string; text: string }[] =
+  liveGroups.flatMap(
+    (group): readonly { key: string; title: string; text: string }[] => group.items,
+  );
+
+/** The mini month in the calendar tile. Decorative demo data: October, with a few events. */
+export const calendarTile = {
+  month: 'October',
+  /** Weekday the 1st falls on, Monday = 0 (1 Oct 2026 is a Thursday). */
+  offset: 3,
+  days: 31,
+  today: 29,
+  events: [
+    { day: 6, kind: 'leave' },
+    { day: 7, kind: 'leave' },
+    { day: 2, kind: 'holiday' },
+    { day: 9, kind: 'shoot' },
+    { day: 14, kind: 'meeting' },
+    { day: 16, kind: 'shoot' },
+    { day: 21, kind: 'meeting' },
+    { day: 23, kind: 'shoot' },
+    { day: 29, kind: 'shoot' },
+  ],
+  legend: [
+    { kind: 'shoot', label: 'Shoot' },
+    { kind: 'meeting', label: 'Meeting' },
+    { kind: 'leave', label: 'Leave' },
+    { kind: 'holiday', label: 'Holiday' },
+  ],
+} as const;
+
+/** The cycle in the client projects tile. Demo data; Saffron Café is an invented client. */
+export const projectTile = {
+  client: 'Saffron Café',
+  cycle: 'October cycle',
+  stages: ['Script', 'Shoot', 'Edit', 'Posted'],
+  items: [
+    { name: 'Reel 1', done: 4 },
+    { name: 'Reel 2', done: 3 },
+    { name: 'Reel 3', done: 2 },
+    { name: 'Reel 4', done: 1 },
+    { name: 'Poster 1', done: 4 },
+  ],
+} as const;
 
 /** Mini bars on the Month summary card. Decorative demo data: how much of the month each person was in. */
 export const monthBars = [
@@ -148,31 +267,6 @@ export const coming = {
 
 export const comingFeatures = [
   {
-    key: 'tasks',
-    title: 'Tasks with “Noted”',
-    text: 'Every assignee taps “Noted”, and one primary owner marks the task Done.',
-  },
-  {
-    key: 'approvals',
-    title: 'Owner-final approvals',
-    text: 'Done goes to the approving Admin, if there is one, then to you. Final completion is always yours.',
-  },
-  {
-    key: 'notifications',
-    title: 'Notifications and reminders',
-    text: 'In the app, on the phone and by email for the important few. Escalations when a task is not acknowledged, and quiet hours at night.',
-  },
-  {
-    key: 'dashboards',
-    title: 'Dashboards and calendar',
-    text: 'A dashboard and a calendar for each role.',
-  },
-  {
-    key: 'projects',
-    title: 'Client projects',
-    text: 'Recurring client work in projects, cycles and items, kept apart from crew tasks.',
-  },
-  {
     key: 'work',
     title: 'Work submission',
     text: 'Crew members hand in their files at full quality, never re-encoded, and originals are kept.',
@@ -180,18 +274,23 @@ export const comingFeatures = [
   {
     key: 'revenue',
     title: 'Owner-only revenue and reports',
-    text: 'Money is visible to you only, never to Admins or Crew.',
+    text: 'Amounts and billing are yours only, never Admins’ or Crew’s.',
+  },
+  {
+    key: 'hours',
+    title: 'Working hours, late starts and leaving early',
+    text: 'Set working hours. A late start is marked after a grace period, and leaving early needs your OK.',
   },
 ] as const;
 
-/** The task-state loop in the Coming section. Demo data. */
+/** The task-state loop in the Tasks tile. Demo data. */
 export const taskLoop = {
   label: 'Task',
   title: 'Cut the launch film',
   meta: 'Aarav is the primary owner, with Tara',
   steps: [
     { name: 'Assigned', note: 'To Aarav and Tara' },
-    { name: 'Noted', note: 'Both tapped Noted' },
+    { name: 'Noted', note: 'Both tapped Task Noted' },
     { name: 'Done', note: 'Aarav marked it Done' },
     { name: 'Approved', note: 'You made the final call' },
   ],
@@ -209,6 +308,11 @@ export const app = {
       text: 'Add it to your home screen. There is no app store.',
     },
     {
+      key: 'app-push',
+      title: 'Push notifications, with quiet hours',
+      text: 'Reminders reach the phone. At night they wait, and arrive as one summary in the morning.',
+    },
+    {
       key: 'app-back',
       title: 'Behaves like a native app',
       text: 'The back gesture does what you expect.',
@@ -223,27 +327,32 @@ export const app = {
       title: 'Any modern phone',
       text: 'Works on any modern phone.',
     },
+    {
+      key: 'app-desk',
+      title: 'At a desk too',
+      text: 'On a laptop, Enter sends a chat message.',
+    },
   ],
-  darkLabel: 'Crew view, dark theme',
-  lightLabel: 'Owner view, light theme',
 } as const;
 
-/** The second recreated screen: the Owner deciding a leave request. Demo data. */
-export const approvalScreen = {
+/** The lock screen in "Feels like an app". Demo data; Saffron Café is an invented client. */
+export const lockScreen = {
   label:
-    'Illustration of a leave request as the Owner sees it: Kabir asks for two days, with Approve and Reject.',
-  time: '10:31',
-  zone: 'IST',
-  back: 'Today',
-  title: 'Leave request',
-  person: 'Kabir',
-  kind: 'Leave',
-  dates: '6–7 Oct, 2 days',
-  note: 'Family function',
-  history: 'Requested by Kabir, 29 Sep 9:41',
-  approve: 'Approve',
-  reject: 'Reject',
-  tabs: ['Today', 'People', 'Leave', 'Claims'],
+    'Illustration of a phone’s lock screen at 8:00 with four MaxOff notifications: Saffron Café’s Reel 3 is overdue and Isha was told yesterday, a summary of updates held during quiet hours, Meera has not noted a task, and Kabir asks for leave.',
+  time: '8:00',
+  date: 'Thursday 1 October',
+  app: 'MaxOff',
+  items: [
+    {
+      when: 'now',
+      title: 'Saffron Café: Reel 3 is overdue',
+      text: 'Isha was told yesterday.',
+    },
+    { when: 'now', title: 'While you slept', text: 'Quiet hours held 3 updates. Here they are.' },
+    { when: '8 h', title: 'Not noted yet', text: 'Meera hasn’t noted “Cut the launch film”.' },
+    { when: '9 h', title: 'Leave request from Kabir', text: '6–7 Oct, 2 days' },
+  ],
+  caption: 'Owner, 8:00 in the morning',
 } as const;
 
 export const roles = {
@@ -259,9 +368,12 @@ export const roles = {
       name: 'Owner',
       tagline: 'One per company. The final say.',
       can: [
-        'Sees everyone’s day on Today.',
+        'Sees everyone’s day on Today, and what needs them first.',
         'Approves the day and decides all leave and comp leave.',
         'Approves or rejects expense claims, then marks them paid.',
+        'Gives the final approval on every crew task.',
+        'Gets the end-of-day report and a weekly summary email.',
+        'Sees who can’t be reached by notifications.',
         'Sees the month summary for each person and for the team.',
         'Sets holidays, days off, thresholds, job titles and custom fields.',
       ],
@@ -273,17 +385,17 @@ export const roles = {
       name: 'Admin',
       tagline: 'Runs clients and work, day to day.',
       can: [
-        'Marks their own attendance and requests leave, like Crew.',
-        'Sees the team list and who is in today, but not attendance history.',
-        'Edits the clients assigned to them: details, contacts, brand and custom fields.',
-        'Manages lists and templates.',
-      ],
-      never: ['Decides attendance or leave.', 'Sees money.'],
-      soon: [
         'Creates and assigns tasks.',
         'Does the Admin approval step before the Owner’s.',
-        'Gets work reports for their own scope.',
+        'Runs client projects for their own clients, end to end.',
+        'Has their own Today and a work report.',
+        'Sees the team list and who is in today, but not attendance history.',
+        'Sees others’ work on the calendar only as Busy.',
+        'Edits the clients assigned to them, and manages lists and templates.',
+        'Marks their own attendance and requests leave, like Crew.',
       ],
+      never: ['Decides attendance or leave.', 'Sees money.'],
+      soon: [],
     },
     {
       key: 'crew',
@@ -291,13 +403,15 @@ export const roles = {
       tagline: 'The people doing the work.',
       can: [
         'Taps Start day and End day.',
-        'Sees only their own day.',
+        'Taps Task Noted on every task assigned to them.',
+        'Has My Day: only what needs them today, then the week ahead.',
+        'Sees only their own day and their own calendar.',
+        'Suggests tasks.',
         'Requests leave, and adds a note when they worked extra.',
         'Submits expense claims. Only they and the Owner see them.',
-        'Sees their own recent attendance, comp leave credits and claims.',
       ],
-      never: [],
-      soon: ['Taps “Noted” on every task assigned to them.'],
+      never: ['Sees client work.', 'Sees money.'],
+      soon: [],
     },
   ],
   money: 'Money stays with the owner.',
@@ -342,7 +456,7 @@ export const trust = {
 
 export const how = {
   eyebrow: 'How it starts',
-  headline: 'Three steps.',
+  headline: 'Four steps.',
   steps: [
     {
       key: 'how-invite',
@@ -355,9 +469,14 @@ export const how = {
       text: 'Each person starts and ends their day on their phone.',
     },
     {
+      key: 'how-assign',
+      title: 'Assign the work. They tap Noted.',
+      text: 'You or an Admin assign a task. Every assignee taps Task Noted, so you know it was seen.',
+    },
+    {
       key: 'how-decide',
       title: 'You decide',
-      text: 'You approve the day and decide leave, comp leave and expense claims.',
+      text: 'You approve the day, decide leave, comp leave and expense claims, and give the final approval on crew tasks.',
     },
   ],
 } as const;
@@ -394,7 +513,7 @@ export const contact = {
 export const footer = {
   description: 'Operations for small creative studios.',
   /** The developer credit. The only place the agency name appears besides the privacy page. */
-  credit: 'MaxOff is developed by Pixora Agencies.',
+  credit: 'MaxOff is developed by 3not8studios.',
   links: [
     { label: 'Privacy', href: '/privacy' },
     { label: 'Contact', href: null },
@@ -403,62 +522,217 @@ export const footer = {
   copyright: 'MaxOff',
 } as const;
 
-/** The recreated My day screen, as a team member sees it: their own day and their own week. Demo data. */
+/** Crew's My Day: only what needs them today, then the week ahead. Demo data. */
 export const myDayScreen = {
   label:
-    'Illustration of a team member’s My day screen: the question “Started working?” with a Start day button, today’s date, and their own week below.',
-  time: '9:02',
+    'Illustration of a crew member’s My Day screen: a task to note, a task due today, an overdue task, and today’s shoot.',
+  time: '10:24',
   zone: 'IST',
-  title: 'My day',
+  title: 'My Day',
   date: 'Tue 29 Sep',
   company: 'Northwind Studio',
-  prompt: { question: 'Started working?', action: 'Start day' },
-  week: {
-    heading: 'This week',
-    days: [
-      { day: 'Mon 28', text: '9:05 to 6:40', state: 'Approved', today: false },
-      { day: 'Tue 29', text: 'Today', state: 'Not started', today: true },
-      { day: 'Wed 30', text: '', state: '', today: false },
-      { day: 'Thu 1', text: '', state: '', today: false },
-      { day: 'Fri 2', text: '', state: '', today: false },
-      { day: 'Sat 3', text: '', state: '', today: false },
-      { day: 'Sun 4', text: 'Weekly off', state: '', today: false },
-    ],
-  },
-  tabs: ['My day', 'Leave', 'Claims', 'Me'],
+  day: { label: 'Your day', status: 'Started 9:05' },
+  sections: [
+    {
+      heading: 'Not noted',
+      rows: [
+        {
+          title: 'Sound mix, launch film',
+          sub: 'From Isha, due Thu',
+          action: 'Task Noted',
+          tone: 'action',
+        },
+      ],
+    },
+    {
+      heading: 'Due today',
+      rows: [
+        { title: 'Cut the launch film', sub: 'Primary owner, due 6:00 PM', action: '', tone: '' },
+      ],
+    },
+    {
+      heading: 'Overdue',
+      rows: [{ title: 'Colour pass, teaser', sub: 'Due yesterday', action: '', tone: 'warn' }],
+    },
+    {
+      heading: 'Today and tomorrow',
+      rows: [
+        { title: 'Shoot, 2:00 PM', sub: 'Studio floor, with Tara', action: '', tone: '' },
+        { title: 'Meeting, tomorrow 11:00 AM', sub: 'Launch film review', action: '', tone: '' },
+      ],
+    },
+  ],
+  tabs: ['My Day', 'Tasks', 'Calendar', 'Me'],
 } as const;
 
-/** The recreated Today screen, as the Owner sees it. Demo data. */
-export const todayScreen = {
+/** The Admin's own Today: their approval step, their clients' projects and the team's day. Demo data. */
+export const adminTodayScreen = {
   label:
-    'Illustration of the Owner’s Today screen: the day started, three items waiting for approval, and who is in.',
+    'Illustration of an Admin’s Today screen: a done task waiting for the Admin approval step, two client project items due, and who is in today.',
   time: '10:24',
   zone: 'IST',
   title: 'Today',
   date: 'Tue 29 Sep',
   company: 'Northwind Studio',
-  day: { label: 'Your day', status: 'Started 9:12', action: 'End day' },
-  waiting: {
-    heading: 'Waiting on you',
-    items: [
-      { who: 'Rohan', kind: 'Attendance', what: 'Mon 28 Sep' },
-      { who: 'Kabir', kind: 'Leave', what: '6–7 Oct, 2 days' },
-      { who: 'Isha', kind: 'Expense', what: 'Taxi to shoot, receipt attached' },
-    ],
-    action: 'Review',
-  },
-  board: {
-    heading: 'Who’s in',
-    people: [
-      { name: 'Meera', state: 'In', since: '9:12' },
-      { name: 'Aarav', state: 'In', since: '9:05' },
-      { name: 'Tara', state: 'In', since: '9:31' },
-      { name: 'Isha', state: 'In', since: '10:02' },
-      { name: 'Kabir', state: 'On leave', since: '' },
-      { name: 'Rohan', state: 'Not started', since: '' },
+  needs: {
+    heading: 'Needs you',
+    rows: [
+      {
+        who: 'A',
+        title: 'Cut the launch film',
+        sub: 'Done by Aarav. Your approval, then the Owner’s',
+        action: 'Approve',
+      },
+      {
+        who: 'S',
+        title: 'Saffron Café, October',
+        sub: 'Reel 3 and Reel 4 due today',
+        action: 'Open',
+      },
     ],
   },
-  tabs: ['Today', 'People', 'Leave', 'Claims'],
+  team: { heading: 'Team today', text: 'In 4 · On leave 1 · Not started 1' },
+  report: {
+    heading: 'Work report, this week',
+    stats: [
+      { value: '9', label: 'Done' },
+      { value: '3', label: 'Due' },
+      { value: '1', label: 'Overdue' },
+    ],
+  },
+  tabs: ['Today', 'Tasks', 'Clients', 'Calendar'],
+} as const;
+
+/** The Owner's week on the calendar, with who's free. Demo data. */
+export const calendarScreen = {
+  label:
+    'Illustration of the Owner’s calendar for the week: a shoot, a meeting, Kabir on leave, a holiday, and who is free on Wednesday.',
+  time: '10:24',
+  zone: 'IST',
+  title: 'Calendar',
+  views: ['Day', 'Week', 'Month'],
+  view: 1,
+  days: [
+    { day: 'Tue 29', items: [{ kind: 'shoot', text: 'Shoot, Saffron Café · Aarav, Tara' }] },
+    { day: 'Wed 30', items: [{ kind: 'meeting', text: 'Meeting, launch film review · Isha' }] },
+    { day: 'Thu 1', items: [{ kind: 'shoot', text: 'Site visit · Meera' }] },
+    { day: 'Fri 2', items: [{ kind: 'holiday', text: 'Holiday' }] },
+    { day: 'Tue 6', items: [{ kind: 'leave', text: 'Kabir on leave, 2 days' }] },
+  ],
+  free: { heading: 'Who’s free, Wed 30', names: 'Meera, Rohan, Tara' },
+  tabs: ['Today', 'Tasks', 'Calendar', 'People'],
+} as const;
+
+/** A day in the studio: one ordinary day at Northwind Studio, beat by beat. Demo data. */
+export const day = {
+  eyebrow: 'A day',
+  headline: 'A day in the studio.',
+  intro: 'One ordinary Wednesday at Northwind Studio.',
+  beats: [
+    {
+      time: '09:05',
+      title: 'Start day',
+      text: 'Aarav taps Start day. You see who’s in, in one row.',
+    },
+    {
+      time: '10:10',
+      title: 'Assigned, and noted',
+      text: 'Isha assigns “Cut the launch film”. Aarav and Tara tap Task Noted.',
+    },
+    {
+      time: '13:40',
+      title: 'A shoot',
+      text: 'The Saffron Café shoot is on the calendar, with who’s free that day.',
+    },
+    {
+      time: '17:20',
+      title: 'Done, then approved',
+      text: 'Aarav marks the task Done. Isha approves it, and the final say is yours.',
+    },
+    {
+      time: '18:30',
+      title: 'End day',
+      text: 'Everyone taps End day. Your end-of-day report is saved.',
+    },
+    {
+      time: '08:00',
+      title: 'Next morning',
+      text: 'Saffron Café’s October cycle is ready, with its items lined up.',
+    },
+  ],
+} as const;
+
+/** The role switcher: one app, three views. */
+export const views = {
+  eyebrow: 'Views',
+  headline: 'One app. Three views.',
+  intro: 'Each role sees what it needs, and nothing it shouldn’t.',
+  legend: 'Choose a role',
+  tabs: [
+    {
+      key: 'owner',
+      label: 'Owner',
+      caption: 'The Owner’s calendar: the week, leave, holidays and who’s free.',
+    },
+    {
+      key: 'admin',
+      label: 'Admin',
+      caption: 'An Admin’s Today: their approval step, their clients’ projects, the team’s day.',
+    },
+    { key: 'crew', label: 'Crew', caption: 'A crew member’s My Day: only what needs them today.' },
+  ],
+} as const;
+
+/**
+ * The Owner's Today, in the hero. It plays one moment once: Kabir's leave is approved, a
+ * six-second Undo appears and fades, and the "Needs you" count goes from 3 to 2. Demo data.
+ */
+export const todayScreen = {
+  label:
+    'Illustration of the Owner’s Today screen: three items need you, with how long each has waited; Kabir’s leave is approved, with Undo; today’s attendance in one row and today’s tasks.',
+  time: '10:24',
+  zone: 'IST',
+  title: 'Today',
+  date: 'Tue 29 Sep',
+  company: 'Northwind Studio',
+  needs: {
+    heading: 'Needs you first',
+    before: '3',
+    after: '2',
+    rows: [
+      {
+        who: 'K',
+        title: 'Kabir: Leave',
+        sub: '6–7 Oct, 2 days · waited 2 h',
+        action: 'Approve',
+        done: 'Approved',
+      },
+      {
+        who: 'R',
+        title: 'Rohan: Attendance',
+        sub: 'Mon 28 Sep · waited 1 day',
+        action: 'Review',
+        done: '',
+      },
+      {
+        who: 'A',
+        title: 'Cut the launch film',
+        sub: 'Final approval · waited 40 min',
+        action: 'Review',
+        done: '',
+      },
+    ],
+  },
+  attendance: { heading: 'Today', text: 'In 4 · On leave 1 · Not started 1' },
+  tasks: {
+    heading: 'Today’s tasks',
+    rows: [
+      { title: 'Cut the launch film', sub: 'Due 6:00 PM', tone: '' },
+      { title: 'Colour pass, teaser', sub: 'Overdue by a day', tone: 'warn' },
+    ],
+  },
+  toast: { text: 'Leave approved', undo: 'Undo' },
+  tabs: ['Today', 'Tasks', 'Calendar', 'People'],
 } as const;
 
 /**
@@ -495,7 +769,7 @@ export const privacy = {
     /** The address sits between these two, written as entities (see src/lib/contact.ts). */
     before: 'Emails to ',
     after:
-      ' are answered by Pixora Agencies, the developer of MaxOff and the data controller for those emails.',
+      ' are answered by 3not8studios, the developer of MaxOff and the data controller for those emails.',
   },
 } as const;
 

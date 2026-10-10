@@ -1,0 +1,64 @@
+---
+/**
+ * The Owner's calendar, week view, recreated in HTML/CSS with demo data: shoots and meetings,
+ * leave, a holiday, and who's free on a day. Kinds are told apart by shape, not colour alone.
+ */
+import Calendar from '@lucide/astro/icons/calendar';
+import House from '@lucide/astro/icons/house';
+import ListChecks from '@lucide/astro/icons/list-checks';
+import Users from '@lucide/astro/icons/users';
+import { calendarScreen as c } from '../../content/copy';
+
+const tabIcons = [House, ListChecks, Calendar, Users];
+---
+
+<div class="today">
+  <div class="today__status">
+    <span>
+      {c.time} {c.zone}
+    </span>
+  </div>
+  <div class="today__head">
+    <p class="today__title">{c.title}</p>
+  </div>
+  <div class="today__segments">
+    {c.views.map((view, i) => (
+      <span class:list={['today__segment', { 'today__segment--on': i === c.view }]}>{view}</span>
+    ))}
+  </div>
+
+  <div class="today__section">
+    {c.days.map((day) => (
+      <div class="today__week-row">
+        <span class="today__week-day">{day.day}</span>
+        <span class="today__events">
+          {day.items.map((item) => (
+            <span class="today__event">
+              <span class={`cal-mark cal-mark--${item.kind}`} />
+              {item.text}
+            </span>
+          ))}
+        </span>
+      </div>
+    ))}
+  </div>
+
+  <div class="today__section">
+    <div class="today__section-head">
+      <span>{c.free.heading}</span>
+    </div>
+    <p class="today__line">{c.free.names}</p>
+  </div>
+
+  <div class="today__tabs">
+    {c.tabs.map((label, i) => {
+      const Icon = tabIcons[i];
+      return (
+        <span class:list={['today__tab', { 'today__tab--on': i === 2 }]}>
+          {Icon && <Icon stroke-width={1.5} aria-hidden="true" />}
+          {label}
+        </span>
+      );
+    })}
+  </div>
+</div>

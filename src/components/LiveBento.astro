@@ -1,0 +1,134 @@
+---
+/**
+ * The live features as a bento grid, in four groups. Large tiles carry a small recreated visual:
+ * the task loop (Tasks), a month calendar (Today, My Day and a calendar), an October cycle
+ * (Client projects) and the month bars (Month summary). Every tile says Live.
+ */
+import {
+  badges,
+  calendarTile as cal,
+  liveGroups,
+  monthBars,
+  projectTile as proj,
+} from '../content/copy';
+import FeatureIcon from './FeatureIcon.astro';
+import TaskLoop from './TaskLoop.astro';
+
+/** Tile sizes on the four-column grid (desktop); smaller grids fold them. */
+const sizes: Record<string, string> = {
+  tasks: 'bento__tile--s2 bento__tile--r2',
+  dashboards: 'bento__tile--s2 bento__tile--r2',
+  reports: 'bento__tile--s2',
+  projects: 'bento__tile--s3',
+  'month-summary': 'bento__tile--s4',
+  templates: 'bento__tile--s2',
+};
+const blanks: number = cal.offset;
+const kindOf = (day: number) => cal.events.find((event) => event.day === day)?.kind;
+---
+
+<div class="bento-groups">
+  {liveGroups.map((group) => (
+    <div class="bento-group" role="group" aria-labelledby={`group-${group.key}`}>
+      <p class="bento-group__label" id={`group-${group.key}`}>
+        {group.label}
+      </p>
+      <ul class="bento">
+        {group.items.map((item, i) => (
+          <li
+            class:list={['bento__tile', 'reveal', sizes[item.key]]}
+            style={`--reveal-delay: ${(i % 4) * 60}ms`}
+          >
+            <div class="bento__top">
+              <FeatureIcon name={item.key} class="mo-cell__icon" />
+              <span class="badge-live">{badges.live}</span>
+            </div>
+            <h3 class="mo-cell__title">{item.title}</h3>
+            <p class="mo-cell__text">{item.text}</p>
+            {item.chips.length > 0 && (
+              <div class="mo-chips" aria-hidden="true">
+                {item.chips.map((chip) => (
+                  <span class="mo-chip">{chip}</span>
+                ))}
+              </div>
+            )}
+
+            {item.key === 'tasks' && (
+              <div class="bento__visual">
+                <TaskLoop />
+              </div>
+            )}
+
+            {item.key === 'dashboards' && (
+              <div class="bento__visual cal" aria-hidden="true">
+                <p class="cal__month">{cal.month}</p>
+                <div class="cal__grid">
+                  {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d) => (
+                    <span class="cal__dow">{d}</span>
+                  ))}
+                  {Array.from({ length: blanks }, () => (
+                    <span />
+                  ))}
+                  {Array.from({ length: cal.days }, (_, n) => {
+                    const day = n + 1;
+                    const kind = kindOf(day);
+                    return (
+                      <span class:list={['cal__day', { 'cal__day--today': day === cal.today }]}>
+                        {day}
+                        {kind && <span class={`cal-mark cal-mark--${kind}`} />}
+                      </span>
+                    );
+                  })}
+                </div>
+                <div class="cal__legend">
+                  {cal.legend.map((entry) => (
+                    <span>
+                      <span class={`cal-mark cal-mark--${entry.kind}`} />
+                      {entry.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {item.key === 'projects' && (
+              <div class="bento__visual cycle" aria-hidden="true">
+                <div class="cycle__head">
+                  <span>{proj.client}</span>
+                  <span>{proj.cycle}</span>
+                </div>
+                <div class="cycle__row cycle__row--stages">
+                  <span />
+                  {proj.stages.map((stage) => (
+                    <span class="cycle__stage">{stage}</span>
+                  ))}
+                </div>
+                {proj.items.map((row) => (
+                  <div class="cycle__row">
+                    <span class="cycle__item">{row.name}</span>
+                    {proj.stages.map((_, s) => (
+                      <span class:list={['cycle__pip', { 'cycle__pip--on': s < row.done }]} />
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {item.key === 'month-summary' && (
+              <div class="mo-bars" aria-hidden="true">
+                {monthBars.map((bar) => (
+                  <div class="mo-bar">
+                    <span>{bar.name}</span>
+                    <span class="mo-bar__track">
+                      <span class="mo-bar__fill" style={`width: ${bar.width}%`} />
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
+</div>

@@ -1,0 +1,29 @@
+---
+/**
+ * A phone's lock screen with MaxOff notifications, recreated in HTML/CSS with demo data. The
+ * notifications slide in one by one the first time the screen is seen (opacity and transform
+ * only); under reduced motion, or without scripting, they are simply there.
+ */
+import PhoneFrame from './PhoneFrame.astro';
+import { lockScreen as l } from '../content/copy';
+---
+
+<PhoneFrame label={l.label} theme="dark" class="lock reveal">
+  <div class="lock__screen">
+    <p class="lock__date">{l.date}</p>
+    <p class="lock__time">{l.time}</p>
+    <ul class="lock__notes">
+      {l.items.map((item, i) => (
+        <li class="lock__note" style={`--i: ${i}`}>
+          <span class="lock__app">
+            <span class="lock__icon">M</span>
+            {l.app}
+            <span class="lock__when">{item.when}</span>
+          </span>
+          <span class="lock__title">{item.title}</span>
+          <span class="lock__text">{item.text}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</PhoneFrame>

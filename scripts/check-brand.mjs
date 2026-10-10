@@ -2,54 +2,54 @@
 /**
  * Brand check (CLAUDE.md rule 1): the only brand is MaxOff.
  *
- * One string is permitted anywhere: the exact developer credit, in the two credit files only.
- * Everything else fails: any other spelling, any other name that starts the same way, the exact
- * credit in any other file, in a <head>, a heading, an attribute or a script, and in commit messages.
+ * One name is permitted, and only in the developer credit: the developer's current name, spelled
+ * exactly, in the two credit files (and the two docs that state the rule). Everything else fails:
+ * any other spelling of it, the name in any other file, in a <head>, a heading, an attribute or a
+ * script, and in commit messages. The former developer name and its whole family are banned
+ * everywhere, the credit files and the rule docs included.
  *
- * The name is stored as joined fragments so this script never trips itself.
+ * Both names are stored as joined fragments so this script never trips itself.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-/** The banned stem, case-insensitive. */
-export const STEM = ['Pix', 'ora'].join('');
-/** The one permitted string, matched case-sensitively. */
-export const CREDIT = `${STEM} Agencies`;
-/** The banned product name the rule docs cite as their example. Allowed in the rule docs only. */
-export const BANNED_EXAMPLE = `${STEM} Clips`;
+/** The developer's name: the one permitted string, matched exactly (lower case, no space). */
+export const CREDIT = ['3not8', 'studios'].join('');
+/** Any spelling of the developer's name: spaces, dashes, capitals, a missing "s". */
+export const CREDIT_FAMILY = new RegExp(
+  ['3', '\\s*not', '[\\s_-]*8', '[\\s_-]*studios?'].join(''),
+  'gi',
+);
+/** The former developer name's stem, banned everywhere in every form, case-insensitive. */
+export const FORMER = ['Pix', 'ora'].join('');
 
-/** Source files where the exact credit may appear (copy lives in copy.ts; the privacy page names the controller). */
+/** Source files where the credit may appear (copy lives in copy.ts; the privacy page names the controller). */
 export const CREDIT_SOURCES = new Set(['src/content/copy.ts', 'src/pages/privacy.astro']);
 /** Docs that state the rule, so they must be able to name the credit. */
 export const RULE_DOCS = new Set(['CLAUDE.md', 'docs/BRIEF.md']);
-/** The original brief states the old rule verbatim. */
+/** The original brief is kept verbatim, from before both names. */
 export const EXEMPT = new Set(['docs/BRIEF-ORIGINAL.md']);
 
 const BINARY = /\.(woff2?|ttf|otf|png|jpe?g|gif|webp|avif|ico|pdf|zip|gz|br|mp4|webm|wasm)$/i;
-const pattern = new RegExp(STEM, 'gi');
+const formerPattern = new RegExp(FORMER, 'gi');
 
 const lineOf = (text, index) => text.slice(0, index).split('\n').length;
 
-/** Is the match at `index` exactly the credit, starting at a word boundary? */
-function isExactCredit(text, index) {
-  return text.startsWith(CREDIT, index) && !/[A-Za-z0-9]/.test(text[index - 1] ?? '');
-}
-
-/** Is the match at `index` the documented banned example, in a file that states the rule? */
-function isCitedExample(file, text, index) {
+/** Is the match exactly the credit name, with no letter or digit glued to either side? */
+function isExactCredit(text, index, length) {
   return (
-    RULE_DOCS.has(file) &&
-    text.startsWith(BANNED_EXAMPLE, index) &&
-    !/[A-Za-z0-9]/.test(text[index - 1] ?? '')
+    length === CREDIT.length &&
+    text.startsWith(CREDIT, index) &&
+    !/[A-Za-z0-9]/.test(text[index - 1] ?? '') &&
+    !/[A-Za-z0-9]/.test(text[index + length] ?? '')
   );
 }
 
 /**
- * Indexes of matches that sit in plain body text of built HTML. Anything in <head>, in a heading,
- * in a script or style, in a comment or inside a tag (attributes such as alt, content, aria-label)
- * is not plain body text.
+ * Indexes of plain body text in built HTML. Anything in <head>, in a heading, in a script or style,
+ * in a comment or inside a tag (attributes such as alt, content, aria-label) is not plain body text.
  */
 function bodyTextRanges(html) {
   const ranges = [];
@@ -75,13 +75,17 @@ function bodyTextRanges(html) {
 export function findViolations(file, text) {
   if (EXEMPT.has(file)) return [];
   const problems = [];
+  for (const match of text.matchAll(formerPattern)) {
+    problems.push(
+      `${file}:${lineOf(text, match.index)}: the former developer name (banned everywhere)`,
+    );
+  }
   const isBuiltHtml = /^dist\/(.+\/)?[^/]+\.html$/.test(file);
   const bodyRanges = isBuiltHtml ? bodyTextRanges(text) : [];
-  for (const match of text.matchAll(pattern)) {
+  for (const match of text.matchAll(CREDIT_FAMILY)) {
     const at = `${file}:${lineOf(text, match.index)}`;
-    if (isCitedExample(file, text, match.index)) continue;
-    if (!isExactCredit(text, match.index)) {
-      problems.push(`${at}: a name from the banned family other than the exact credit`);
+    if (!isExactCredit(text, match.index, match[0].length)) {
+      problems.push(`${at}: the developer's name spelled other than exactly "${CREDIT}"`);
     } else if (isBuiltHtml) {
       const inBodyText = bodyRanges.some(([a, b]) => match.index >= a && match.index < b);
       if (!inBodyText)
@@ -95,11 +99,11 @@ export function findViolations(file, text) {
   return problems;
 }
 
-/** Violations in a commit message: the name may not appear at all, not even the credit. */
+/** Violations in a commit message: neither name may appear at all, not even the credit. */
 export function findCommitViolations(message) {
-  return new RegExp(STEM, 'i').test(message)
-    ? [`commit message: ${message.trim().split('\n')[0].slice(0, 80)}`]
-    : [];
+  const named =
+    new RegExp(FORMER, 'i').test(message) || new RegExp(CREDIT_FAMILY.source, 'i').test(message);
+  return named ? [`commit message: ${message.trim().split('\n')[0].slice(0, 80)}`] : [];
 }
 
 function git(args) {
@@ -141,7 +145,7 @@ function main() {
 
   if (problems.length) {
     console.error(
-      'check-brand: MaxOff is the only brand. The one permitted string is the exact developer credit, in the credit files.',
+      'check-brand: MaxOff is the only brand. The one permitted name is the exact developer credit, in the credit files; the former developer name is banned everywhere.',
     );
     for (const problem of problems) console.error(`  ${problem}`);
     process.exit(1);

@@ -80,6 +80,10 @@ Second slice, `phase-5/audit`: performance and an accessibility audit past axe.
 - Tests for each fix, each shown to fail without it.
 - **Still open:** Lighthouse on the live URL (PageSpeed Insights; this sandbox cannot reach maxoff.in), Safari and Firefox (no WebKit or Firefox build here), and the owner's critique and polish pass.
 
+## v1.6 update (content/v1.6)
+
+The app moved to v1.6.0 (live 9 Oct 2026). Brief facts first, then copy, then visuals: the hero's approval moment, a bento grid, the role switcher, a day timeline and a lock screen. Approved by the owner on the preview before merge.
+
 ## Phase 6: Launch
 
 **Branch:** `phase-6/launch`. The owner decided to go live before Phase 5.

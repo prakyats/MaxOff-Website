@@ -9,8 +9,11 @@ const WIDTHS = [360, 390, 430, 768, 1280, 1440] as const;
 const APP = 'https://app.maxoff.in';
 const ADDRESS = 'hello@maxoff.in';
 /** Built from parts: the developer credit may not be written out in test files. */
-const CREDIT = `MaxOff is developed by ${['Pix', 'ora'].join('')} Agencies.`;
-const AGENCY = new RegExp(['Pix', 'ora'].join(''), 'i');
+const DEVELOPER = ['3not8', 'studios'].join('');
+const CREDIT = `MaxOff is developed by ${DEVELOPER}.`;
+const AGENCY = new RegExp(DEVELOPER, 'i');
+/** The former developer name, banned everywhere. */
+const FORMER = new RegExp(['Pix', 'ora'].join(''), 'i');
 
 /** Reveal-on-scroll hides sections until they are seen; show them all for screenshots and scans. */
 async function revealAll(page: Page): Promise<void> {
@@ -378,7 +381,8 @@ test.describe('on a phone', () => {
       await page.setViewportSize({ width: 740, height: 360 });
       await page.goto(HOME);
       if (zoom) await page.addStyleTag({ content: zoom });
-      // Wide enough for the bar's Request a demo, which shows while the hero's is off screen.
+      // Wide enough for the bar's Request a demo, which shows once the hero's is off screen.
+      await page.evaluate(() => document.querySelector('#what')?.scrollIntoView());
       const barDemo = page.locator('.site-header__demo');
       await expect(barDemo).toBeVisible();
       await page.getByRole('button', { name: 'Menu' }).tap();
@@ -529,13 +533,18 @@ test.describe('beyond axe', () => {
         await revealAll(page);
         if (spacing) await page.addStyleTag({ content: TEXT_SPACING });
         expect(await horizontalOverflow(page)).toBeLessThanOrEqual(0);
-        const clipped = await page.evaluate(() =>
-          [...document.querySelectorAll<HTMLElement>('a[href], button')]
-            .filter((el) => getComputedStyle(el).visibility === 'visible' && el.offsetWidth > 0)
-            .filter((el) => el.scrollWidth > el.clientWidth + 1)
-            .map((el) => (el.textContent ?? '').trim()),
-        );
-        expect(clipped).toEqual([]);
+        // Polled: the header's Request a demo opens out over 200 ms when the hero's button is
+        // below the fold, and is narrower than its text only while it does.
+        await expect
+          .poll(() =>
+            page.evaluate(() =>
+              [...document.querySelectorAll<HTMLElement>('a[href], button')]
+                .filter((el) => getComputedStyle(el).visibility === 'visible' && el.offsetWidth > 0)
+                .filter((el) => el.scrollWidth > el.clientWidth + 1)
+                .map((el) => (el.textContent ?? '').trim()),
+            ),
+          )
+          .toEqual([]);
       });
     }
   }
@@ -603,7 +612,16 @@ test.describe('beyond axe', () => {
     await page.goto(HOME);
     const cdp = await page.context().newCDPSession(page);
     await cdp.send('Performance.enable');
-    await page.waitForTimeout(1000); // let the load settle
+    // Let the load settle and the hero's one-time approval moment finish playing.
+    await expect
+      .poll(
+        () =>
+          page.evaluate(
+            () => document.getAnimations().filter((a) => a.playState === 'running').length,
+          ),
+        { timeout: 15_000 },
+      )
+      .toBe(0);
     const recalcs = async (): Promise<number> => {
       const { metrics } = await cdp.send('Performance.getMetrics');
       return metrics.find((metric) => metric.name === 'RecalcStyleCount')?.value ?? 0;
@@ -676,7 +694,7 @@ test.describe('/privacy', () => {
     await expect(email.getByRole('heading', { name: 'Email' })).toBeVisible();
     await expect(email).toContainText(ADDRESS);
     await expect(email).toContainText(
-      `are answered by ${['Pix', 'ora'].join('')} Agencies, the developer of MaxOff and the data controller for those emails.`,
+      `are answered by ${DEVELOPER}, the developer of MaxOff and the data controller for those emails.`,
     );
     for (const heading of await page.locator('h1, h2, h3').allTextContents()) {
       expect(heading).not.toMatch(AGENCY);
@@ -685,6 +703,12 @@ test.describe('/privacy', () => {
     const html = await (await request.get(PRIVACY)).text();
     const head = html.slice(0, html.indexOf('</head>'));
     expect(head).not.toMatch(AGENCY);
+  });
+
+  test('no page, and nothing built, carries the former developer name', async ({ request }) => {
+    for (const path of [...PAGES, '/404', '/robots.txt', '/sitemap-0.xml']) {
+      expect(await (await request.get(path)).text()).not.toMatch(FORMER);
+    }
   });
 
   test('is linked from the footer of every page and is not a dead end', async ({
@@ -846,9 +870,11 @@ test('the icons exist: favicon.ico, favicon.svg and a 180 px Apple touch icon', 
 const SECTION_IDS = [
   'questions',
   'what',
-  'coming',
+  'views',
+  'day',
   'app',
   'roles',
+  'coming',
   'trust',
   'how',
   'demo',
@@ -896,56 +922,6 @@ test.describe('the page', () => {
     );
   });
 
-  test('every feature is labelled Live or Coming, and matches the brief', async ({ page }) => {
-    await page.goto(HOME);
-    await revealAll(page);
-    const live = page.locator('#what .badge-live');
-    const soon = page.locator('#coming .mo-grid .badge-coming');
-    await expect(live).toHaveCount(8);
-    await expect(soon).toHaveCount(7);
-    const liveTitles = await page.locator('#what .mo-cell__title').allTextContents();
-    expect(liveTitles).toEqual([
-      'Attendance',
-      'Leave',
-      'Comp leave',
-      'Expense claims',
-      'Month summary',
-      'Clients',
-      'People',
-      'Settings',
-    ]);
-    const comingTitles = await page.locator('#coming .mo-grid .mo-cell__title').allTextContents();
-    expect(comingTitles).toEqual([
-      'Tasks with “Noted”',
-      'Owner-final approvals',
-      'Notifications and reminders',
-      'Dashboards and calendar',
-      'Client projects',
-      'Work submission',
-      'Owner-only revenue and reports',
-    ]);
-    // The second question depends on a Coming feature, so it is labelled Coming.
-    const questions = page.locator('#questions .mo-q');
-    await expect(questions.nth(0).locator('.badge-live')).toHaveCount(1);
-    await expect(questions.nth(1).locator('.badge-coming')).toHaveCount(1);
-    await expect(questions.nth(2).locator('.badge-live')).toHaveCount(1);
-  });
-
-  test('the three roles state what each can do, and money stays with the owner', async ({
-    page,
-  }) => {
-    await page.goto(HOME);
-    await revealAll(page);
-    await expect(page.locator('#roles .mo-role__name')).toHaveText(['Owner', 'Admin', 'Crew']);
-    await expect(page.locator('#roles')).toContainText('Money stays with the owner.');
-    const admin = page.locator('#roles .mo-role').nth(1);
-    await expect(admin).toContainText('Decides attendance or leave.');
-    await expect(admin).toContainText('Sees money.');
-    // Admin tasks are Coming, not live.
-    const adminSoon = admin.locator('.mo-list--soon');
-    await expect(adminSoon).toContainText('Creates and assigns tasks.');
-  });
-
   test('the third role is Crew everywhere: no page says Staff', async ({ request }) => {
     for (const path of PAGES) {
       const html = await (await request.get(path)).text();
@@ -966,57 +942,243 @@ test.describe('the page', () => {
     await expect(closing).toContainText('We usually reply within two working days.');
   });
 
-  test('the two phones show a dark and a light theme whatever the page theme is', async ({
-    page,
-  }) => {
-    for (const scheme of ['dark', 'light'] as const) {
-      await page.emulateMedia({ colorScheme: scheme });
-      await page.goto(HOME);
-      const backgrounds = await page.evaluate(() =>
-        [...document.querySelectorAll('#app .phone')].map((phone) =>
-          getComputedStyle(phone).getPropertyValue('--bg').trim(),
-        ),
-      );
-      expect(backgrounds).toEqual(['#0a0a0b', '#fafafa']);
-    }
+  test('every feature is labelled Live or Coming, and matches the brief', async ({ page }) => {
+    await page.goto(HOME);
+    await revealAll(page);
+    const liveTitles = await page.locator('#what .bento__tile .mo-cell__title').allTextContents();
+    expect(liveTitles).toEqual([
+      'Attendance',
+      'Leave',
+      'Comp leave',
+      'Expense claims',
+      'Month summary',
+      'Tasks with “Noted”',
+      'Today, My Day and a calendar',
+      'Owner-final approvals',
+      'Notifications and reminders',
+      'End-of-day report',
+      'Client projects',
+      'Clients',
+      'People',
+      'Settings',
+      'Templates',
+    ]);
+    // Every live tile says Live, and nothing in the live section says Coming.
+    await expect(page.locator('#what .bento__tile .badge-live')).toHaveCount(liveTitles.length);
+    await expect(page.locator('#what .badge-coming')).toHaveCount(0);
+    await expect(page.locator('#what .bento-group__label')).toHaveText([
+      'Your team’s day',
+      'The work',
+      'Clients',
+      'Set up once',
+    ]);
+    const comingTitles = await page.locator('#coming .mo-grid .mo-cell__title').allTextContents();
+    expect(comingTitles).toEqual([
+      'Work submission',
+      'Owner-only revenue and reports',
+      'Working hours, late starts and leaving early',
+    ]);
+    await expect(page.locator('#coming .mo-grid .badge-coming')).toHaveCount(3);
+    // All three questions are answered by live features now.
+    await expect(page.locator('#questions .mo-q .badge-live')).toHaveCount(3);
+    await expect(page.locator('#questions .badge-coming')).toHaveCount(0);
   });
 
-  test('the dark phone is the Crew view and the light phone is the Owner deciding a request', async ({
+  test('the three roles state what each can do, and money stays with the owner', async ({
     page,
   }) => {
     await page.goto(HOME);
-    const [dark, light] = await page.locator('#app .phone').all();
-    const crew = (await dark?.textContent()) ?? '';
-    expect(crew).toContain('My day');
-    expect(crew).toContain('Started working?');
-    expect(crew).toContain('Start day');
-    expect(crew).toContain('This week');
-    // The hero shows the Owner's Today, so the app section adds a different view.
-    expect(crew).not.toContain('Waiting on you');
-    const owner = (await light?.textContent()) ?? '';
-    expect(owner).toContain('Leave request');
-    expect(owner).toContain('Approve');
-    expect(owner).toContain('Reject');
-    expect(owner).not.toContain('Decline');
-    expect(owner).not.toContain('Recorded next to the original');
-    await expect(page.locator('#app figcaption')).toHaveText([
-      'Crew view, dark theme',
-      'Owner view, light theme',
+    await revealAll(page);
+    await expect(page.locator('#roles .mo-role__name')).toHaveText(['Owner', 'Admin', 'Crew']);
+    await expect(page.locator('#roles')).toContainText('Money stays with the owner.');
+    const [owner, admin, crew] = await page.locator('#roles .mo-role').all();
+    await expect(owner!).toContainText('Gives the final approval on every crew task.');
+    // Revenue is the one role line still Coming.
+    await expect(owner!.locator('.mo-list--soon')).toContainText('Sees revenue and reports.');
+    await expect(admin!).toContainText('Creates and assigns tasks.');
+    await expect(admin!).toContainText('Runs client projects for their own clients, end to end.');
+    await expect(admin!.locator('.mo-list--never')).toContainText('Decides attendance or leave.');
+    await expect(admin!.locator('.mo-list--never')).toContainText('Sees money.');
+    await expect(crew!).toContainText('Taps Task Noted on every task assigned to them.');
+    await expect(crew!.locator('.mo-list--never')).toContainText('Sees client work.');
+    await expect(page.locator('#roles .mo-list--soon')).toHaveCount(1);
+  });
+
+  test('a day in the studio runs from Start day to the next morning, in order', async ({
+    page,
+  }) => {
+    await page.goto(HOME);
+    await expect(page.locator('#day .mo-day__time')).toHaveText([
+      '09:05',
+      '10:10',
+      '13:40',
+      '17:20',
+      '18:30',
+      '08:00',
+    ]);
+    await expect(page.locator('#day .mo-day__title').first()).toHaveText('Start day');
+  });
+
+  test('the home page title is the approved one, in the tab and in link previews', async ({
+    page,
+  }) => {
+    await page.goto(HOME);
+    const title = 'MaxOff — Your studio, in one place';
+    await expect(page).toHaveTitle(title);
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', title);
+    await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', title);
+  });
+
+  test('how it starts has four steps, with Assign the work', async ({ page }) => {
+    await page.goto(HOME);
+    await expect(page.locator('#how .mo-cell__title')).toHaveText([
+      'Invite your team by link',
+      'They tap Start day',
+      'Assign the work. They tap Noted.',
+      'You decide',
     ]);
   });
 
-  test('the seventh Coming card spans the row, so no empty cell shows', async ({
+  test('the hero plays one approval: Approved, the count goes from 3 to 2, and an Undo shows', async ({
     page,
-  }, testInfo) => {
-    test.skip(testInfo.project.name !== 'desktop', 'viewport is set explicitly; run once');
-    await page.setViewportSize({ width: 1280, height: 900 });
+  }) => {
+    await page.goto(HOME);
+    const hero = page.locator('.mo-hero .moment');
+    const visible = (selector: string) =>
+      hero.locator(selector).evaluate((el) => Number(getComputedStyle(el).opacity));
+    await expect.poll(() => visible('.moment__row .moment__after')).toBe(1);
+    await expect.poll(() => visible('.today__count .moment__after')).toBe(1);
+    await expect.poll(() => visible('.moment__toast')).toBeGreaterThan(0.9);
+    await expect(hero.locator('.moment__toast')).toContainText('Undo');
+    await expect(hero.locator('.today__count .moment__after')).toHaveText('2');
+    // Then it is still: every animation in the hero finishes.
+    await expect
+      .poll(
+        () =>
+          page.evaluate(
+            () =>
+              document
+                .getAnimations()
+                .filter(
+                  (a) =>
+                    a.playState === 'running' &&
+                    (a.effect as KeyframeEffect | null)?.target?.closest('.mo-hero'),
+                ).length,
+          ),
+        { timeout: 12_000 },
+      )
+      .toBe(0);
+    await expect.poll(() => visible('.moment__toast')).toBe(0);
+  });
+
+  test('under reduced motion the hero stays on its first frame', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(HOME);
+    await page.waitForTimeout(2500);
+    const hero = page.locator('.mo-hero .moment');
+    expect(
+      await hero
+        .locator('.today__count .moment__before')
+        .evaluate((el) => getComputedStyle(el).opacity),
+    ).toBe('1');
+    expect(
+      await hero.locator('.moment__toast').evaluate((el) => getComputedStyle(el).opacity),
+    ).toBe('0');
+  });
+
+  test('the role switcher shows one view at a time and works with the keyboard', async ({
+    page,
+  }) => {
     await page.goto(HOME);
     await revealAll(page);
-    const cells = page.locator('#coming .mo-grid .mo-cell');
-    await expect(cells).toHaveCount(7);
-    const grid = await page.locator('#coming .mo-grid').boundingBox();
-    const last = await cells.last().boundingBox();
-    expect(Math.abs((last?.width ?? 0) - (grid?.width ?? 1))).toBeLessThan(4);
+    const views = page.locator('#views');
+    const group = views.getByRole('group', { name: 'Choose a role' });
+    await expect(group.getByRole('radio')).toHaveCount(3);
+    const shown = async () =>
+      views
+        .locator('.views__panel')
+        .evaluateAll((panels) =>
+          panels.filter((p) => getComputedStyle(p).display !== 'none').map((p) => p.className),
+        );
+    expect(await shown()).toEqual(['views__panel views__panel--owner']);
+    await expect(views.locator('.views__panel--owner')).toContainText('Who’s free');
+
+    await group.getByRole('radio', { name: 'Owner' }).focus();
+    await page.keyboard.press('ArrowRight');
+    await expect(group.getByRole('radio', { name: 'Admin' })).toBeChecked();
+    expect(await shown()).toEqual(['views__panel views__panel--admin']);
+    await expect(views.locator('.views__panel--admin')).toContainText('Work report');
+
+    await page.keyboard.press('ArrowRight');
+    await expect(group.getByRole('radio', { name: 'Crew' })).toBeChecked();
+    expect(await shown()).toEqual(['views__panel views__panel--crew']);
+    const crew = views.locator('.views__panel--crew');
+    await expect(crew).toContainText('My Day');
+    await expect(crew).toContainText('Task Noted');
+    // Crew never see client work or money.
+    await expect(crew.locator('.phone')).not.toContainText('Saffron');
+  });
+
+  test('the role tabs can be clicked or tapped', async ({ page }) => {
+    await page.goto(HOME);
+    await revealAll(page);
+    await page.locator('label[for="view-crew"]').click();
+    await expect(page.locator('#view-crew')).toBeChecked();
+    await expect(page.locator('.views__panel--crew')).toBeVisible();
+    await expect(page.locator('.views__panel--owner')).toBeHidden();
+  });
+
+  test('the lock screen shows four notifications, and under reduced motion they are simply there', async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(HOME);
+    const notes = page.locator('#app .lock__note');
+    await expect(notes).toHaveCount(4);
+    const opacities = await notes.evaluateAll((items) =>
+      items.map((n) => getComputedStyle(n).opacity),
+    );
+    expect(opacities).toEqual(['1', '1', '1', '1']);
+    await expect(page.locator('#app .lock')).toHaveAttribute('role', 'img');
+    // The lock screen is the Owner's: an escalation, not "cycle ready" (that goes to the Admin).
+    await expect(notes.first()).toContainText('Saffron Café: Reel 3 is overdue');
+    await expect(page.locator('#app .lock')).not.toContainText('cycle ready');
+  });
+
+  test('the lock screen notifications arrive once it is on screen', async ({ page }) => {
+    await page.goto(HOME);
+    const last = page.locator('#app .lock__note').last();
+    expect(await last.evaluate((n) => getComputedStyle(n).opacity)).toBe('0');
+    await page.locator('#app .lock').scrollIntoViewIfNeeded();
+    await expect
+      .poll(() => last.evaluate((n) => Number(getComputedStyle(n).opacity)), { timeout: 5000 })
+      .toBe(1);
+  });
+
+  test('search snippets skip section numbers and the phone mock-ups', async ({ request }) => {
+    const html = await (await request.get(HOME)).text();
+    // The number and the label are separate words, not "01Operations".
+    expect(html).not.toMatch(/<\/span>Operations/);
+    expect(html).toMatch(
+      /<p class="mo-eyebrow" data-nosnippet><span aria-hidden="true">01<\/span> /,
+    );
+    const phones = html.match(/<div class="phone(?: [^"]*)?"[^>]*>/g) ?? [];
+    expect(phones.length).toBeGreaterThanOrEqual(5);
+    for (const phone of phones) expect(phone).toContain('data-nosnippet');
+  });
+
+  test('red stays for the logo and the one button: overdue is amber in the mock-ups', async ({
+    page,
+  }) => {
+    await page.goto(HOME);
+    const warn = await page
+      .locator('.mo-hero .today__warn')
+      .evaluate((el) => getComputedStyle(el).color);
+    const accent = await page.evaluate(() =>
+      getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(),
+    );
+    expect(warn).not.toBe('rgb(196, 33, 38)');
+    expect(accent.toLowerCase()).toBe('#c42126');
   });
 
   test('Northwind Studio is shown once in each recreated screen', async ({ page }) => {

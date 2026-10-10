@@ -16,6 +16,7 @@ CSS custom properties on `:root` in `src/styles/tokens.css`. Dark is the default
 | `--text`           | `#F4F4F5`        | `#16161A`        | Body and headings                                                                 |
 | `--muted`          | `#A1A1AA`        | `#52525B`        | Secondary text. Contrast at least 7:1 on `--bg` and `--surface` in both themes    |
 | `--control-border` | 45 % of `--text` | 52 % of `--text` | Borders of controls and chips (at least 3:1 on the page: 4.2:1 dark, 3.6:1 light) |
+| `--warn`           | `#fbbf24`        | `#a16207`        | Overdue and waiting, inside the recreated screens only (never red)                |
 | `--accent`         | `#C42126`        | `#C42126`        | **Rare.** Logo mark, the one primary button per view, the hero glow               |
 | `--on-accent`      | `#FFFFFF`        | `#FFFFFF`        | Text on the primary button (5.8:1 on the accent)                                  |
 | `--live`           | `#4ADE80`        | `#15803D`        | The "Live" badge only                                                             |
@@ -82,3 +83,12 @@ In the footer. Stored under the `maxoff-theme` key in `localStorage`, every read
 ## Responsive checkpoints
 
 Every section works at 360, 390, 430, 768, 1280 and 1440px wide, in both themes, and at 200 % text size. No horizontal scroll at 360px.
+
+## v1.6 additions (10 Oct 2026)
+
+- **Bento grid** for the live features, in four groups with mono labels on a hairline. Tiles are bordered cards on a 4-column grid (2 on tablets, 1 on phones); large tiles carry a small recreated visual: the task loop, a month calendar, the October cycle of a client project, the month bars. The last tile of a group stretches to the row's end, so no row ends in a gap.
+- **Motion tells the product story**, never decoration, and only with opacity and transform: the hero's Owner Today plays one approval once on load (Approve to Approved, the count from 3 to 2, a six-second Undo); the lock screen's notifications arrive once, the first time it is seen; the task loop runs only while on screen. Under reduced motion everything is still: the hero stays on its first frame and the notifications are simply there.
+- **Role switcher**: Owner / Admin / Crew as real radio buttons styled as a segmented control; the chosen tab fills with the text colour, never red. CSS `:has()` shows the chosen phone, no script; without `:has()` the Owner's view shows.
+- **Calendar marks** tell kinds apart by shape (filled dot, ring, square, diamond), so colour is never the only cue.
+- **Amber** (`--warn`) marks overdue and waiting inside the mock-ups. Red stays for the logo mark (including the app icon on the lock screen) and the one primary button per view.
+- **A day in the studio**: six beats on a hairline rail, across the top on desktop, down the side on phones.

@@ -18,6 +18,8 @@
   --accent: #c42126;
   --on-accent: #ffffff;
   --live: #4ade80;
+  /* Overdue and waiting, inside the recreated screens only. Red stays for the logo and one button. */
+  --warn: #fbbf24;
   --grid-line: rgb(255 255 255 / 5.5%);
   --glow: rgb(196 33 38 / 22%);
   --control-border: color-mix(in srgb, var(--text) 45%, transparent);
@@ -38,6 +40,7 @@
   --text: #16161a;
   --muted: #52525b;
   --live: #15803d;
+  --warn: #a16207;
   --grid-line: rgb(0 0 0 / 7%);
   --glow: rgb(196 33 38 / 14%);
   /* 52%, not the dark theme's 45%: outline buttons need 3:1 against the page (3.6:1 here). */
@@ -53,6 +56,7 @@
     --text: #16161a;
     --muted: #52525b;
     --live: #15803d;
+    --warn: #a16207;
     --grid-line: rgb(0 0 0 / 7%);
     --glow: rgb(196 33 38 / 14%);
     --control-border: color-mix(in srgb, var(--text) 52%, transparent);
