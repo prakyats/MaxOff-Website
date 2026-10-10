@@ -11,7 +11,7 @@ export const site = {
   name: 'MaxOff',
   url: 'https://maxoff.in',
   appUrl: 'https://app.maxoff.in',
-  title: 'MaxOff: operations for small studios',
+  title: 'MaxOff — Your studio, in one place',
   description:
     'Attendance, leave, tasks, client projects and approvals in one app your team already has on their phone. The final say is always yours.',
 } as const;
@@ -513,7 +513,7 @@ export const contact = {
 export const footer = {
   description: 'Operations for small creative studios.',
   /** The developer credit. The only place the agency name appears besides the privacy page. */
-  credit: 'MaxOff is developed by Pixora Agencies.',
+  credit: 'MaxOff is developed by 3not8studios.',
   links: [
     { label: 'Privacy', href: '/privacy' },
     { label: 'Contact', href: null },
@@ -769,7 +769,7 @@ export const privacy = {
     /** The address sits between these two, written as entities (see src/lib/contact.ts). */
     before: 'Emails to ',
     after:
-      ' are answered by Pixora Agencies, the developer of MaxOff and the data controller for those emails.',
+      ' are answered by 3not8studios, the developer of MaxOff and the data controller for those emails.',
   },
 } as const;
 

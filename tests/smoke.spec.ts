@@ -9,8 +9,11 @@ const WIDTHS = [360, 390, 430, 768, 1280, 1440] as const;
 const APP = 'https://app.maxoff.in';
 const ADDRESS = 'hello@maxoff.in';
 /** Built from parts: the developer credit may not be written out in test files. */
-const CREDIT = `MaxOff is developed by ${['Pix', 'ora'].join('')} Agencies.`;
-const AGENCY = new RegExp(['Pix', 'ora'].join(''), 'i');
+const DEVELOPER = ['3not8', 'studios'].join('');
+const CREDIT = `MaxOff is developed by ${DEVELOPER}.`;
+const AGENCY = new RegExp(DEVELOPER, 'i');
+/** The former developer name, banned everywhere. */
+const FORMER = new RegExp(['Pix', 'ora'].join(''), 'i');
 
 /** Reveal-on-scroll hides sections until they are seen; show them all for screenshots and scans. */
 async function revealAll(page: Page): Promise<void> {
@@ -690,7 +693,7 @@ test.describe('/privacy', () => {
     await expect(email.getByRole('heading', { name: 'Email' })).toBeVisible();
     await expect(email).toContainText(ADDRESS);
     await expect(email).toContainText(
-      `are answered by ${['Pix', 'ora'].join('')} Agencies, the developer of MaxOff and the data controller for those emails.`,
+      `are answered by ${DEVELOPER}, the developer of MaxOff and the data controller for those emails.`,
     );
     for (const heading of await page.locator('h1, h2, h3').allTextContents()) {
       expect(heading).not.toMatch(AGENCY);
@@ -699,6 +702,12 @@ test.describe('/privacy', () => {
     const html = await (await request.get(PRIVACY)).text();
     const head = html.slice(0, html.indexOf('</head>'));
     expect(head).not.toMatch(AGENCY);
+  });
+
+  test('no page, and nothing built, carries the former developer name', async ({ request }) => {
+    for (const path of [...PAGES, '/404', '/robots.txt', '/sitemap-0.xml']) {
+      expect(await (await request.get(path)).text()).not.toMatch(FORMER);
+    }
   });
 
   test('is linked from the footer of every page and is not a dead end', async ({
@@ -1007,6 +1016,16 @@ test.describe('the page', () => {
       '08:00',
     ]);
     await expect(page.locator('#day .mo-day__title').first()).toHaveText('Start day');
+  });
+
+  test('the home page title is the approved one, in the tab and in link previews', async ({
+    page,
+  }) => {
+    await page.goto(HOME);
+    const title = 'MaxOff — Your studio, in one place';
+    await expect(page).toHaveTitle(title);
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', title);
+    await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', title);
   });
 
   test('how it starts has four steps, with Assign the work', async ({ page }) => {
