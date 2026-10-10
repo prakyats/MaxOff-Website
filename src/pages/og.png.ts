@@ -20,7 +20,7 @@ const COLOURS = {
   grid: 'rgba(255,255,255,0.055)',
 } as const;
 
-const facts = ['Owner, Admin, Crew', 'IST', 'History never overwritten'] as const;
+const facts = ['Attendance, leave, tasks', 'Client projects', 'Owner, Admin, Crew'] as const;
 
 const mono = { fontFamily: 'Geist Mono', fontWeight: 500, textTransform: 'uppercase' } as const;
 

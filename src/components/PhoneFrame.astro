@@ -10,7 +10,12 @@ interface Props {
 const { label, theme, class: className } = Astro.props;
 ---
 
-<div class:list={['phone', theme && `phone--${theme}`, className]} role="img" aria-label={label}>
+<div
+  class:list={['phone', theme && `phone--${theme}`, className]}
+  role="img"
+  aria-label={label}
+  data-nosnippet
+>
   <div class="phone__screen">
     <slot />
   </div>

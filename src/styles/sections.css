@@ -377,14 +377,7 @@
   color: var(--muted);
 }
 
-/* ---------- Coming next: the task loop beside the table ---------- */
-
-.mo-coming {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1.5rem;
-  align-items: start;
-}
+/* ---------- The task loop, inside the Tasks tile ---------- */
 
 .loop {
   display: grid;
@@ -596,12 +589,6 @@
   color: var(--muted);
   font-size: 0.9375rem;
 }
-.mo-devices {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 2rem;
-  justify-items: center;
-}
 .mo-shot {
   display: grid;
   width: 100%;
@@ -742,9 +729,405 @@
   margin-top: 0;
 }
 
+/* ---------- What it does: the live features as a bento grid ---------- */
+
+.bento-groups {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3rem);
+}
+.bento-group__label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 0.9rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.bento-group__label::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--border);
+}
+.bento {
+  display: grid;
+  grid-auto-flow: row dense;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bento__tile {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg);
+  transition: background-color var(--duration-hover) var(--ease-out);
+}
+.bento__tile:hover {
+  background: var(--surface);
+}
+.bento__tile:hover .mo-cell__icon {
+  color: var(--text);
+}
+.bento__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+.bento__visual {
+  margin-top: auto;
+  padding-top: 0.75rem;
+}
+.bento__visual .loop {
+  background: var(--bg);
+}
+
+/* The month in the calendar tile. */
+.cal__month {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-align: center;
+}
+.cal__dow {
+  padding-bottom: 0.25rem;
+}
+.cal__day {
+  position: relative;
+  padding: 0.3rem 0 0.65rem;
+  border-radius: 4px;
+}
+.cal__day--today {
+  outline: 1px solid var(--text);
+  outline-offset: -1px;
+  color: var(--text);
+}
+.cal__day .cal-mark {
+  position: absolute;
+  bottom: 0.2rem;
+  left: calc(50% - 0.2rem);
+  width: 0.4rem;
+  height: 0.4rem;
+}
+.cal__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+}
+.cal__legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* The October cycle in the client projects tile: each item's stages, ticked as work moves. */
+.cycle {
+  display: grid;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+}
+.cycle__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.cycle__head span + span {
+  color: var(--muted);
+}
+.cycle__row {
+  display: grid;
+  grid-template-columns: 4.5rem repeat(4, minmax(0, 1fr));
+  align-items: center;
+  gap: 0.4rem;
+}
+.cycle__stage {
+  overflow: hidden;
+  color: var(--muted);
+  text-align: center;
+  text-overflow: ellipsis;
+}
+.cycle__pip {
+  height: 0.5rem;
+  border: 1px solid var(--control-border);
+  border-radius: 2px;
+}
+.cycle__pip--on {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--text) 55%, transparent);
+}
+
+/* ---------- One app, three views: the role switcher ---------- */
+
+.views {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: 1.5rem;
+}
+.views__tabs {
+  position: relative;
+  display: inline-flex;
+  /* A fieldset is min-content wide by default; let the tabs wrap at large text sizes instead. */
+  min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+}
+/* The real radio button stays focusable and readable; its label is what you see. */
+.views__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.views__tab {
+  display: inline-flex;
+  min-width: 5.5rem;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.1rem;
+  border-radius: 999px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-hover) var(--ease-out),
+    color var(--duration-hover) var(--ease-out);
+}
+.views__tab:hover {
+  color: var(--text);
+}
+.views__input:checked + .views__tab {
+  background: var(--text);
+  color: var(--bg);
+}
+.views__input:focus-visible + .views__tab {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+.views__panel {
+  display: none;
+  width: 100%;
+  max-width: 34rem;
+  justify-items: center;
+  gap: 1rem;
+  margin: 0;
+  padding: 2.5rem 1rem 1.5rem;
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / 100% 16px,
+    color-mix(in srgb, var(--surface) 55%, transparent);
+}
+.views:has(#view-owner:checked) .views__panel--owner,
+.views:has(#view-admin:checked) .views__panel--admin,
+.views:has(#view-crew:checked) .views__panel--crew {
+  display: grid;
+}
+@supports not selector(:has(*)) {
+  .views__panel--owner {
+    display: grid;
+  }
+}
+.views__panel figcaption {
+  max-width: 24rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* ---------- A day in the studio: a timeline on a hairline rail ---------- */
+
+.mo-day {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mo-day__beat {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.4rem;
+  padding: 0 0 1.75rem 1.75rem;
+  border-left: 1px solid var(--border);
+}
+/* The dot on the rail. */
+.mo-day__beat::before {
+  content: '';
+  position: absolute;
+  top: 0.45rem;
+  left: -0.3125rem;
+  width: 0.5625rem;
+  height: 0.5625rem;
+  border: 1px solid var(--text);
+  border-radius: 50%;
+  background: var(--bg);
+}
+.mo-day__beat:last-child::before {
+  background: var(--text);
+}
+.mo-day__time {
+  font-family: var(--font-mono);
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.mo-day__title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.mo-day__text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* ---------- Feels like an app: the lock screen ---------- */
+
+.lock__screen {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  padding: 3.4em 0.9em 1em;
+  background: linear-gradient(165deg, #1d1d22, #0a0a0b 70%);
+  color: #f4f4f5;
+  font-size: 4.3cqw;
+  line-height: 1.35;
+}
+.lock__screen p {
+  margin: 0;
+}
+.lock__date {
+  color: #a1a1aa;
+  font-size: 0.9em;
+  text-align: center;
+}
+.lock__time {
+  font-size: 4.4em;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  text-align: center;
+}
+.lock__notes {
+  display: grid;
+  gap: 0.5em;
+  margin: 1.6em 0 0;
+  padding: 0;
+  list-style: none;
+}
+.lock__note {
+  display: grid;
+  gap: 0.15em;
+  padding: 0.75em 0.9em;
+  border-radius: 1.1em;
+  background: rgb(255 255 255 / 9%);
+}
+.lock__app {
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  color: #a1a1aa;
+  font-size: 0.72em;
+}
+/* The app's icon is the logo mark, the one place red belongs. */
+.lock__icon {
+  display: inline-flex;
+  width: 1.5em;
+  height: 1.5em;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.35em;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.85em;
+  font-weight: 700;
+}
+.lock__when {
+  margin-left: auto;
+}
+.lock__title {
+  font-size: 0.9em;
+  font-weight: 600;
+}
+.lock__text {
+  color: #a1a1aa;
+  font-size: 0.82em;
+}
+/* The notifications arrive one by one the first time the screen is seen. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .lock .lock__note {
+    animation: lock-in 500ms var(--ease-out) calc(300ms + var(--i) * 450ms) both paused;
+  }
+  .lock.is-visible .lock__note {
+    animation-play-state: running;
+  }
+}
+@keyframes lock-in {
+  from {
+    opacity: 0;
+    transform: translateY(-1.2em) scale(0.97);
+  }
+}
+
 /* ---------- Breakpoints ---------- */
 
 @media (min-width: 640px) {
+  .bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .bento__tile--s2,
+  .bento__tile--s3,
+  .bento__tile--s4 {
+    grid-column: span 2;
+  }
+  /* The last tile of a group stretches to the row's end, so no row ends in a gap. */
+  .bento > :last-child {
+    grid-column-end: -1;
+  }
   /* An odd last cell in a two-column table spans the row, so no empty cell shows the border colour. */
   .mo-grid--c2 > .mo-cell:last-child:nth-child(odd) {
     grid-column: 1 / -1;
@@ -756,12 +1139,6 @@
   .mo-grid--c3,
   .mo-grid--c4 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (min-width: 768px) {
-  .mo-devices {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: start;
   }
 }
 @media (min-width: 1024px) {
@@ -788,13 +1165,38 @@
   .mo-grid--c4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
-  .mo-coming {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: 2rem;
+  /* On wide screens the rail runs across the top and the beats sit in one row. */
+  .mo-day {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .mo-day__beat {
+    padding: 1.75rem 1rem 0 0;
+    border-top: 1px solid var(--border);
+    border-left: 0;
+  }
+  .mo-day__beat::before {
+    top: -0.3125rem;
+    left: 0;
   }
   .mo-app {
-    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+    align-items: center;
     gap: 4rem;
+  }
+  .bento {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .bento__tile--s2 {
+    grid-column: span 2;
+  }
+  .bento__tile--s3 {
+    grid-column: span 3;
+  }
+  .bento__tile--s4 {
+    grid-column: span 4;
+  }
+  .bento__tile--r2 {
+    grid-row: span 2;
   }
   .mo-close {
     grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);

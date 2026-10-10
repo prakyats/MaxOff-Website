@@ -1,0 +1,50 @@
+---
+/**
+ * One app, three views: Owner / Admin / Crew tabs swap the phone. Real radio buttons in a
+ * fieldset, so it works with the keyboard (arrow keys) and a screen reader, and needs no script.
+ * CSS shows the chosen panel with :has(); a browser without :has() shows the Owner's view.
+ */
+import PhoneFrame from './PhoneFrame.astro';
+import AdminTodayScreen from './screens/AdminTodayScreen.astro';
+import CalendarScreen from './screens/CalendarScreen.astro';
+import MyDayScreen from './screens/MyDayScreen.astro';
+import { adminTodayScreen, calendarScreen, myDayScreen, views } from '../content/copy';
+
+const labels = {
+  owner: calendarScreen.label,
+  admin: adminTodayScreen.label,
+  crew: myDayScreen.label,
+};
+---
+
+<div class="views">
+  <fieldset class="views__tabs">
+    <legend class="sr-only">{views.legend}</legend>
+    {views.tabs.map((tab, i) => (
+      <>
+        <input
+          class="views__input"
+          type="radio"
+          name="role-view"
+          id={`view-${tab.key}`}
+          value={tab.key}
+          checked={i === 0}
+        />
+        <label class="views__tab" for={`view-${tab.key}`}>
+          {tab.label}
+        </label>
+      </>
+    ))}
+  </fieldset>
+
+  {views.tabs.map((tab) => (
+    <figure class={`views__panel views__panel--${tab.key}`}>
+      <PhoneFrame label={labels[tab.key]}>
+        {tab.key === 'owner' && <CalendarScreen />}
+        {tab.key === 'admin' && <AdminTodayScreen />}
+        {tab.key === 'crew' && <MyDayScreen />}
+      </PhoneFrame>
+      <figcaption>{tab.caption}</figcaption>
+    </figure>
+  ))}
+</div>

@@ -1,19 +1,20 @@
 ---
 /**
- * The Owner's Today screen, recreated in HTML/CSS with demo data (Northwind Studio, invented
- * first names). Sizes use container units so the whole screen scales with its phone frame.
- * Only live features appear: attendance, leave, expense claims, comp leave. No tasks.
+ * The Owner's Today, recreated in HTML/CSS with demo data (Northwind Studio, invented first names).
+ * In the hero it plays one moment, once, in CSS only: Kabir's leave is approved, a six-second Undo
+ * appears and fades, and the "Needs you first" count goes from 3 to 2. Opacity and transform only,
+ * so nothing shifts. Under reduced motion it stays at the first frame. No amounts on any screen.
  */
 import Calendar from '@lucide/astro/icons/calendar';
 import House from '@lucide/astro/icons/house';
-import Receipt from '@lucide/astro/icons/receipt';
+import ListChecks from '@lucide/astro/icons/list-checks';
 import Users from '@lucide/astro/icons/users';
 import { todayScreen as t } from '../../content/copy';
 
-const tabIcons = [House, Users, Calendar, Receipt];
+const tabIcons = [House, ListChecks, Calendar, Users];
 ---
 
-<div class="today">
+<div class="today moment">
   <div class="today__status">
     <span>
       {t.time} {t.zone}
@@ -27,45 +28,60 @@ const tabIcons = [House, Users, Calendar, Receipt];
     <p class="today__company">{t.company}</p>
   </div>
 
-  <div class="today__day">
-    <div>
-      <p class="today__day-label">{t.day.label}</p>
-      <p class="today__day-status">{t.day.status}</p>
-    </div>
-    <span class="today__pill">{t.day.action}</span>
-  </div>
-
   <div class="today__section">
     <div class="today__section-head">
-      <span>{t.waiting.heading}</span>
-      <span class="today__count">{t.waiting.items.length}</span>
+      <span>{t.needs.heading}</span>
+      <span class="today__count moment__swap">
+        <span class="moment__before">{t.needs.before}</span>
+        <span class="moment__after">{t.needs.after}</span>
+      </span>
     </div>
-    {t.waiting.items.map((item) => (
-      <div class="today__row">
-        <span class="today__avatar">{item.who.slice(0, 1)}</span>
+    {t.needs.rows.map((row, i) => (
+      <div class:list={['today__row', { moment__row: i === 0 }]}>
+        <span class="today__avatar">{row.who}</span>
         <div class="today__row-text">
-          <p class="today__row-title">
-            {item.who}: {item.kind}
-          </p>
-          <p class="today__row-sub">{item.what}</p>
+          <p class="today__row-title">{row.title}</p>
+          <p class="today__row-sub">{row.sub}</p>
         </div>
-        <span class="today__pill today__pill--quiet">{t.waiting.action}</span>
+        {row.done ? (
+          <span class="moment__swap">
+            <span class="today__pill today__pill--quiet moment__before">{row.action}</span>
+            <span class="today__pill today__pill--quiet today__pill--done moment__after">
+              {row.done}
+            </span>
+          </span>
+        ) : (
+          <span class="today__pill today__pill--quiet">{row.action}</span>
+        )}
       </div>
     ))}
   </div>
 
   <div class="today__section">
     <div class="today__section-head">
-      <span>{t.board.heading}</span>
+      <span>{t.attendance.heading}</span>
     </div>
-    <div class="today__board">
-      {t.board.people.map((person) => (
-        <div class="today__person">
-          {person.name}
-          <span>{person.since ? `${person.state} since ${person.since}` : person.state}</span>
+    <p class="today__line">{t.attendance.text}</p>
+  </div>
+
+  <div class="today__section">
+    <div class="today__section-head">
+      <span>{t.tasks.heading}</span>
+    </div>
+    {t.tasks.rows.map((row) => (
+      <div class="today__row">
+        <div class="today__row-text">
+          <p class="today__row-title">{row.title}</p>
+          <p class:list={['today__row-sub', { today__warn: row.tone === 'warn' }]}>{row.sub}</p>
         </div>
-      ))}
-    </div>
+      </div>
+    ))}
+  </div>
+
+  <div class="today__toast moment__toast">
+    <span>{t.toast.text}</span>
+    <span class="today__toast-undo">{t.toast.undo}</span>
+    <span class="today__toast-timer moment__timer"></span>
   </div>
 
   <div class="today__tabs">

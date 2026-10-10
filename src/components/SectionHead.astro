@@ -13,9 +13,8 @@ const { index, eyebrow, title, titleId, intro, class: className = '' } = Astro.p
 ---
 
 <header class:list={['mo-sechead', 'reveal', className]}>
-  <p class="mo-eyebrow">
-    <span>{index}</span>
-    {eyebrow}
+  <p class="mo-eyebrow" data-nosnippet>
+    <span aria-hidden="true">{index}</span> {eyebrow}
   </p>
   <h2 id={titleId} class="mo-h2">
     {title}

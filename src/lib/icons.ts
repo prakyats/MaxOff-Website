@@ -5,6 +5,12 @@
 import Briefcase from '@lucide/astro/icons/briefcase';
 import Archive from '@lucide/astro/icons/archive';
 import Bell from '@lucide/astro/icons/bell';
+import BellRing from '@lucide/astro/icons/bell-ring';
+import Clock from '@lucide/astro/icons/clock';
+import ClipboardCheck from '@lucide/astro/icons/clipboard-check';
+import Copy from '@lucide/astro/icons/copy';
+import Laptop from '@lucide/astro/icons/laptop';
+import NotebookText from '@lucide/astro/icons/notebook-text';
 import CalendarCheck from '@lucide/astro/icons/calendar-check';
 import ChartColumn from '@lucide/astro/icons/chart-column';
 import CheckCheck from '@lucide/astro/icons/check-check';
@@ -43,16 +49,21 @@ export const icons = {
   clients: Briefcase,
   people: Users,
   settings: SlidersHorizontal,
-  // Coming features
   tasks: ListChecks,
   approvals: ShieldCheck,
   notifications: Bell,
   dashboards: LayoutDashboard,
+  reports: NotebookText,
   projects: FolderKanban,
+  templates: Copy,
+  // Coming features
   work: FileUp,
   revenue: Wallet,
+  hours: Clock,
   // Feels like an app
   'app-install': Download,
+  'app-push': BellRing,
+  'app-desk': Laptop,
   'app-back': Undo2,
   'app-themes': SunMoon,
   'app-phones': Smartphone,
@@ -70,6 +81,7 @@ export const icons = {
   // How it starts
   'how-invite': UserPlus,
   'how-start': Smartphone,
+  'how-assign': ClipboardCheck,
   'how-decide': CheckCheck,
 } as const;
 

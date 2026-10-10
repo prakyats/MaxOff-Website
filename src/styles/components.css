@@ -495,6 +495,7 @@
     --text: #f4f4f5;
     --muted: #a1a1aa;
     --control-border: color-mix(in srgb, #f4f4f5 45%, transparent);
+    --warn: #fbbf24;
     color: var(--text);
   }
   .phone--light {
@@ -503,13 +504,15 @@
     --border: #e4e4e7;
     --text: #16161a;
     --muted: #52525b;
-    --control-border: color-mix(in srgb, #16161a 45%, transparent);
+    --control-border: color-mix(in srgb, #16161a 52%, transparent);
+    --warn: #a16207;
     color: var(--text);
   }
 
   /* ---------- Recreated Today screen (sizes in container units, so it scales with the frame) ---------- */
 
   .today {
+    position: relative;
     display: flex;
     height: 100%;
     flex-direction: column;
@@ -684,62 +687,6 @@
     height: 1.5em;
   }
 
-  .today__back {
-    display: flex;
-    align-items: center;
-    gap: 0.2em;
-    color: var(--muted);
-    font-size: 0.85em;
-  }
-  .today__back svg {
-    width: 1.2em;
-    height: 1.2em;
-  }
-  .today__row--first {
-    border-top: 0;
-  }
-  .today__facts {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.6em 1em;
-    padding-top: 0.6em;
-    border-top: 1px solid var(--border);
-  }
-  .today__history {
-    padding: 0.35em 0;
-    border-top: 1px solid var(--border);
-    color: var(--muted);
-    font-family: var(--font-mono);
-    font-size: 0.72em;
-    letter-spacing: 0.02em;
-  }
-  .today__actions {
-    display: grid;
-    gap: 0.6em;
-    padding: 1.2em 1.4em;
-  }
-  .today__pill--wide {
-    display: flex;
-    justify-content: center;
-    padding-block: 0.7em;
-    font-size: 0.95em;
-  }
-
-  .today__prompt {
-    display: grid;
-    gap: 0.9em;
-    margin: 0 1.2em;
-    padding: 1.1em 1em 1em;
-    border: 1px solid var(--border);
-    border-radius: 1.1em;
-    background: color-mix(in srgb, var(--text) 4%, transparent);
-  }
-  .today__prompt-question {
-    font-size: 1.45em;
-    font-weight: 600;
-    letter-spacing: -0.03em;
-    line-height: 1.15;
-  }
   .today__week-row {
     display: grid;
     grid-template-columns: 4.6em minmax(0, 1fr) auto;
@@ -767,5 +714,200 @@
   }
   .today__week-row--today .today__week-day {
     color: var(--text);
+  }
+  /* ---------- Screen pieces added for v1.6 ---------- */
+
+  .today__line {
+    padding: 0.5em 0;
+    border-top: 1px solid var(--border);
+    font-size: 0.9em;
+  }
+  .today__warn {
+    color: var(--warn);
+  }
+  .today__pill--done {
+    border-color: transparent;
+    color: var(--muted);
+  }
+  .today__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--border);
+  }
+  .today__stat {
+    display: grid;
+    padding: 0.5em 0;
+    color: var(--muted);
+    font-size: 0.78em;
+  }
+  .today__stat span {
+    color: var(--text);
+    font-size: 1.7em;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  .today__segments {
+    display: flex;
+    gap: 0.4em;
+    padding: 0 1.4em 0.2em;
+  }
+  .today__segment {
+    padding: 0.3em 0.9em;
+    border: 1px solid var(--control-border);
+    border-radius: 999px;
+    font-size: 0.78em;
+  }
+  .today__segment--on {
+    border-color: var(--text);
+    background: var(--text);
+    color: var(--bg);
+    font-weight: 600;
+  }
+  .today__events {
+    display: grid;
+    gap: 0.2em;
+    min-width: 0;
+  }
+  .today__event {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    min-width: 0;
+  }
+
+  /* Calendar marks: shape tells the kind, so colour is never the only cue. */
+  .cal-mark {
+    display: inline-block;
+    width: 0.55em;
+    height: 0.55em;
+    flex: none;
+  }
+  .cal-mark--shoot {
+    border-radius: 50%;
+    background: var(--text);
+  }
+  .cal-mark--meeting {
+    border: 1.5px solid var(--text);
+    border-radius: 50%;
+  }
+  .cal-mark--leave {
+    border-radius: 1px;
+    background: color-mix(in srgb, var(--text) 45%, transparent);
+  }
+  .cal-mark--holiday {
+    border: 1px solid var(--muted);
+    transform: rotate(45deg) scale(0.85);
+  }
+
+  /* The six-second Undo after an approval. */
+  .today__toast {
+    position: absolute;
+    right: 1.2em;
+    bottom: 5.4em;
+    left: 1.2em;
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    padding: 0.8em 1em;
+    overflow: hidden;
+    border-radius: 0.9em;
+    background: var(--text);
+    color: var(--bg);
+    font-size: 0.85em;
+    font-weight: 600;
+    opacity: 0;
+  }
+  .today__toast-undo {
+    margin-left: auto;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .today__toast-timer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    opacity: 0.5;
+    transform-origin: left;
+  }
+
+  /* Two states stacked in one place, so swapping them never moves anything. */
+  .moment__swap {
+    display: inline-grid;
+  }
+  .moment__swap > * {
+    grid-area: 1 / 1;
+  }
+  .moment__after {
+    opacity: 0;
+  }
+}
+
+/*
+  The hero's moment plays once on load: Approve turns into Approved, the row settles, the count
+  goes from 3 to 2, and an Undo shows for six seconds. Opacity and transform only, on the
+  compositor. Under reduced motion none of this runs and the first frame stays.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  .moment .moment__before {
+    animation: moment-out 300ms var(--ease-out) var(--moment-at, 1.8s) both;
+  }
+  .moment .moment__after {
+    animation: moment-in 300ms var(--ease-out) var(--moment-at, 1.8s) both;
+  }
+  .moment .today__count {
+    --moment-at: 2.2s;
+  }
+  .moment .moment__row .today__row-text {
+    animation: moment-settle 400ms var(--ease-out) 2s both;
+  }
+  .moment .moment__toast {
+    animation: moment-toast 6.8s var(--ease-out) 1.9s both;
+  }
+  .moment .moment__timer {
+    animation: moment-timer 6s linear 2.2s both;
+  }
+}
+@keyframes moment-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes moment-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes moment-settle {
+  to {
+    opacity: 0.55;
+  }
+}
+@keyframes moment-toast {
+  0% {
+    opacity: 0;
+    transform: translateY(1em);
+  }
+  5%,
+  95% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0.5em);
+  }
+}
+@keyframes moment-timer {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
   }
 }
