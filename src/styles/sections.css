@@ -68,7 +68,8 @@
   text-wrap: balance;
 }
 .mo-h1 {
-  font-size: clamp(2.5rem, 1.3rem + 5.4vw, 5.5rem);
+  /* Also capped by the screen's height, so the hero fits a laptop's first screen. */
+  font-size: clamp(2.5rem, min(1.3rem + 5.4vw, 10svh), 5.5rem);
   line-height: 1;
   letter-spacing: -0.045em;
 }
@@ -101,7 +102,7 @@
 /* ---------- Hero ---------- */
 
 .mo-hero {
-  padding-top: clamp(2rem, 5vw, 4.5rem);
+  padding-top: clamp(1.5rem, min(5vw, 6svh), 4.5rem);
   /* The glow behind the device extends past the container; clip it without making a scroll box. */
   overflow-x: clip;
 }
@@ -1147,7 +1148,12 @@
     gap: 4rem;
   }
   .mo-frame {
-    padding-inline: 2rem;
+    padding: 2.25rem 2rem;
+  }
+  /* The hero phone follows the screen's height too: the whole phone and the red button stay
+     above the fold on common laptops (1280 × 720 and up). */
+  .mo-hero .phone {
+    width: clamp(14rem, calc((100svh - 12.5rem) * 0.47), 19rem);
   }
   .mo-sechead {
     grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -381,7 +381,8 @@ test.describe('on a phone', () => {
       await page.setViewportSize({ width: 740, height: 360 });
       await page.goto(HOME);
       if (zoom) await page.addStyleTag({ content: zoom });
-      // Wide enough for the bar's Request a demo, which shows while the hero's is off screen.
+      // Wide enough for the bar's Request a demo, which shows once the hero's is off screen.
+      await page.evaluate(() => document.querySelector('#what')?.scrollIntoView());
       const barDemo = page.locator('.site-header__demo');
       await expect(barDemo).toBeVisible();
       await page.getByRole('button', { name: 'Menu' }).tap();
