@@ -55,7 +55,7 @@ export const questions = {
     {
       question: 'Who’s in today?',
       answer:
-        'Attendance with Start day and End day, approved by you. Your Today screen shows everyone’s day in one row.',
+        'Attendance with Start day and End day, approved by you. Today shows the day’s attendance in one row; one tap opens everyone’s day.',
       status: 'live',
     },
     {
@@ -338,15 +338,15 @@ export const app = {
 /** The lock screen in "Feels like an app". Demo data; Saffron Café is an invented client. */
 export const lockScreen = {
   label:
-    'Illustration of a phone’s lock screen at 8:00 with four MaxOff notifications: the October cycle for Saffron Café is ready, a summary of updates held during quiet hours, Meera has not noted a task, and Kabir asks for leave.',
+    'Illustration of a phone’s lock screen at 8:00 with four MaxOff notifications: Saffron Café’s Reel 3 is overdue and Isha was told yesterday, a summary of updates held during quiet hours, Meera has not noted a task, and Kabir asks for leave.',
   time: '8:00',
   date: 'Thursday 1 October',
   app: 'MaxOff',
   items: [
     {
       when: 'now',
-      title: 'Saffron Café: October cycle ready',
-      text: 'Reel 1–4 and Poster 1 are lined up.',
+      title: 'Saffron Café: Reel 3 is overdue',
+      text: 'Isha was told yesterday.',
     },
     { when: 'now', title: 'While you slept', text: 'Quiet hours held 3 updates. Here they are.' },
     { when: '8 h', title: 'Not noted yet', text: 'Meera hasn’t noted “Cut the launch film”.' },

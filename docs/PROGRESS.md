@@ -13,7 +13,7 @@
 
 ## Next step
 
-0. The owner reviews `content/v1.6` on the preview URL and approves or asks for changes; nothing merges before that. Open question: the invented demo client name "Saffron Café".
+0. The owner reviews `content/v1.6` on the preview URL and approves or asks for changes; nothing merges before that. "Saffron Café" is approved as the demo client.
 1. The owner creates the www Redirect Rule (`docs/ROADMAP.md` Phase 6 step 2) and runs `pnpm check:www`; then merges `fix/www-and-crew`, runs PageSpeed Insights on https://maxoff.in (mobile) and checks the site on an iPhone in Safari: tap the hero's Request a demo, open the menu in landscape.
 2. The owner's critique and polish pass (the design skills run from a local session), and the Phase 6 owner steps still open (the www redirect rule, Web Analytics).
 

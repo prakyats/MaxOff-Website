@@ -1120,6 +1120,9 @@ test.describe('the page', () => {
     );
     expect(opacities).toEqual(['1', '1', '1', '1']);
     await expect(page.locator('#app .lock')).toHaveAttribute('role', 'img');
+    // The lock screen is the Owner's: an escalation, not "cycle ready" (that goes to the Admin).
+    await expect(notes.first()).toContainText('Saffron Café: Reel 3 is overdue');
+    await expect(page.locator('#app .lock')).not.toContainText('cycle ready');
   });
 
   test('the lock screen notifications arrive once it is on screen', async ({ page }) => {
