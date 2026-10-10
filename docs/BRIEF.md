@@ -23,15 +23,20 @@ The app is a separate product at https://app.maxoff.in. This repository is only 
 - **People:** invite by link, roles, job titles, deactivate without losing history.
 - **Settings:** holidays, days off, thresholds, job titles, custom fields: all editable by the Owner, no developer needed.
 
-**Coming next (always labelled "Coming", never as live):**
+Added by the owner, 10 Oct 2026 (app v1.6.0, live on app.maxoff.in since 9 Oct 2026; relayed from the app's advisor session at the owner's request):
 
-- **Tasks with acknowledgement:** every assignee must tap **"Noted"**; one primary owner marks it Done.
-- **Approvals that end with the Owner:** Done → approving Admin (if any) → **Owner**. Final completion is always the Owner's.
-- **Notifications and reminders:** in-app, push to the phone, email for the important few; escalations when a task is not acknowledged; quiet hours at night.
-- **Dashboards and calendar** for each role.
-- **Client projects:** recurring client work (projects → cycles → items) kept separate from crew tasks.
+- **Tasks with "Noted":** every assignee taps **Task Noted**; one primary owner marks it Done. Tasks have a type, a due date and time, a priority, optional stages and a chat thread on the task. Task templates. Crew can **Suggest a task**; the Owner or an Admin turns a suggestion into a task.
+- **Approvals that end with the Owner (crew tasks):** Done → approving Admin (if any, and not an assignee) → **Owner**. Final completion of a crew task is always the Owner's.
+- **Notifications and reminders:** an in-app bell, push to the phone (installed app), and email only for the important few (invites, escalations, the last deadline reminders). Reminders before a deadline and when overdue. Escalations when a task isn't noted: first to the approving Admin, then to the Owner. **Quiet hours** at night (held notifications arrive as one morning summary). The Owner sees who **can't be reached** (whose phone isn't getting notifications).
+- **Dashboards and calendar, per role:** Crew get **My Day** (only what needs them today: not noted, changes requested, overdue, due today, then the week ahead; today's and tomorrow's shoots and meetings). The Owner gets **Today**: what needs them first (approvals with how long each has waited), today's attendance in one row, today's tasks, client work, overdue and risks, and the week ahead. Admins get their own Today and a work report. A **calendar** with day, week and month views: shoots, site visits and meetings in their task type's colour, leave, holidays, and **Who's free** on a day. Admins see others' work only as "Busy"; Crew see only their own.
+- **End-of-day report** for the Owner each day (saved, never rewritten), and a **weekly summary email** on a day the Owner picks.
+- **Client projects (Owner and Admins only; Crew never see client work):** one-time, weekly or monthly projects for a client. A weekly or monthly project starts a new **cycle** by itself each week or month from its item list (for example Reel 1–4, Poster 1). Each item can have its own **stages** (for example Script → Shoot → Edit → Posted), ticked as work moves. Admins run their own clients' projects end to end: they create projects, tick stages and mark items done (done counts at once, with a few seconds to undo). The Owner can send an item back; the Admin can reopen one, each with a reason. At the end of a cycle, unfinished items are carried forward, closed with a reason, or left pending. Project templates and stage presets. A project's full activity history. Morning messages at 8 AM ("cycle ready", "items to decide"); an item still overdue is escalated to the Owner. Kept separate from crew tasks (the only link is a task's optional client label).
+
+**Coming (always labelled "Coming", never as live):**
+
 - **Work submission** with original-quality files.
-- **Owner-only revenue and reports:** money is visible to the Owner only, never to Admins or Crew.
+- **Owner-only revenue and reports:** amounts and billing are the Owner's only, never Admins' or Crew's.
+- **Working hours, late starts and leaving early:** set working hours, a late start marked after a grace period, and leaving early only with the Owner's OK.
 
 **True principles the site may state:**
 
@@ -47,7 +52,7 @@ The app is a separate product at https://app.maxoff.in. This repository is only 
 ### Clarifications from the owner (29 Sep 2026): use exactly these
 
 - **Who's in today:** the Owner sees everyone's day (a people board on Today). Admins can see today's presence and availability, but not attendance history. Crew see only their own day. The hero phone shows the Owner's Today.
-- **Admins:** they mark their own attendance and request leave like Crew, see the team list and availability, edit the clients assigned to them (details, contacts, brand, custom fields), and manage lists and templates. They never decide attendance or leave, and never see money. Coming with tasks: they create and assign tasks, do the Admin approval step before the Owner's, and get work reports for their own scope.
+- **Admins:** they mark their own attendance and request leave like Crew, see the team list and availability, edit the clients assigned to them (details, contacts, brand, custom fields), and manage lists and templates. They never decide attendance or leave, and never see money. Since v1.6 (10 Oct 2026) they also create and assign tasks, do the Admin approval step before the Owner's, get a work report for their own scope, and run client projects for their own clients.
 - **Comp leave:** never automatic. A person adds an extra-work note (for example "I worked on a day off"), and the Owner grants ½ or 1 day, or nothing. The Owner can also grant comp leave at any time. Credits expire at the end of the calendar month, and using one is a leave request the Owner approves.
 - **Expense claims:** the member adds a claim (a receipt photo is required above an amount the Owner sets), the Owner approves or rejects it, then marks it paid. Expenses belong under "What's waiting on me".
 - **Month summary:** Owner-only (per person and a team report). Each person sees only their own recent attendance, comp leave credits and claims.
